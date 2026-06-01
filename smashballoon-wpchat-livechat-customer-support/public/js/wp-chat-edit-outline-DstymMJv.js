@@ -1,0 +1,1 @@
+import{r as t}from"./wp-chat-chunk-EPOLDU6W-CW-UdKEc.js";const o=e=>t.createElement("svg",{width:16,height:17,viewBox:"0 0 16 17",fill:"currentColor",xmlns:"http://www.w3.org/2000/svg",...e},t.createElement("path",{d:"M2 12V14.5H4.5L11.8733 7.12667L9.37333 4.62667L2 12ZM14.2733 4.72667L11.7733 2.22667L10.0867 3.92L12.5867 6.42L14.2733 4.72667Z"}));export{o as default};

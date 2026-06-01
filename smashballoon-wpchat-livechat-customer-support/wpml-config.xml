@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wpml-config>
+	<!--
+		WPML Configuration for WPChat Plugin
+		This file defines which plugin settings should be translatable.
+		For more info: https://wpml.org/documentation/support/language-configuration-files/
+	-->
+
+	<!-- Admin Settings Translation -->
+	<admin-texts>
+		<!-- Main Settings Option Key -->
+		<key name="wpchat_global_settings">
+
+			<!-- Customizer Settings - User-Facing Translatable Text Only -->
+			<key name="customizerSettings">
+				<!-- Translatable Headings and Messages -->
+				<key name="headerHeading" />
+				<key name="sendMessageHeading" />
+				<key name="sendMessageSubHeading" />
+				<key name="faqHeading" />
+
+				<!-- Custom Chatbot Name (if user sets a custom name, it should be translatable) -->
+				<key name="chatbotCustomName" />
+			</key>
+		</key>
+	</admin-texts>
+
+	<!-- Custom Post Types and Taxonomies -->
+	<custom-types>
+		<!--
+			Note: WPChat uses custom database tables, not WordPress post types.
+			Therefore, no custom post types need to be registered here.
+
+			Data stored in custom tables:
+			- wp_wpchat_agents (name, platforms)
+			- wp_wpchat_faqs (question, answer, image)
+			- wp_wpchat_funnels (name, visibility) [Pro]
+			- wp_wpchat_funnel_blocks (message) [Pro]
+		-->
+	</custom-types>
+
+	<!-- String Translation for Database Content -->
+	<!--
+		Since WPChat stores translatable content in custom tables rather than
+		WordPress post types, translators should use WPML's String Translation
+		feature to translate:
+
+		1. Agent Names (wp_wpchat_agents.name)
+		2. FAQ Questions and Answers (wp_wpchat_faqs.question, wp_wpchat_faqs.answer)
+		3. Funnel Names and Messages (wp_wpchat_funnels.name, wp_wpchat_funnel_blocks.message)
+
+		These strings should be registered via wpml_register_single_string()
+		when created/updated.
+
+		Example:
+		do_action('wpml_register_single_string', 'wpchat', 'faq_question_' . $faq_id, $question);
+		do_action('wpml_register_single_string', 'wpchat', 'faq_answer_' . $faq_id, $answer);
+	-->
+</wpml-config>

@@ -1,0 +1,36 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@FC/*": ["./src/apps/Frontend/components/*"],
+      "@FP/*": ["./src/apps/Frontend/pages/*"],
+      "@FU/*": ["./src/apps/Frontend/utils/*"],
+      "@FCPro/*": ["./src/pro/apps/Frontend/components/*"],
+      "@FPPro/*": ["./src/pro/apps/Frontend/pages/*"],
+      "@FUPro/*": ["./src/pro/apps/Frontend/utils/*"],
+      "@AC/*": ["./src/apps/Admin/components/*"],
+      "@AP/*": ["./src/apps/Admin/pages/*"],
+      "@AU/*": ["./src/apps/Admin/utils/*"],
+      "@AH/*": ["./src/apps/Admin/hooks/*"],
+      "@ACPro/*": ["./src/pro/apps/Admin/components/*"],
+      "@APPro/*": ["./src/pro/apps/Admin/pages/*"],
+      "@AUPro/*": ["./src/pro/apps/Admin/utils/*"],
+      "@AHPro/*": ["./src/pro/apps/Admin/hooks/*"],
+      "@Components/*": ["./src/components/*"],
+      "@Utils/*": ["./src/utils/*"],
+      "@Hooks/*": ["./src/hooks/*"],
+      "@ComponentsPro/*": ["./src/pro/components/*"],
+      "@UtilsPro/*": ["./src/pro/utils/*"],
+      "@HooksPro/*": ["./src/pro/hooks/*"],
+      "@Assets/*": ["./src/assets/*"],
+      "@DataStore/*": ["./src/apps/Admin/data/*"],
+      "@FDataStore/*": ["./src/apps/Frontend/data/*"],
+      "@DataStorePro/*": ["./src/pro/apps/Admin/data/*"],
+      "@FDataStorePro/*": ["./src/pro/apps/Frontend/data/*"],
+      "@node/*": ["./node_modules/*"],
+      "@Frontend/*": ["./src/apps/Frontend/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

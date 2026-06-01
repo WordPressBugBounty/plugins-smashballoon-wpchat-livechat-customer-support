@@ -1,0 +1,64 @@
+{
+  "name": "smashballoon/wpchat",
+  "description": "WPChat plugin by Smash Balloon",
+  "type": "project",
+  "license": "GPL",
+  "autoload": {
+    "psr-4": {
+      "SmashBalloon\\WPChat\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Ahmed Hussein",
+      "email": "ahussein@awesomemotive.com"
+    }
+  ],
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/awesomemotive/smash-bundler.git"
+    },
+    {
+      "type": "vcs",
+      "url": "https://github.com/awesomemotive/sb-common.git"
+    }
+  ],
+  "require": {
+    "php": ">=8.0",
+    "smashballoon/framework": "dev-master as 1.0.0"
+  },
+  "require-dev": {
+    "php-stubs/wordpress-stubs": "^6.8",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "phpunit/phpunit": "^9.6",
+    "smashballoon/smash-bundler": "v2.x-dev",
+    "squizlabs/php_codesniffer": "^3.12",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "wp-coding-standards/wpcs": "^3.1",
+    "wp-phpunit/wp-phpunit": "^6.4",
+    "yoast/phpunit-polyfills": "^2.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "process-timeout": 0,
+    "sort-packages": true
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "[ -f vendor/bin/phpcs ] && vendor/bin/phpcs --config-set installed_paths vendor/wp-coding-standards/wpcs || echo 'PHPCS not found, skipping configuration'"
+    ],
+    "phpcs": "phpcs --",
+    "phpcbf": "phpcbf --",
+    "lint-php": "phpcs --",
+    "review-php": "phpcs -s --report=summary && phpcs -a --",
+    "reformat-php": "phpcbf --",
+    "test": "phpunit --configuration phpunit.xml",
+    "test-coverage": "phpunit --configuration phpunit.xml --coverage-html tests/coverage",
+    "test-watch": "phpunit --configuration phpunit.xml --colors --watch",
+    "check-php74": "phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4 --extensions=php --ignore='vendor/*,node_modules/*,tests/*,resources/node_modules/*,*/index.php' src/ wp-chat.php",
+    "check-php74-detailed": "./scripts/check-php74-compatibility.sh"
+  }
+}

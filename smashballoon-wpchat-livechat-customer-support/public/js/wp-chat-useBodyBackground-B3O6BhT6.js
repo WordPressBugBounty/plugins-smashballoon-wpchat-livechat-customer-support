@@ -1,0 +1,1 @@
+import{d,r as n}from"./wp-chat-chunk-EPOLDU6W-CW-UdKEc.js";function l(c){const o=d.c(3),t=c;let r,e;o[0]!==t?(r=()=>{const s=document.body.style.backgroundColor;return document.body.style.backgroundColor=t,()=>{document.body.style.backgroundColor=s}},e=[t],o[0]=t,o[1]=r,o[2]=e):(r=o[1],e=o[2]),n.useEffect(r,e)}export{l as u};

@@ -1,0 +1,17 @@
+@import '@Assets/css/reset';
+@import '@Assets/css/main.css';
+
+.wpchat-viewport > div {
+  display: block !important;
+}
+
+.wpchat-viewport {
+  font-family: 'Inter', sans-serif;
+}
+
+  @supports (font-variation-settings: normal) {
+    .wpchat-viewport{
+      font-family: "InterVariable", sans-serif;
+      font-optical-sizing: auto;
+    }
+  }
