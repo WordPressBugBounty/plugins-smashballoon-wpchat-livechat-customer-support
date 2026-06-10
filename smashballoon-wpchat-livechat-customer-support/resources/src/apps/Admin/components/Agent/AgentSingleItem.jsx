@@ -8,6 +8,7 @@ import { Tooltip } from '@AC/ui/Tooltip';
 import SvgLoader from '@Components/SvgLoader';
 import { getAvatarFallback } from '@Utils/getAvatarFallback';
 import { isPro } from '@Utils/isPro';
+import AgentPlatformStatus from '@AC/Agent/AgentPlatformStatus';
 
 const AgentSingleItemPro = isPro
   ? lazy(() =>
@@ -88,11 +89,13 @@ export default function AgentSingleItem({
             </Suspense>
           )}
         </div>
-        {AgentSingleItemPro && (
-          <Suspense>
-            <AgentSingleItemPro platforms={platforms} settings={settings} agent={agent} />
-          </Suspense>
-        )}
+        <AgentPlatformStatus platforms={platforms} settings={settings}>
+          {AgentSingleItemPro && (
+            <Suspense>
+              <AgentSingleItemPro settings={settings} agent={agent} />
+            </Suspense>
+          )}
+        </AgentPlatformStatus>
       </div>
       <Button
         className={twMerge(

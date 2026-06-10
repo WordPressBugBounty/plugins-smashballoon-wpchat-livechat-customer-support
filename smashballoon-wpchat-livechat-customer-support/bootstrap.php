@@ -27,10 +27,12 @@ if (!defined("WPCHAT_STORE_URL")) {
 // Initialize the deactivation feedback survey.
 if (class_exists('SmashBalloon\WPChat\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager')) {
     SmashBalloon\WPChat\Vendor\Smashballoon\Framework\Packages\Feedback\FeedbackManager::init([
-        'plugin_slug'    => 'wpchat',
-        'plugin_name'    => defined('WPCHAT_PLUGIN_NAME') ? WPCHAT_PLUGIN_NAME : 'WPChat',
-        'plugin_version' => defined('WPCHAT_VERSION') ? WPCHAT_VERSION : '',
-        'plugin_file'    => defined('WPCHAT_PLUGIN_FILE') ? WPCHAT_PLUGIN_FILE : dirname(__FILE__) . '/wp-chat.php',
-        'support_url'    => 'https://wpchat.com/support/',
+        'plugin_slug'        => 'wpchat',
+        'plugin_name'        => defined('WPCHAT_PLUGIN_NAME') ? WPCHAT_PLUGIN_NAME : 'WPChat',
+        'plugin_version'     => defined('WPCHAT_VERSION') ? WPCHAT_VERSION : '',
+        'plugin_file'        => defined('WPCHAT_PLUGIN_FILE') ? WPCHAT_PLUGIN_FILE : dirname(__FILE__) . '/wp-chat.php',
+        'support_url'        => 'https://wpchat.com/support/',
+        'enable_help_widget' => true,
+        'help_url'           => 'https://wpchat.com/help-center/',
     ]);
 }

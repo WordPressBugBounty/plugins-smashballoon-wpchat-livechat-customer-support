@@ -4,7 +4,7 @@
  * Plugin Name: WPChat - Livechat Customer Support Suite
  * Plugin URI: https://wpchat.com
  * Description: Connect with your website visitors through simple and reliable live chat widget for WordPress.
- * Version: 1.3.1
+ * Version: 1.4.1
  * Author: Smash Balloon
  * Author URI: https://smashballoon.com
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if (!defined('WPCHAT_PLUGIN_NAME')) {
 	define('WPCHAT_PLUGIN_NAME', 'WPChat');
 }
 if (!defined('WPCHAT_VERSION')) {
-	define('WPCHAT_VERSION', '1.3.1');
+	define('WPCHAT_VERSION', '1.4.1');
 }
 if (!defined('WPCHAT_PLUGIN_FILE')) {
 	define('WPCHAT_PLUGIN_FILE', __FILE__);
@@ -39,14 +39,14 @@ require_once 'bootstrap.php';
  *
  * @return string Fully qualified class name of the service container.
  */
-if (!function_exists('getWpChatContainer')) {
-	function getWpChatContainer()
+if (!function_exists('wpchat_get_container')) {
+	function wpchat_get_container()
 	{
 		return \SmashBalloon\WPChat\Common\Services\ServiceContainer::class;
 	}
 }
 
 // Register the service container.
-$serviceContainerClass = getWpChatContainer();
-$container = new $serviceContainerClass();
-$container->register();
+$wpchat_service_container_class = wpchat_get_container();
+$wpchat_container = new $wpchat_service_container_class();
+$wpchat_container->register();

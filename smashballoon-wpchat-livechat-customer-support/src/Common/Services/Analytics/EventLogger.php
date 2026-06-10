@@ -117,7 +117,7 @@ class EventLogger
 	private function initializeSession(): void
 	{
 		// Get existing session ID or create new one
-		$existingSessionId = isset($_COOKIE[self::SESSION_ID_COOKIE]) ? sanitize_text_field($_COOKIE[self::SESSION_ID_COOKIE]) : null;
+		$existingSessionId = isset($_COOKIE[self::SESSION_ID_COOKIE]) ? sanitize_text_field(wp_unslash($_COOKIE[self::SESSION_ID_COOKIE])) : null;
 
 		if (!$existingSessionId) {
 			$this->sessionId = wp_generate_uuid4();
@@ -164,7 +164,7 @@ class EventLogger
 		}
 
 		// Get or create guest ID
-		$guestId = isset($_COOKIE[self::GUEST_ID_COOKIE]) ? sanitize_text_field($_COOKIE[self::GUEST_ID_COOKIE]) : null;
+		$guestId = isset($_COOKIE[self::GUEST_ID_COOKIE]) ? sanitize_text_field(wp_unslash($_COOKIE[self::GUEST_ID_COOKIE])) : null;
 		if (!$guestId) {
 			$guestId = 'guest_' . wp_generate_uuid4();
 			if (!headers_sent()) {
@@ -249,11 +249,13 @@ class EventLogger
 		];
 
 		// Insert into analytics table
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->insert(
 			$this->tableName,
 			$eventData,
 			['%d', '%s', '%s', '%s', '%s', '%s']
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Log any database errors
 		if ($result === false) {
@@ -336,9 +338,9 @@ class EventLogger
 	public function logBotOpen(array $metadata = [], array $contextData = []): bool
 	{
 		$data = array_merge([
-			'source' => $_SERVER['REQUEST_URI'] ?? '',
-			'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-			'referrer' => $_SERVER['HTTP_REFERER'] ?? '',
+			'source' => isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '',
+			'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '',
+			'referrer' => isset($_SERVER['HTTP_REFERER']) ? esc_url_raw(wp_unslash($_SERVER['HTTP_REFERER'])) : '',
 		], $metadata);
 
 		return $this->logEvent('BOT_OPEN', $data, $contextData);
@@ -798,14 +800,16 @@ class EventLogger
 		}
 
 		// Initialize sequence number from database only once per session
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$count = $this->wpdb->get_var(
 			$this->wpdb->prepare(
-				"SELECT COUNT(*) FROM {$this->tableName} 
-				WHERE session_id = %s 
+				"SELECT COUNT(*) FROM {$this->tableName}
+				WHERE session_id = %s
 				AND event_type = 'navigation'",
 				$this->sessionId
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		$this->navigationSequenceNumber = ((int) $count) + 1;
 		return $this->navigationSequenceNumber;
@@ -904,11 +908,12 @@ class EventLogger
 	 */
 	public function cleanupOldData(int $days = 365, int $batchSize = 1000): int
 	{
-		$cutoffDate = date('Y-m-d H:i:s', strtotime("-{$days} days"));
+		$cutoffDate = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
 		$siteId = $this->getSiteId();
 		$totalDeleted = 0;
 
 		do {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 			$deletedRows = $this->wpdb->query(
 				$this->wpdb->prepare(
 					"DELETE FROM {$this->tableName}
@@ -920,6 +925,7 @@ class EventLogger
 					$batchSize
 				)
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			$totalDeleted += (int) $deletedRows;
 		} while ($deletedRows === $batchSize);
 

@@ -219,6 +219,19 @@ body[class*='wp-chat_page_wp-chat-'] {
     100% { opacity: 0.6; }
 }
 
+/* Dim non-expanded accordion siblings */
+.wpchat-accordion-highlight:has([data-expanded]) > *:not([data-expanded]) {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+}
+
+/* Dim sections outside the accordion group when one is expanded */
+.wpchat-panel-highlight:has([data-expanded]) > *:not(:has([data-expanded])) {
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
 .sb-wpchat-pro-upgrade-link-container {
     position: relative;
     

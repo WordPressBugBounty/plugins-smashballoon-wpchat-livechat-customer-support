@@ -35,8 +35,7 @@ class AnalyticsDailySummaryTableMigration implements MigrationInterface
 	{
 		$tableName = $this->db->prefix . 'wpchat_daily_site_summary';
 
-		$sql = <<<SQL
-			CREATE TABLE IF NOT EXISTS `{$tableName}` (
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (
 				`site_id` bigint(20) unsigned NOT NULL,
 				`summary_date` date NOT NULL,
 				`total_user_interactions` int(11) unsigned DEFAULT 0 COMMENT 'User interaction events only',
@@ -58,8 +57,7 @@ class AnalyticsDailySummaryTableMigration implements MigrationInterface
 				INDEX `idx_conversion_rate` (`conversion_rate`),
 				INDEX `idx_created_at` (`created_at`),
 				INDEX `idx_updated_at` (`updated_at`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-		SQL;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);

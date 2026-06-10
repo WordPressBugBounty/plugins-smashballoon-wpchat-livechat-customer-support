@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Helpers\Logger;
 
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;

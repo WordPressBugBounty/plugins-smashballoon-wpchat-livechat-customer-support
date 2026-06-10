@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\Services\Database\MigratorService;
 
@@ -61,7 +65,7 @@ class PluginActivationService implements ServiceProviderInterface
 		do_action('wpchat_plugin_activated');
 
 		// Set redirect flag.
-		set_transient('wpchat_activation_redirect', true, 30);
+		add_option('wpchat_plugin_do_activation_redirect', true);
 	}
 
 	/**
@@ -84,8 +88,8 @@ class PluginActivationService implements ServiceProviderInterface
 	 */
 	public function redirectAfterActivation(): void
 	{
-		if (get_transient('wpchat_activation_redirect')) {
-			delete_transient('wpchat_activation_redirect');
+		if (get_option('wpchat_plugin_do_activation_redirect', false)) {
+			delete_option('wpchat_plugin_do_activation_redirect');
 			wp_safe_redirect(admin_url('admin.php?page=wp-chat'));
 			exit;
 		}

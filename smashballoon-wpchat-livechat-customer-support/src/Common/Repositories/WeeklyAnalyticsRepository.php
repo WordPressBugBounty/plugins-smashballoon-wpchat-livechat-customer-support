@@ -3,6 +3,7 @@
 namespace SmashBalloon\WPChat\Common\Repositories;
 
 use SmashBalloon\WPChat\Common\Contracts\AnalyticsRepositoryInterface;
+use DateTime;
 use wpdb;
 
 /**
@@ -41,10 +42,11 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSummaryData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
-					YEARWEEK(summary_date, 1) as week_id,
+				"SELECT
+					YEARWEEK(summary_date, 3) as week_id,
 					MIN(summary_date) as week_start_date,
 					MAX(summary_date) as week_end_date,
 					SUM(total_user_interactions) as weekly_user_interactions,
@@ -57,7 +59,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 					SUM(unique_sessions) as weekly_unique_sessions,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY week_id
 				ORDER BY week_id ASC",
@@ -67,6 +69,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -76,12 +79,13 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSinglePeriodSummary(int $site_id, string $date, $period_unit = null): array
 	{
-		// For weekly, period_unit might be a specific week number or derive from date
-		$week_id = date('YW', strtotime($date)); // YYYYWW format for week
+		// For weekly, derive week ID from date in WordPress timezone (summary_date is stored in WP timezone)
+		$week_id = (new DateTime($date))->format('oW'); // YYYYWW format using ISO-8601 year+week
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
-					YEARWEEK(summary_date, 1) as week_id,
+				"SELECT
+					YEARWEEK(summary_date, 3) as week_id,
 					MIN(summary_date) as week_start_date,
 					MAX(summary_date) as week_end_date,
 					SUM(total_user_interactions) as weekly_user_interactions,
@@ -94,14 +98,15 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 					SUM(unique_sessions) as weekly_unique_sessions,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
-				AND YEARWEEK(summary_date, 1) = %s
+				WHERE site_id = %d
+				AND YEARWEEK(summary_date, 3) = %s
 				GROUP BY week_id",
 				$site_id,
 				$week_id
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results[0] ?? [];
 	}
@@ -111,17 +116,19 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueUsersCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_users) as total_unique_users
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -131,17 +138,19 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueSessionsCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_sessions) as total_unique_sessions
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -151,9 +160,10 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAggregatedTotals(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					SUM(total_user_interactions) as total_user_interactions,
 					SUM(total_redirects) as total_redirects,
 					SUM(total_bot_opens) as total_bot_opens,
@@ -163,9 +173,9 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 					SUM(unique_users) as unique_users,
 					SUM(unique_sessions) as unique_sessions,
 					COUNT(DISTINCT summary_date) as active_days,
-					COUNT(DISTINCT YEARWEEK(summary_date, 1)) as active_weeks
+					COUNT(DISTINCT YEARWEEK(summary_date, 3)) as active_weeks
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
@@ -173,6 +183,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if (!$result) {
 			return [
@@ -222,20 +233,21 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getWeeklyTrends(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
-					YEARWEEK(summary_date, 1) as week_id,
+				"SELECT
+					YEARWEEK(summary_date, 3) as week_id,
 					MIN(summary_date) as week_start_date,
 					MAX(summary_date) as week_end_date,
 					SUM(total_user_interactions) as weekly_user_interactions,
 					SUM(total_redirects) as weekly_redirects,
 					SUM(unique_users) as weekly_unique_users,
-					LAG(SUM(total_user_interactions), 1) OVER (ORDER BY YEARWEEK(summary_date, 1)) as prev_user_interactions,
-					LAG(SUM(total_redirects), 1) OVER (ORDER BY YEARWEEK(summary_date, 1)) as prev_redirects,
-					LAG(SUM(unique_users), 1) OVER (ORDER BY YEARWEEK(summary_date, 1)) as prev_unique_users
+					LAG(SUM(total_user_interactions), 1) OVER (ORDER BY YEARWEEK(summary_date, 3)) as prev_user_interactions,
+					LAG(SUM(total_redirects), 1) OVER (ORDER BY YEARWEEK(summary_date, 3)) as prev_redirects,
+					LAG(SUM(unique_users), 1) OVER (ORDER BY YEARWEEK(summary_date, 3)) as prev_unique_users
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY week_id
 				ORDER BY week_id ASC",
@@ -245,6 +257,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to calculate growth rates
 		$processedResults = [];
@@ -290,10 +303,11 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getWeeklyPerformanceSummary(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
-					YEARWEEK(summary_date, 1) as week_id,
+				"SELECT
+					YEARWEEK(summary_date, 3) as week_id,
 					MIN(summary_date) as week_start_date,
 					MAX(summary_date) as week_end_date,
 					SUM(total_user_interactions) as weekly_user_interactions,
@@ -305,7 +319,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 					COUNT(DISTINCT summary_date) as active_days,
 					(SUM(total_redirects) / NULLIF(SUM(total_bot_opens), 0)) * 100 as conversion_rate
 				FROM {$this->dailyTableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY week_id
 				ORDER BY week_id ASC",
@@ -315,6 +329,7 @@ class WeeklyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to format numeric values
 		$processedResults = [];

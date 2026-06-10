@@ -1,38 +1,10 @@
 import React from 'react';
-import { __, sprintf } from '@wordpress/i18n';
-import { createInterpolateElement } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
-import RedirectMsg from '@FC/RedirectMsg';
+import PlatformLinks from '@FC/PlatformLinks';
+import QRCodeMessage from '@FC/QRCodeMessage';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { getCurrentTime } from '@Utils/getCurrentTime';
-
-/**
- * FallbackLink component for "Did not redirect?" message.
- * Reconstructed from stored data.
- */
-function FallbackLink({ platformName, link }) {
-  return (
-    <div>
-      {createInterpolateElement(
-        sprintf(
-          /* translators: %s: platform name (e.g., "WhatsApp", "Messenger") */
-          __('Did not redirect? <a>Click here</a> to go to %s manually.', 'smashballoon-wpchat-livechat-customer-support'),
-          platformName
-        ),
-        {
-          a: (
-            <a
-              href={link}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='wpchat:text-widget-accent-1 wpchat:underline'
-            />
-          ),
-        }
-      )}
-    </div>
-  );
-}
 
 /**
  * ChatBubble component represents an individual chat message bubble.
@@ -60,11 +32,11 @@ function ChatBubble({ msg, setChatMessages }) {
 
   // Determine the message content based on type
   let messageContent = message;
-  if (type === 'redirect' && data) {
-    messageContent = <RedirectMsg {...data} />;
-  } else if (type === 'fallback_link' && data) {
-    messageContent = <FallbackLink {...data} />;
+
+  if (type === 'qr_code' && data) {
+    messageContent = <QRCodeMessage {...data} />;
   }
+
   const isImage =
     /\.(png|jpe?g|gif|webp|bmp|ico)$/i.test(chatbotAvatar) ||
     /^data:image\/(png|jpe?g|gif|webp|bmp|ico);base64,/.test(chatbotAvatar);
@@ -151,6 +123,10 @@ function ChatBubble({ msg, setChatMessages }) {
             </div>
           )}
         </div>
+      )}
+
+      {type === 'platform_links' && data && (
+        <PlatformLinks platforms={data.platforms} storeApi={msg.storeApi} />
       )}
 
       {optionsList && messageType === 'receive' && showOptions && (

@@ -41,9 +41,10 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSummaryData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					agent_id,
@@ -53,8 +54,8 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				ORDER BY summary_date ASC, total_assignments DESC",
 				$site_id,
 				$start_date,
@@ -62,6 +63,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -73,9 +75,10 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	{
 		// For agent data, period_unit could be a specific agent ID
 		if (!is_null($period_unit) && is_numeric($period_unit)) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 			$result = $this->wpdb->get_row(
 				$this->wpdb->prepare(
-					"SELECT 
+					"SELECT
 						site_id,
 						summary_date,
 						agent_id,
@@ -85,8 +88,8 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 						created_at,
 						updated_at
 					FROM {$this->tableName}
-					WHERE site_id = %d 
-					AND summary_date = %s 
+					WHERE site_id = %d
+					AND summary_date = %s
 					AND agent_id = %d",
 					$site_id,
 					$date,
@@ -94,6 +97,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 				),
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 			return $result ?: [];
 		}
@@ -125,14 +129,15 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAggregatedTotals(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					SUM(total_assignments) as total_assignments,
 					COUNT(DISTINCT agent_id) as unique_agents,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
@@ -140,6 +145,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if (!$result) {
 			return [
@@ -177,6 +183,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function upsertAgentDailySummary(int $site_id, string $summary_date, int $agent_id, string $agent_name, array $data): bool
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
 			"INSERT INTO {$this->tableName} (
 				site_id,
@@ -206,6 +213,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		return $this->wpdb->query($sql) !== false;
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	/**
@@ -218,16 +226,18 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function deleteAgentDailySummaries(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$affected_rows = $this->wpdb->query(
 			$this->wpdb->prepare(
 				"DELETE FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) $affected_rows;
 	}
@@ -242,9 +252,10 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAgentPerformanceStats(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					agent_id,
 					agent_name,
 					MAX(agent_avatar) as agent_avatar,
@@ -252,7 +263,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 					COUNT(DISTINCT summary_date) as active_days,
 					AVG(total_assignments) as avg_daily_assignments
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY agent_id, agent_name
 				ORDER BY total_assignments_period DESC",
@@ -262,6 +273,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to calculate meaningful metrics
 		$processedResults = [];
@@ -294,9 +306,10 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAgentStatsByName(int $site_id, string $agent_name, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					agent_id,
 					agent_name,
 					MAX(agent_avatar) as agent_avatar,
@@ -304,8 +317,8 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 					COUNT(DISTINCT summary_date) as active_days,
 					AVG(total_assignments) as avg_daily_assignments
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				AND agent_name = %s
 				GROUP BY agent_id, agent_name",
 				$site_id,
@@ -315,6 +328,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -329,9 +343,10 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAgentWorkloadDistribution(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					agent_id,
 					agent_name,
 					MAX(agent_avatar) as agent_avatar,
@@ -340,7 +355,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 					AVG(total_assignments) as avg_daily_assignments,
 					MAX(total_assignments) as peak_daily_assignments
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY agent_id, agent_name
 				ORDER BY total_assignments DESC",
@@ -350,6 +365,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Calculate workload percentages
 		$totalAssignments = array_sum(array_column($results, 'total_assignments'));
@@ -386,8 +402,9 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAgentTrendAnalysis(int $site_id, string $current_start, string $current_end, string $previous_start, string $previous_end): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
-			"SELECT 
+			"SELECT
 				agent_id,
 				agent_name,
 				MAX(agent_avatar) as agent_avatar,
@@ -396,7 +413,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 				COUNT(DISTINCT CASE WHEN summary_date BETWEEN %s AND %s THEN summary_date END) as current_active_days,
 				COUNT(DISTINCT CASE WHEN summary_date BETWEEN %s AND %s THEN summary_date END) as previous_active_days
 			FROM {$this->tableName}
-			WHERE site_id = %d 
+			WHERE site_id = %d
 			AND (summary_date BETWEEN %s AND %s OR summary_date BETWEEN %s AND %s)
 			GROUP BY agent_id, agent_name
 			HAVING current_assignments > 0 OR previous_assignments > 0
@@ -417,6 +434,7 @@ class AgentAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		$results = $this->wpdb->get_results($sql, ARRAY_A);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to calculate trend metrics
 		$processedResults = [];

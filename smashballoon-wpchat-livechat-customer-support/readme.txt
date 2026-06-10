@@ -4,9 +4,9 @@ Tags: whatsapp, live chat, chat plugin, chat widget, customer support
 Author: Smash Balloon
 Author URI: https://wpchat.com
 Requires at least: 5.8
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.3.1
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -243,6 +243,13 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.1 =
+* New: Added a Help widget for in-app access to documentation and support.
+* Fix: Chat links now open directly in a new tab without a redirect bounce.
+
+= 1.4.0 =
+* New: Phone and SMS support. You can now chat with visitors through phone calls and text messages.
 
 = 1.3.1 =
 * Tweak: Added optional deactivation feedback survey to help us improve the plugin.

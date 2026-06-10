@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services\Analytics;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Helpers\Logger;
 
 use Exception;
@@ -336,7 +340,7 @@ class AnalyticsCron
 	public function getCronDiagnostics(): array
 	{
 		$diagnostics = [
-			'timestamp' => current_time('mysql'),
+			'timestamp' => current_time('mysql', true),
 			'wp_cron_enabled' => !defined('DISABLE_WP_CRON') || !DISABLE_WP_CRON,
 			'available_schedules' => [],
 			'wpchat_jobs' => [],
@@ -369,7 +373,7 @@ class AnalyticsCron
 			$diagnostics['wpchat_jobs'][$hook] = [
 				'scheduled' => $nextRun !== false,
 				'next_run' => $nextRun,
-				'next_run_formatted' => $nextRun ? date('Y-m-d H:i:s', $nextRun) : null,
+				'next_run_formatted' => $nextRun ? gmdate('Y-m-d H:i:s', $nextRun) : null,
 				'time_until_next' => $nextRun ? human_time_diff(time(), $nextRun) : null,
 			];
 		}
@@ -407,7 +411,7 @@ class AnalyticsCron
 				'name' => $job,
 				'status' => $jobStatus['status'] ?? 'unknown',
 				'last_run' => $lastRun,
-				'next_run' => $scheduled[$job] ? date('Y-m-d H:i:s', $scheduled[$job]) : null,
+				'next_run' => $scheduled[$job] ? gmdate('Y-m-d H:i:s', $scheduled[$job]) : null,
 				'is_scheduled' => $isScheduled,
 				'healthy' => true,
 			];
@@ -468,8 +472,8 @@ class AnalyticsCron
 			'job_name' => $job_name,
 			'args' => $args,
 			'priority' => $priority,
-			'queued_at' => current_time('mysql'),
-			'scheduled_for' => date('Y-m-d H:i:s', time() + $delay),
+			'queued_at' => current_time('mysql', true),
+			'scheduled_for' => gmdate('Y-m-d H:i:s', time() + $delay),
 			'attempts' => 0,
 			'status' => 'queued',
 		];
@@ -526,7 +530,7 @@ class AnalyticsCron
 				$results['failed']++;
 				$queue[$jobId]['attempts']++;
 				$queue[$jobId]['last_error'] = $result['error'];
-				$queue[$jobId]['last_attempt'] = current_time('mysql');
+				$queue[$jobId]['last_attempt'] = current_time('mysql', true);
 
 				// If max attempts reached, mark as failed
 				if ($queue[$jobId]['attempts'] >= self::MAX_RETRY_ATTEMPTS) {
@@ -658,7 +662,7 @@ class AnalyticsCron
 				$this->updateCronStatus('processing_aggregates', 'completed', [
 					'processing_time_ms' => $processingTime,
 					'total_processed' => $totalProcessed,
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				// Only log success if there are performance issues or periodically
@@ -674,7 +678,7 @@ class AnalyticsCron
 				$this->updateCronStatus('processing_aggregates', 'failed', [
 					'errors' => $results['errors'],
 					'processing_time_ms' => $processingTime,
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				$this->logCronEvent('Aggregates processing failed', [
@@ -688,7 +692,7 @@ class AnalyticsCron
 			$this->updateCronStatus('processing_aggregates', 'error', [
 				'error_message' => $e->getMessage(),
 				'processing_time_ms' => $processingTime,
-				'last_run' => current_time('mysql'),
+				'last_run' => current_time('mysql', true),
 			]);
 
 			$this->logCronEvent('Aggregates processing error', [
@@ -711,7 +715,7 @@ class AnalyticsCron
 		$currentStatus = $this->getCronStatus();
 		$currentStatus[$job_name] = array_merge([
 			'status' => $status,
-			'updated_at' => current_time('mysql'),
+			'updated_at' => current_time('mysql', true),
 		], $extra_data);
 
 		return update_option(self::CRON_STATUS_OPTION, $currentStatus);
@@ -779,7 +783,7 @@ class AnalyticsCron
 				$this->updateCronStatus('quick_aggregation', 'completed', [
 					'processing_time_ms' => $processingTime,
 					'total_processed' => $totalProcessed,
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				// Only log success if there are performance issues or periodically
@@ -795,7 +799,7 @@ class AnalyticsCron
 				$this->updateCronStatus('quick_aggregation', 'failed', [
 					'errors' => $results['errors'],
 					'processing_time_ms' => $processingTime,
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				$this->logCronEvent('Quick aggregation failed', [
@@ -809,7 +813,7 @@ class AnalyticsCron
 			$this->updateCronStatus('quick_aggregation', 'error', [
 				'error_message' => $e->getMessage(),
 				'processing_time_ms' => $processingTime,
-				'last_run' => current_time('mysql'),
+				'last_run' => current_time('mysql', true),
 			]);
 
 			$this->logCronEvent('Quick aggregation error', [
@@ -840,7 +844,7 @@ class AnalyticsCron
 					'processing_time_ms' => $processingTime,
 					'total_deleted' => $totalDeleted,
 					'deleted_records' => $results['deleted_records'],
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				// Only log success if there are performance issues or periodically
@@ -860,7 +864,7 @@ class AnalyticsCron
 				$this->updateCronStatus('cleanup', 'failed', [
 					'errors' => $results['errors'],
 					'processing_time_ms' => $processingTime,
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 
 				$this->logCronEvent('Old data cleanup failed', [
@@ -874,7 +878,7 @@ class AnalyticsCron
 			$this->updateCronStatus('cleanup', 'error', [
 				'error_message' => $e->getMessage(),
 				'processing_time_ms' => $processingTime,
-				'last_run' => current_time('mysql'),
+				'last_run' => current_time('mysql', true),
 			]);
 
 			$this->logCronEvent('Old data cleanup error', [
@@ -923,13 +927,13 @@ class AnalyticsCron
 					'processing_time_ms' => $processingTime,
 					'batches_processed' => $results['batches_processed'],
 					'total_processed' => $results['total_processed'],
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 			} else {
 				$this->updateCronStatus($job_name, 'failed', [
 					'processing_time_ms' => $processingTime,
 					'errors' => $results['errors'],
-					'last_run' => current_time('mysql'),
+					'last_run' => current_time('mysql', true),
 				]);
 			}
 		} catch (Exception $e) {
@@ -937,7 +941,7 @@ class AnalyticsCron
 			$this->updateCronStatus($job_name, 'error', [
 				'error_message' => $e->getMessage(),
 				'processing_time_ms' => $processingTime,
-				'last_run' => current_time('mysql'),
+				'last_run' => current_time('mysql', true),
 			]);
 			$results['errors'][] = $e->getMessage();
 		}
@@ -1008,8 +1012,9 @@ class AnalyticsCron
 			'errors' => [],
 		];
 
-		$yesterday = date('Y-m-d', strtotime('-1 day'));
-		$today = date('Y-m-d');
+		$wpTimezone = AnalyticsTimezoneHelper::getWordPressTimezoneObject();
+		$yesterday = (new DateTime('yesterday', $wpTimezone))->format('Y-m-d');
+		$today = (new DateTime('now', $wpTimezone))->format('Y-m-d');
 
 		$batchResults = $this->aggregationService->processAllAggregates(
 			$yesterday,

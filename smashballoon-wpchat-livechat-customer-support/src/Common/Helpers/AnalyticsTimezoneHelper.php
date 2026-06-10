@@ -42,7 +42,8 @@ class AnalyticsTimezoneHelper
 			if (!empty($timezoneString)) {
 				self::$wpTimezone = $timezoneString;
 			} elseif ($gmtOffset !== false) {
-				// Convert GMT offset to timezone string (WordPress native approach)
+				// Convert GMT offset to timezone string compatible with PHP DateTimeZone.
+				// Must use "+05:45" format, not "UTC+05:45" which PHP rejects for fractional offsets.
 				$offset = (float) $gmtOffset;
 				$hours = (int) $offset;
 				$minutes = ($offset - $hours);
@@ -50,7 +51,7 @@ class AnalyticsTimezoneHelper
 				$sign = ($offset < 0) ? '-' : '+';
 				$absHour = abs($hours);
 				$absMins = abs($minutes * 60);
-				self::$wpTimezone = sprintf('UTC%s%02d:%02d', $sign, $absHour, $absMins);
+				self::$wpTimezone = sprintf('%s%02d:%02d', $sign, $absHour, $absMins);
 			} else {
 				self::$wpTimezone = 'UTC';
 			}

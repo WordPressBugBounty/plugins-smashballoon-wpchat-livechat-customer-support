@@ -41,9 +41,10 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSummaryData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					summary_hour,
@@ -57,8 +58,8 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				ORDER BY summary_date ASC, summary_hour ASC",
 				$site_id,
 				$start_date,
@@ -66,6 +67,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -81,9 +83,10 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 			return $this->getSummaryData($site_id, $date, $date);
 		}
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					summary_hour,
@@ -97,8 +100,8 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date = %s 
+				WHERE site_id = %d
+				AND summary_date = %s
 				AND summary_hour = %d",
 				$site_id,
 				$date,
@@ -106,6 +109,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $result ?: [];
 	}
@@ -115,17 +119,19 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueUsersCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_users) as total_unique_users
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -135,17 +141,19 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueSessionsCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_sessions) as total_unique_sessions
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -155,9 +163,10 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAggregatedTotals(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					SUM(total_user_interactions) as total_user_interactions,
 					SUM(total_redirects) as total_redirects,
 					SUM(total_bot_opens) as total_bot_opens,
@@ -168,7 +177,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 					COUNT(DISTINCT summary_date) as active_days,
 					COUNT(DISTINCT CONCAT(summary_date, '-', summary_hour)) as active_hours
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
@@ -176,6 +185,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if (!$result) {
 			return [
@@ -224,6 +234,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function upsertHourlySummary(int $site_id, string $summary_date, int $summary_hour, array $data): bool
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
 			"INSERT INTO {$this->tableName} (
 				site_id,
@@ -265,6 +276,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		return $this->wpdb->query($sql) !== false;
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	/**
@@ -277,16 +289,18 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function deleteHourlySummaries(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$affected_rows = $this->wpdb->query(
 			$this->wpdb->prepare(
 				"DELETE FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) $affected_rows;
 	}
@@ -301,9 +315,10 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getBusyTimesData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					summary_hour,
 					SUM(total_user_interactions) as total_user_interactions,
 					SUM(total_redirects) as total_redirects,
@@ -312,7 +327,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 					AVG(total_user_interactions) as avg_interactions,
 					AVG(total_redirects) as avg_redirects
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY summary_hour
 				ORDER BY summary_hour ASC",
@@ -322,6 +337,7 @@ class HourlyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to include calculated averages
 		$processedResults = [];

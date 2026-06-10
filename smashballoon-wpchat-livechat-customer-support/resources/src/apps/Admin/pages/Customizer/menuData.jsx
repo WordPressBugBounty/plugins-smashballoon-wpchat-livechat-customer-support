@@ -10,7 +10,7 @@ import ThemePanel from '@AP/Customizer/Panels/ThemePanel';
 export const menuData = [
   {
     slug: 'theme',
-    title: 'Theme',
+    title: __('Theme', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     icon: 'theme',
     component: <ThemePanel />,
@@ -18,7 +18,7 @@ export const menuData = [
   },
   {
     slug: 'colorPalette',
-    title: 'Color Palette',
+    title: __('Color Palette', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     icon: 'colorPalette',
     component: <ColorPalettePanel />,
@@ -28,7 +28,7 @@ export const menuData = [
   },
   {
     slug: 'header',
-    title: 'Header',
+    title: __('Header', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     icon: 'header',
     component: <HeaderPanel />,
@@ -36,7 +36,7 @@ export const menuData = [
   },
   {
     slug: 'icon',
-    title: 'Icon',
+    title: __('Icon', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     icon: 'messageIcon',
     component: <IconPanel />,
@@ -44,7 +44,7 @@ export const menuData = [
   },
   {
     slug: 'assistantAvatar',
-    title: 'Assistant Avatar',
+    title: __('Assistant Avatar', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     icon: 'bot',
     component: <AssistantAvatarPanel />,
@@ -53,19 +53,19 @@ export const menuData = [
   {
     type: 'headingSection',
     slug: 'reorder-title-section',
-    title: 'Sections',
+    title: __('Sections', 'smashballoon-wpchat-livechat-customer-support'),
     borderBottom: true,
   },
   {
     slug: 'sendMessage',
-    title: 'Send Message',
+    title: __('Send Message', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     sortable: true,
     component: <SendMessagePanel />,
   },
   {
     slug: 'frequentQuestions',
-    title: 'Frequent Questions',
+    title: __('Frequent Questions', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     sortable: true,
     component: <FAQPanel />,
@@ -75,7 +75,7 @@ export const menuData = [
   },
   {
     slug: 'wpChatBranding',
-    title: 'WPChat Branding',
+    title: __('WPChat Branding', 'smashballoon-wpchat-livechat-customer-support'),
     type: 'section',
     sortable: true,
     draggable: false,

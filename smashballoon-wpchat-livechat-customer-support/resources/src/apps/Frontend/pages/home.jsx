@@ -7,16 +7,10 @@ import HomeSkeleton from '@FC/Skeleton/HomeSkeleton';
 import ChatFAQ from '@FC/ChatFAQ';
 import ChatSubSection from '@FC/ChatSubSection';
 import { getInitialMessages } from '@FC/getInitialMessages';
-import { logCTANavigation, logNavigation } from '@FDataStore/Chat/analyticsApi';
+import { logCTANavigation } from '@FDataStore/Chat/analyticsApi';
 import { useChatStore, useChatStoreApi } from '@Frontend/context/ChatStoreContext';
-import { createChatMessage } from '@FU/createChatMessage';
 import { useWidgetHeight } from '@FU/useWidgetHeight';
 import { useIsEditingPanel } from '@FU/useIsEditingPanel';
-import {
-  formatOffHoursMessage,
-  getOffHoursData,
-  isOffHoursError,
-} from '@FDataStore/Chat/offHoursHandler';
 import { cn } from '@Utils/cn';
 import { getLocalizeVariables } from '@Utils/getLocalizeVariables';
 import useSettingsStore from '@DataStore/settings/settingsStore';
@@ -57,8 +51,9 @@ export default function Home() {
   const setWidgetHeight = useChatStore((s) => s.setWidgetHeight);
   const isEditingFaqPanel = useIsEditingPanel('frequentQuestions');
 
-  // Get available platforms from Zustand store (pre-fetched by Frontend.jsx)
+  // Get available platforms and off-hours data from Zustand store (pre-fetched by Frontend.jsx)
   const availablePlatforms = useChatStore((s) => s.availablePlatforms);
+  const offHoursData = useChatStore((s) => s.offHoursData);
   const platformsLoading = useChatStore((s) => s.platformsLoading);
 
   // Dynamic height calculation ref
@@ -84,45 +79,10 @@ export default function Home() {
     }
   }, [chatFunnelId]);
 
-  const showError = (error) => {
-    let chatMessage = '';
-
-    // Check for specific off-hours scenario
-    if (isOffHoursError(error)) {
-      const offHoursData = getOffHoursData(error);
-      chatMessage = formatOffHoursMessage(offHoursData);
-    } else {
-      // Handle other error types (no agents, configuration issues, etc.)
-      chatMessage =
-        error.message || getLocalizeVariables('connectionErrorMessage') || __("Sorry, we're unable to connect you right now. Please try again later.", 'smashballoon-wpchat-livechat-customer-support');
-    }
-
-    // Create simple chat message without suggestions
-    const errorMsg = createChatMessage(chatMessage, [], 'receive', true);
-
-    // Log error-triggered navigation
-    logNavigation('home', 'chat', {
-      navigation_type: 'error_redirect',
-      navigation_trigger: 'platform_error',
-      trigger_type: 'error_handling',
-      error_context: 'platform_connection_failed',
-    });
-
-    navigate('/chat', { state: { msg: errorMsg } });
-  };
-
   // Get store API for passing to getInitialMessages
   const storeApi = useChatStoreApi();
 
-  const botMsg = getInitialMessages(showError, (url) => {
-    // Set flag to prevent funnel abandonment logging during platform redirect
-    window.wpChatPlatformRedirecting = true;
-    window.open(url, '_blank', 'noopener,noreferrer');
-    // Reset after short delay to resume abandonment tracking
-    setTimeout(() => {
-      window.wpChatPlatformRedirecting = false;
-    }, 3000);
-  }, availablePlatforms, storeApi);
+  const botMsg = getInitialMessages(availablePlatforms, offHoursData, storeApi);
 
   const handleChatSectionClick = () => {
     // Log enhanced CTA navigation event

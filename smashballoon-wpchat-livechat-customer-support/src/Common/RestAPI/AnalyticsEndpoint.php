@@ -236,6 +236,7 @@ class AnalyticsEndpoint extends RestEndpoint
 
 			foreach ($events as $index => $event) {
 				if (!isset($event['event_type']) || !isset($event['event_data'])) {
+					// translators: %s is the event index number
 					$errors[] = sprintf(__('Event {%s}: Missing event_type or event_data', 'smashballoon-wpchat-livechat-customer-support'), $index);
 					continue;
 				}
@@ -265,12 +266,14 @@ class AnalyticsEndpoint extends RestEndpoint
 				if ($success) {
 					$successCount++;
 				} else {
-					$errors[] = sprintf(__('Event {%s}: Failed to log {%s}', 'smashballoon-wpchat-livechat-customer-support'), $index, $eventType);
+					// translators: %1$s is the event index number, %2$s is the event type
+					$errors[] = sprintf(__('Event {%1$s}: Failed to log {%2$s}', 'smashballoon-wpchat-livechat-customer-support'), $index, $eventType);
 				}
 			}
 
 			return new WP_REST_Response([
 				'success' => true,
+				// translators: %s is the number of successfully logged events
 				'message' => sprintf(__('Batch processed: {%s} events logged successfully', 'smashballoon-wpchat-livechat-customer-support'), $successCount),
 				'processed' => $successCount,
 				'total' => count($events),
@@ -622,8 +625,8 @@ class AnalyticsEndpoint extends RestEndpoint
 		}
 		
 		// For sendBeacon requests, validate using session/cookie
-		$sessionId = isset($_COOKIE['wpchat_session_id']) ? sanitize_text_field($_COOKIE['wpchat_session_id']) : null;
-		$guestId = isset($_COOKIE['wpchat_guest_id']) ? sanitize_text_field($_COOKIE['wpchat_guest_id']) : null;
+		$sessionId = isset($_COOKIE['wpchat_session_id']) ? sanitize_text_field(wp_unslash($_COOKIE['wpchat_session_id'])) : null;
+		$guestId = isset($_COOKIE['wpchat_guest_id']) ? sanitize_text_field(wp_unslash($_COOKIE['wpchat_guest_id'])) : null;
 		
 		if (!$sessionId && !$guestId) {
 			return new WP_Error(
@@ -743,18 +746,18 @@ class AnalyticsEndpoint extends RestEndpoint
 	{
 		// Check for Cloudflare
 		if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-			$ip = $_SERVER['HTTP_CF_CONNECTING_IP'];
+			$ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_CONNECTING_IP']));
 		}
 		// Check for other proxies
 		elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+			$ips = explode(',', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR'])));
 			$ip = trim($ips[0]);
 		}
 		elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
-			$ip = $_SERVER['HTTP_X_REAL_IP'];
+			$ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_REAL_IP']));
 		}
 		else {
-			$ip = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+			$ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '0.0.0.0';
 		}
 		
 		// Validate IP

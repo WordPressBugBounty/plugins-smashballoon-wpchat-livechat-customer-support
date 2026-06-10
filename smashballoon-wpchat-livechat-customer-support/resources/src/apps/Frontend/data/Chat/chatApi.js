@@ -2,69 +2,86 @@ import { makeWPChatRequest } from '@Utils/apiHelper';
 import { makeFrontendRequest } from '@Utils/apiHelper';
 
 /**
- * Get platform redirection link.
+ * Get available platforms that have at least one agent configured.
  *
- * @param {string} platform The platform to get the link for.
- * @param {string} [customText=''] Custom text to include in the link.
- * @param {string} [pdfFile=''] URL of PDF file to include.
- * @param {string} [source='chat'] Source tracking parameter (e.g., 'funnel', 'chat').
- * @param {string|number|null} [funnelId=null] Funnel ID if source is funnel.
- * @returns {Promise<Object>} The platform link data.
+ * @returns {Promise<{platforms: Array, offHoursData: object|null}>} Platforms and off-hours data.
  */
-export const getPlatformLink = async (platform, customText = '', pdfFile = '', source = 'chat', funnelId = null) => {
-	try {
-		const data = { 
-			platform, 
-			customText, 
-			pdfFile,
-			source // Include source for backend tracking
-		};
-		
-		// Include funnel_id if provided
-		if (funnelId) {
-			data.funnel_id = funnelId;
-		}
-		
-		const response = await makeFrontendRequest('chatbot', {
-			method: 'POST',
-			data
-		});
+export const getAvailablePlatforms = async () => {
+	const frontendNonce = window.wpChatFrontend?.frontendNonce || '';
 
-		if (!response?.success) {
-			throw new Error(response?.message || 'Failed to get platform link');
-		}
+	const response = await makeWPChatRequest('chatbot/available-platforms', {
+		method: 'GET',
+		params: {
+			nonce: frontendNonce
+		},
+		context: 'both'
+	});
 
-		return response;
-	} catch (error) {
-		throw error;
+	if (!response?.success) {
+		throw new Error(response?.message || 'Failed to get available platforms');
 	}
+
+	return {
+		platforms: Array.isArray(response.platforms) ? response.platforms : [],
+		offHoursData: response.is_off_hours ? response.off_hours_data : null,
+	};
 };
 
 /**
- * Get available platforms that have at least one agent configured.
+ * Fetch redirection links for all available platforms in a single batch request.
  *
- * @returns {Promise<Array>} List of available platform slugs.
+ * @returns {Promise<Object>} Object with `links` and `errors` keyed by platform slug.
  */
-export const getAvailablePlatforms = async () => {
-	try {
-		// Get the frontend nonce for non-logged-in users
-		const frontendNonce = window.wpChatFrontend?.frontendNonce || '';
+export const getAllPlatformLinks = async () => {
+	const frontendNonce = window.wpChatFrontend?.frontendNonce || '';
 
-		const response = await makeWPChatRequest('chatbot/available-platforms', {
-			method: 'GET',
-			params: {
-				nonce: frontendNonce // Pass nonce as query parameter for public access
-			},
-			context: 'both'
-		});
+	const response = await makeWPChatRequest('chatbot/platform-links', {
+		method: 'GET',
+		params: {
+			nonce: frontendNonce
+		},
+		context: 'both'
+	});
 
-		if (!response?.success) {
-			throw new Error(response?.message || 'Failed to get available platforms');
-		}
-
-		return Array.isArray(response.platforms) && response.platforms.length > 0 ? response.platforms : ['whatsapp'];
-	} catch (error) {
-		console.error('Error fetching available platforms:', error);
-		return ['whatsapp'];
+	if (!response?.success) {
+		throw new Error(response?.message || 'Failed to get platform links');
 	}
+
+	return {
+		links: response.links || {},
+		errors: response.errors || {},
+	};
+};
+
+/**
+ * Fire-and-forget REDIRECT_TO_PLATFORM analytics tracking on click.
+ *
+ * @param {string} platform Platform slug.
+ * @param {string} agentId Agent ID.
+ * @param {string} [source='chat'] Source (chat or funnel).
+ * @param {string|null} [funnelId=null] Funnel ID if applicable.
+ */
+export const trackPlatformRedirect = (platform, agentId, source = 'chat', funnelId = null) => {
+	const data = {
+		platform,
+		agent_id: agentId,
+		source,
+		nonce: window.wpChatFrontend?.frontendNonce || ''
+	};
+
+	if (funnelId) {
+		data.funnel_id = funnelId;
+	}
+
+	// Fire-and-forget POST to existing chatbot endpoint for redirect tracking
+	makeFrontendRequest('chatbot', {
+		method: 'POST',
+		data: {
+			...data,
+			customText: '',
+			pdfFile: '',
+		}
+	}).catch(() => {
+		// Swallow errors — analytics should not block the user
+	});
 };

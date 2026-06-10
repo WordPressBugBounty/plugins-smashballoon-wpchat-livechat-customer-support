@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\Contracts\VisibilityServiceInterface;
 use SmashBalloon\WPChat\Common\Services\SupportService;
@@ -114,14 +118,13 @@ class AssetsManagerService implements ServiceProviderInterface
 	public function register(): void
 	{
 		add_filter('script_loader_tag', [$this, 'filterScriptLoaderTag'], 10, 3);
+		add_filter('pre_load_script_translations', [$this, 'provideScriptTranslations'], 10, 4);
 		add_action('init', [$this, 'registerStyles']);
 		add_action('init', [$this, 'maybeStartSession'], 1);
 		add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
 		add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
-		add_action('admin_enqueue_scripts', [$this, 'addInlineTranslations'], 20);
 		add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendScripts']);
 		add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendStyles']);
-		add_action('wp_enqueue_scripts', [$this, 'addInlineTranslations'], 20);
 		add_filter('admin_body_class', [$this, 'addAdminBodyClass']);
 	}
 
@@ -267,6 +270,7 @@ class AssetsManagerService implements ServiceProviderInterface
 			]);
 
 			wp_enqueue_script('wp-chat-admin');
+			wp_set_script_translations('wp-chat-admin', 'smashballoon-wpchat-livechat-customer-support', WPCHAT_PLUGIN_DIR . 'languages');
 			wp_enqueue_media();
 		}
 	}
@@ -349,6 +353,7 @@ class AssetsManagerService implements ServiceProviderInterface
 			WPCHAT_VERSION,
 			true
 		);
+		wp_set_script_translations('wp-chat-frontend', 'smashballoon-wpchat-livechat-customer-support', WPCHAT_PLUGIN_DIR . 'languages');
 
 		wp_localize_script('wp-chat-frontend', 'wpChatFrontend', [
 			'restNonce' => wp_create_nonce('wp_rest'),
@@ -374,6 +379,82 @@ class AssetsManagerService implements ServiceProviderInterface
 	}
 
 	/**
+	 * Provide JavaScript translations for our scripts straight from the
+	 * loaded text domain, regardless of where the .mo file came from.
+	 *
+	 * WordPress only looks for handle-named JSON inside the path passed to
+	 * wp_set_script_translations() and for md5-named JSON in WP_LANG_DIR.
+	 * Translations downloaded from the WPChat CDN land in WP_LANG_DIR/plugins
+	 * as .mo files with no accompanying JSON, so neither lookup finds them.
+	 *
+	 * By short-circuiting pre_load_script_translations we build the Jed
+	 * payload on the fly from the already-loaded domain (via
+	 * get_translations_for_domain()), so the React GUI translates for any
+	 * locale the CDN provides without any build-time JSON generation.
+	 *
+	 * @param mixed  $translations The pre-computed translations (null by default).
+	 * @param string $file         The translation file path WordPress would load.
+	 * @param string $handle       The script handle.
+	 * @param string $domain       The text domain.
+	 * @return mixed JSON string of locale data, or the original value to let core proceed.
+	 */
+	public function provideScriptTranslations($translations, $file, $handle, $domain)
+	{
+		if ($domain !== 'smashballoon-wpchat-livechat-customer-support') {
+			return $translations;
+		}
+
+		if (!in_array($handle, ['wp-chat-frontend', 'wp-chat-admin'], true)) {
+			return $translations;
+		}
+
+		$loaded = get_translations_for_domain($domain);
+		$entries = $loaded->entries ?? [];
+
+		// No translations loaded for this locale (e.g. en_US). Let core proceed
+		// so the untranslated source strings are used.
+		if (empty($entries)) {
+			return $translations;
+		}
+
+		// Build the Jed/setLocaleData payload directly from the loaded text
+		// domain. WP_Scripts::print_translations() reads locale_data.messages
+		// and overrides the '' domain itself.
+		$localeData = [
+			'' => [
+				'domain' => 'messages',
+				'lang'   => is_admin() ? get_user_locale() : determine_locale(),
+			],
+		];
+
+		if (!empty($loaded->headers['Plural-Forms'])) {
+			$localeData['']['plural-forms'] = $loaded->headers['Plural-Forms'];
+		}
+
+		// Build each entry's lookup key from the entry itself: WP 6.5+ returns
+		// a numerically-indexed entries array, so we cannot rely on the array
+		// key. Translation_Entry::key() yields "{context}\4{singular}" (or just
+		// the singular), which is exactly what @wordpress/i18n (Tannin) expects.
+		// ->translations is the value array Tannin reads (index 0 = singular).
+		foreach ($entries as $entry) {
+			$key = $entry->key();
+
+			if (false === $key) {
+				continue;
+			}
+
+			$localeData[$key] = $entry->translations;
+		}
+
+		return wp_json_encode(
+			[
+				'domain'      => 'messages',
+				'locale_data' => ['messages' => $localeData],
+			]
+		);
+	}
+
+	/**
 	 * Filters the script loader tag for specific script handles.
 	 *
 	 * This method modifies the script tag for scripts with handles containing
@@ -385,125 +466,15 @@ class AssetsManagerService implements ServiceProviderInterface
 	 *
 	 * @return string The modified or unmodified script tag.
 	 */
-	/**
-	 * Add inline translations for our scripts.
-	 * This is needed because we use external WordPress globals, so WordPress
-	 * can't auto-detect that our scripts need translations.
-	 *
-	 * @return void
-	 */
-	public function addInlineTranslations(): void
-	{
-		// Determine which script to load translations for
-		$handle = is_admin() ? 'wp-chat-admin' : 'wp-chat-frontend';
-
-		if (WP_DEBUG) {
-			error_log(sprintf(
-				'[WPChat] Checking translations - Handle: %s, Registered: %s, Enqueued: %s',
-				$handle,
-				wp_script_is($handle, 'registered') ? 'yes' : 'no',
-				wp_script_is($handle, 'enqueued') ? 'yes' : 'no'
-			));
-		}
-
-		// Only proceed if our script is enqueued
-		if (!wp_script_is($handle, 'enqueued')) {
-			if (WP_DEBUG) {
-				error_log(sprintf('[WPChat] Script %s not enqueued yet', $handle));
-			}
-			return;
-		}
-
-		// Get current locale
-		$locale = determine_locale();
-		if (WP_DEBUG) {
-			error_log(sprintf('[WPChat] Current locale: %s', $locale));
-		}
-
-		if ($locale === 'en_US') {
-			return; // No translations needed for default English
-		}
-
-		// Find the JSON translation file (single file for both admin and frontend)
-		$json_file = $this->findTranslationFile($locale);
-		if (!$json_file || !file_exists($json_file)) {
-			if (WP_DEBUG) {
-				error_log(sprintf(
-					'[WPChat] Translation file not found for locale %s',
-					$locale
-				));
-			}
-			return;
-		}
-
-		if (WP_DEBUG) {
-			error_log(sprintf('[WPChat] Loading translations from: %s', $json_file));
-		}
-
-		// Load and validate the translations
-		$json_data = file_get_contents($json_file);
-		if (empty($json_data)) {
-			if (WP_DEBUG) {
-				error_log(sprintf('[WPChat] Empty translation file: %s', $json_file));
-			}
-			return;
-		}
-
-		// Decode and validate JSON structure
-		$translations = json_decode($json_data, true);
-		if (json_last_error() !== JSON_ERROR_NONE) {
-			error_log(sprintf(
-				'[WPChat] Invalid JSON in translation file %s: %s',
-				$json_file,
-				json_last_error_msg()
-			));
-			return;
-		}
-
-		$domain = 'smashballoon-wpchat-livechat-customer-support';
-
-		// Create inline script in WordPress format
-		// Re-encode translations with wp_json_encode() for proper escaping
-		$inline_script = sprintf(
-			'( function( domain, translations ) {
-				var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
-				localeData[""].domain = domain;
-				wp.i18n.setLocaleData( localeData, domain );
-			} )( %s, %s );',
-			wp_json_encode($domain),
-			wp_json_encode($translations)
-		);
-
-		// Add as inline script to our script handle (before the main script runs)
-		wp_add_inline_script('wp-i18n', $inline_script, 'after');
-
-		if (WP_DEBUG) {
-			error_log(sprintf('[WPChat] Translations loaded successfully for locale: %s, handle: %s', $locale, $handle));
-		}
-	}
-
-	/**
-	 * Find the translation JSON file for a given locale.
-	 *
-	 * @param string $locale Locale code
-	 * @return string|false Path to JSON file or false if not found
-	 */
-	private function findTranslationFile($locale)
-	{
-		$languages_dir = WPCHAT_PLUGIN_DIR . 'languages/';
-		$domain = 'smashballoon-wpchat-livechat-customer-support';
-
-		// Build filename: smashballoon-wpchat-livechat-customer-support-ar.json
-		$json_file = $languages_dir . $domain . '-' . $locale . '.json';
-
-		return file_exists($json_file) ? $json_file : false;
-	}
-
 	public function filterScriptLoaderTag($tag, $handle, $source)
 	{
 		if (strpos($handle, 'wp-chat-') !== false) {
-			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- This is a filter modifying already-enqueued scripts to add type="module"
-			$tag = '<script src="' . esc_url($source) . '" type="module" ></script>';
+			// WordPress's do_item() concatenates translations, inline scripts, and
+			// the main <script> tag into a single $tag string. We must only modify
+			// the external script tag (has src=), not replace the entire string,
+			// or we'd discard translation data and wp_localize_script output.
+			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Modifying already-enqueued script to add type="module"
+			$tag = preg_replace('#<script ([^>]*src=)#', '<script type="module" $1', $tag);
 		}
 
 		return $tag;

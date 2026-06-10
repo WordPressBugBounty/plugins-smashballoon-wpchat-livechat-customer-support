@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\Contracts\GateInterface;
 use SmashBalloon\WPChat\Common\Helpers\UTMUrlGenerator;
@@ -80,7 +84,7 @@ class AdminPagesService implements ServiceProviderInterface
 			'wp-chat',
 			[$this, 'renderAdminPage'],
 			$icon_url,
-			10
+			26
 		);
 
 		// Add Overview as first submenu item
@@ -214,7 +218,7 @@ class AdminPagesService implements ServiceProviderInterface
 
 				// Redirect to remove the token from the URL for security
 				$redirectUrl = remove_query_arg('access_token');
-				wp_redirect($redirectUrl);
+				wp_safe_redirect($redirectUrl);
 				exit();
 			}
 		}

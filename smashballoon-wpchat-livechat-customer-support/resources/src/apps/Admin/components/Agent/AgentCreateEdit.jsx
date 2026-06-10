@@ -253,7 +253,7 @@ export default function AgentCreateEdit({
         const validationState = getFieldValidationState(
           app.slug,
           platformValue,
-          app.slug === 'whatsapp' ? 'phone' : 'username'
+          platformConfig?.inputType === 'phone' ? 'phone' : 'username'
         );
 
         return (

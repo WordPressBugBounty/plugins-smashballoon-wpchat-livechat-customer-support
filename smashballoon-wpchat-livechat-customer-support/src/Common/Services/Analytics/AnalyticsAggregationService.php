@@ -439,6 +439,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 		$conversionEvents = $this->createEventInClause(self::CONVERSION_EVENTS);
 
 		// Get raw data for the date using precise datetime range
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$dailyData = $this->wpdb->get_row(
 			$this->wpdb->prepare(
 				"SELECT
@@ -465,6 +466,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if ($dailyData) {
 			// Calculate conversion rate
@@ -533,6 +535,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 		$userInteractionEvents = $this->createEventInClause(self::USER_INTERACTION_EVENTS);
 		$conversionEvents = $this->createEventInClause(self::CONVERSION_EVENTS);
 
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$hourlyData = $this->wpdb->get_results(
 			$this->wpdb->prepare(
 				"SELECT
@@ -559,6 +562,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		foreach ($hourlyData as $hour) {
 			// Hour is already in user timezone, no conversion needed
@@ -653,12 +657,14 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 	private function getFaqQuestionText(int $faq_id): string
 	{
 		$faqTableName = $this->wpdb->prefix . 'wpchat_faqs';
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$question = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT question FROM {$faqTableName} WHERE id = %d LIMIT 1",
 				$faq_id
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $question ?: "FAQ #{$faq_id}";
 	}
@@ -676,6 +682,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 		$utcDateTimeRange = $this->getUtcDateTimeRange($date);
 
 		// Get FAQ data with question text in a single optimized query
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$faqData = $this->wpdb->get_results(
 			$this->wpdb->prepare(
 				"SELECT
@@ -701,6 +708,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		foreach ($faqData as $faq) {
 			$faqId = (int)$faq['faq_id'];
@@ -756,6 +764,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 		$utcDateTimeRange = $this->getUtcDateTimeRange($date);
 
 		// Get agent data for the date using precise datetime range - only successful assignments have agent_id
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$agentData = $this->wpdb->get_results(
 			$this->wpdb->prepare(
 				"SELECT
@@ -778,6 +787,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		foreach ($agentData as $agent) {
 			$agentId = (int)$agent['agent_id'];
@@ -810,6 +820,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 	private function getAgentData(int $agent_id): array
 	{
 		$agentTableName = $this->wpdb->prefix . 'wpchat_agents';
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
 				"SELECT name, avatar FROM {$agentTableName} WHERE id = %d LIMIT 1",
@@ -817,6 +828,7 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 
 		return [
@@ -865,7 +877,8 @@ class AnalyticsAggregationService implements AnalyticsAggregationServiceInterfac
 		];
 
 		try {
-			$cutoffDate = date('Y-m-d', strtotime("-{$retention_days} days"));
+			$wpTimezone = AnalyticsTimezoneHelper::getWordPressTimezoneObject();
+			$cutoffDate = (new DateTime('now', $wpTimezone))->modify("-{$retention_days} days")->format('Y-m-d');
 			$startDate = '1970-01-01'; // Delete all data from epoch start to cutoff date
 
 			// Clean up daily summaries

@@ -37,7 +37,7 @@ export default function PlatformFieldRow({
     return null;
   }
 
-  const isPhone = platform.slug === 'whatsapp';
+  const isPhone = platform.inputType === 'phone';
   const PlatformIcon = platform.icon;
   const borderClass = getBorderClass(validationStatus, isFocused);
 

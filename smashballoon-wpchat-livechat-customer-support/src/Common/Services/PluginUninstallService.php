@@ -56,6 +56,10 @@ class PluginUninstallService implements ServiceProviderInterface
 		// Clean up funnels visibility map
 		delete_option('wpchat_funnels_visibility_map');
 
+		// Clean up translation data
+		delete_option('wpchat_translations_version');
+		delete_site_transient('wpchat_t15s_smashballoon-wpchat-livechat-customer-support');
+
 		// Clean up wpchat_admin capability from all roles
 		global $wp_roles;
 		if (isset($wp_roles) && is_object($wp_roles)) {

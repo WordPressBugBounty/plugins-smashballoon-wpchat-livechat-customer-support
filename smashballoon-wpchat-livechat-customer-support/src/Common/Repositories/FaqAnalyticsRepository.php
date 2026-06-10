@@ -41,9 +41,10 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSummaryData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					faq_id,
@@ -56,8 +57,8 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				ORDER BY summary_date ASC, total_clicks DESC",
 				$site_id,
 				$start_date,
@@ -65,6 +66,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -76,9 +78,10 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	{
 		// For FAQ data, period_unit could be a specific FAQ ID
 		if (!is_null($period_unit) && is_numeric($period_unit)) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 			$result = $this->wpdb->get_row(
 				$this->wpdb->prepare(
-					"SELECT 
+					"SELECT
 						site_id,
 						summary_date,
 						faq_id,
@@ -91,8 +94,8 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 						created_at,
 						updated_at
 					FROM {$this->tableName}
-					WHERE site_id = %d 
-					AND summary_date = %s 
+					WHERE site_id = %d
+					AND summary_date = %s
 					AND faq_id = %d",
 					$site_id,
 					$date,
@@ -100,6 +103,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 				),
 				ARRAY_A
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 			return $result ?: [];
 		}
@@ -113,17 +117,19 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueUsersCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_users) as total_unique_users
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -142,9 +148,10 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAggregatedTotals(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					SUM(total_clicks) as total_clicks,
 					SUM(unique_users) as unique_users,
 					SUM(search_appearances) as search_appearances,
@@ -153,7 +160,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 					COUNT(DISTINCT faq_id) as unique_faqs,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
@@ -161,6 +168,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if (!$result) {
 			return [
@@ -206,6 +214,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function upsertFaqDailySummary(int $site_id, string $summary_date, int $faq_id, string $faq_question_text, array $data): bool
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
 			"INSERT INTO {$this->tableName} (
 				site_id,
@@ -244,6 +253,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		return $this->wpdb->query($sql) !== false;
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	/**
@@ -256,16 +266,18 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function deleteFaqDailySummaries(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$affected_rows = $this->wpdb->query(
 			$this->wpdb->prepare(
 				"DELETE FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) $affected_rows;
 	}
@@ -281,9 +293,10 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getTopFaqsByClicks(int $site_id, string $start_date, string $end_date, int $limit = 10): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					faq_id,
 					faq_question_text,
 					SUM(total_clicks) as total_clicks_period,
@@ -291,7 +304,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 					SUM(search_appearances) as search_appearances_period,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY faq_id, faq_question_text
 				ORDER BY total_clicks_period DESC
@@ -303,6 +316,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -318,17 +332,18 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getFaqsBySearch(int $site_id, string $search_term, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					faq_id,
 					faq_question_text,
 					SUM(total_clicks) as total_clicks_period,
 					SUM(unique_users) as unique_users_period,
 					SUM(search_appearances) as search_appearances_period
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				AND faq_question_text LIKE %s
 				GROUP BY faq_id, faq_question_text
 				ORDER BY total_clicks_period DESC",
@@ -339,6 +354,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -353,9 +369,10 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getFaqPerformanceAnalytics(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					faq_id,
 					faq_question_text,
 					SUM(total_clicks) as total_clicks,
@@ -369,7 +386,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 					(SUM(total_clicks) / NULLIF(SUM(search_appearances), 0)) * 100 as click_through_rate,
 					(SUM(helpful_count) / NULLIF(SUM(helpful_count) + SUM(not_helpful_count), 0)) * 100 as satisfaction_rate
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s
 				GROUP BY faq_id, faq_question_text
 				ORDER BY total_clicks DESC",
@@ -379,6 +396,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to format numeric values
 		$processedResults = [];
@@ -452,8 +470,9 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getFaqTrendAnalysis(int $site_id, string $current_start, string $current_end, string $previous_start, string $previous_end): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
-			"SELECT 
+			"SELECT
 				faq_id,
 				faq_question_text,
 				SUM(CASE WHEN summary_date BETWEEN %s AND %s THEN total_clicks ELSE 0 END) as current_clicks,
@@ -494,6 +513,7 @@ class FaqAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		$results = $this->wpdb->get_results($sql, ARRAY_A);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		// Process results to calculate trend metrics
 		$processedResults = [];

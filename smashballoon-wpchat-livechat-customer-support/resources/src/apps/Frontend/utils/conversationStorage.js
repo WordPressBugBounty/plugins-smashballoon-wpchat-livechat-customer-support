@@ -172,7 +172,9 @@ const isSerializable = (msg) => {
 	if (!msg) return false;
 	if (typeof msg.message !== 'string' && !(msg.type && msg.data)) return false;
 	try {
-		JSON.stringify(msg);
+		// Strip non-serializable fields before checking
+		const { storeApi, ...rest } = msg;
+		JSON.stringify(rest);
 		return true;
 	} catch (e) {
 		return false;
@@ -191,17 +193,14 @@ export const saveConversation = (messages, instanceId = 'default') => {
 	const serializableMessages = messages.filter(isSerializable);
 	if (serializableMessages.length === 0) return;
 
-	const processedMessages = serializableMessages.map((msg) => {
-		if (msg.type === 'redirect' && msg.data) {
-			return { ...msg, data: { ...msg.data, showLoader: false } };
-		}
-		return msg;
+	const messagesWithTime = serializableMessages.map((msg) => {
+		// Strip non-serializable fields (e.g. storeApi from platform_links messages)
+		const { storeApi, ...rest } = msg;
+		return {
+			...rest,
+			displayTime: msg.displayTime || getCurrentTimeString(),
+		};
 	});
-
-	const messagesWithTime = processedMessages.map((msg) => ({
-		...msg,
-		displayTime: msg.displayTime || getCurrentTimeString(),
-	}));
 
 	const data = {
 		messages: messagesWithTime,

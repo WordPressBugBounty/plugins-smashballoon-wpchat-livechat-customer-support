@@ -7,6 +7,7 @@ use SmashBalloon\WPChat\Common\Helpers\Logger;
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\Repositories\OptionsRepository;
 use SmashBalloon\WPChat\Common\Services\Database\AgentsService;
+use SmashBalloon\WPChat\Common\Services\SettingsMigrationService;
 
 /**
  * Class SettingsService
@@ -30,15 +31,27 @@ class SettingsService implements ServiceProviderInterface
 	private $agentsService;
 
 	/**
+	 * The settings migration service instance.
+	 *
+	 * @var SettingsMigrationService $settingsMigration The settings migration service instance.
+	 */
+	private $settingsMigration;
+
+	/**
 	 * Constructor for the SettingsService class.
 	 *
-	 * @param OptionsRepository $repository The repository instance used to manage options.
-	 * @param AgentsService     $agentsService The agents service instance.
+	 * @param OptionsRepository        $repository The repository instance used to manage options.
+	 * @param AgentsService            $agentsService The agents service instance.
+	 * @param SettingsMigrationService $settingsMigration The settings migration service instance.
 	 */
-	public function __construct(OptionsRepository $repository, AgentsService $agentsService)
-	{
+	public function __construct(
+		OptionsRepository $repository,
+		AgentsService $agentsService,
+		SettingsMigrationService $settingsMigration
+	) {
 		$this->repository = $repository;
 		$this->agentsService = $agentsService;
+		$this->settingsMigration = $settingsMigration;
 	}
 
 	/**
@@ -68,9 +81,8 @@ class SettingsService implements ServiceProviderInterface
 					'telegram' => ['enabled' => true, 'value' => ''],
 					'instagram' => ['enabled' => true, 'value' => ''],
 					'messenger' => ['enabled' => true, 'value' => ''],
-					'phone' => ['enabled' => false, 'value' => ''],
-					'message' => ['enabled' => false, 'value' => ''],
-					'facetime' => ['enabled' => false, 'value' => ''],
+					'sms' => ['enabled' => true, 'value' => ''],
+					'phone' => ['enabled' => true, 'value' => ''],
 				],
 				'offHoursRule' => 'disable',
 				'selectedOffHoursAgent' => '',
@@ -109,10 +121,21 @@ class SettingsService implements ServiceProviderInterface
 					'wpChatBranding' => true,
 				),
 				'chatInputVariation' => 'primary',
+				'iconType' => 'platform',
+				'sendMessageIcon' => true,
+				'iconShape' => 'circle',
+				'iconPosition' => 'right',
+				'iconPositionOffsetX' => 0,
+				'iconPositionOffsetY' => 0,
+				'iconAnimation' => 'none',
+				'platformOrder' => null,
+				'platformVisibility' => null,
 			],
 		];
 		$stored_settings = $this->repository->getSettings();
 		$merged_settings = wp_parse_args($stored_settings, $defaults);
+
+		$merged_settings = $this->settingsMigration->migrate($merged_settings, $stored_settings);
 
 		// Normalize platforms to new format - idempotent, runs on every read
 		// TODO: Remove this migration code in version 3.0.0
@@ -197,7 +220,11 @@ class SettingsService implements ServiceProviderInterface
 	{
 		$settings = $this->repository->getSettings();
 		$settings[$key] = $value;
-		return $this->repository->updateSettings($settings);
+		$result = $this->repository->updateSettings($settings);
+		if ($result) {
+			do_action('wpchat_settings_updated', $settings);
+		}
+		return $result;
 	}
 
 	/**
@@ -219,7 +246,11 @@ class SettingsService implements ServiceProviderInterface
 			$this->createDefaultAgent($settings);
 		}
 
-		return $this->repository->updateSettings($settings);
+		$result = $this->repository->updateSettings($settings);
+		if ($result) {
+			do_action('wpchat_settings_updated', $settings);
+		}
+		return $result;
 	}
 
 	/**

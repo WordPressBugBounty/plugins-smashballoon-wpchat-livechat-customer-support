@@ -3,6 +3,8 @@ import WhatsAppIcon from '@Assets/svg/platforms/whatsapp-color.svg?react';
 import InstagramIcon from '@Assets/svg/platforms/instagram-color.svg?react';
 import TelegramIcon from '@Assets/svg/platforms/telegram-color.svg?react';
 import MessengerIcon from '@Assets/svg/platforms/messenger-color.svg?react';
+import SmsIcon from '@Assets/svg/platforms/sms-color.svg?react';
+import PhoneIcon from '@Assets/svg/platforms/phone-color.svg?react';
 
 /**
  * Centralized platform configuration
@@ -90,7 +92,43 @@ export const PLATFORM_CONFIG = {
     helpFooter: __('Don\'t have a username?', 'smashballoon-wpchat-livechat-customer-support'),
     helpFooterText: __('You can use your Page ID instead. Look for the long number in the URL (e.g., facebook.com/profile.php?id=123456789)', 'smashballoon-wpchat-livechat-customer-support'),
     prefix: '@'
-  }
+  },
+  sms: {
+    slug: 'sms',
+    name: __('SMS', 'smashballoon-wpchat-livechat-customer-support'),
+    label: __('SMS', 'smashballoon-wpchat-livechat-customer-support'),
+    icon: SmsIcon,
+    placeholder: __('+1 (555) 000-0000', 'smashballoon-wpchat-livechat-customer-support'),
+    inputType: 'phone',
+    helpTitle: __('Enter your SMS phone number', 'smashballoon-wpchat-livechat-customer-support'),
+    helpInstructions: [
+      /* translators: %1$s and %2$s are opening/closing bold tags */
+      sprintf(__('Enter the %1$sphone number%2$s where you want to receive SMS messages', 'smashballoon-wpchat-livechat-customer-support'), '<b>', '</b>'),
+      /* translators: %1$s and %2$s are opening/closing bold tags */
+      sprintf(__('Use your %1$smobile number%2$s with country code', 'smashballoon-wpchat-livechat-customer-support'), '<b>', '</b>'),
+    ],
+    helpFooter: null,
+    helpFooterText: null,
+    prefix: null,
+  },
+  phone: {
+    slug: 'phone',
+    name: __('Phone', 'smashballoon-wpchat-livechat-customer-support'),
+    label: __('Phone', 'smashballoon-wpchat-livechat-customer-support'),
+    icon: PhoneIcon,
+    placeholder: __('+1 (555) 000-0000', 'smashballoon-wpchat-livechat-customer-support'),
+    inputType: 'phone',
+    helpTitle: __('Enter your phone number', 'smashballoon-wpchat-livechat-customer-support'),
+    helpInstructions: [
+      /* translators: %1$s and %2$s are opening/closing bold tags */
+      sprintf(__('Enter the %1$sphone number%2$s where you want to receive calls', 'smashballoon-wpchat-livechat-customer-support'), '<b>', '</b>'),
+      /* translators: %1$s and %2$s are opening/closing bold tags */
+      sprintf(__('Use your %1$sbusiness number%2$s with country code', 'smashballoon-wpchat-livechat-customer-support'), '<b>', '</b>'),
+    ],
+    helpFooter: null,
+    helpFooterText: null,
+    prefix: null,
+  },
 };
 
 /**

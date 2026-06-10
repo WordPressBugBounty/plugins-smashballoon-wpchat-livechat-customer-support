@@ -144,6 +144,8 @@ export const validatePlatformValue = (slug, value) => {
 
   switch (slug) {
     case 'whatsapp':
+    case 'sms':
+    case 'phone':
       return isValidPhoneNumber(trimmedValue);
     case 'instagram':
       return isValidInstagram(trimmedValue);

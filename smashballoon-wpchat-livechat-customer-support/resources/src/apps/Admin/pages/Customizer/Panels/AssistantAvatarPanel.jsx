@@ -8,8 +8,8 @@ import { Dialog } from '@AC/ui/Dialog';
 import { Modal } from '@AC/ui/Modal';
 import { getUpgradeDialogData, upgradeConfigs } from '@AU/upgradeDialogs';
 import SvgLoader from '@Components/SvgLoader';
-import { getInitialMessages } from '@FC/getInitialMessages';
 import { useChatStore } from '@FDataStore/Chat/chatStore';
+import { getInitialMessages } from '@FC/getInitialMessages';
 import { isPro } from '@Utils/isPro';
 import { useEntitlements } from '@AH/useEntitlements';
 
@@ -24,10 +24,8 @@ const CustomAvatarModal = isPro ? lazy(() => import('@ACPro/Customizer/CustomAva
  */
 export default function AssistantAvatarPanel() {
   const location = useLocation();
-
   const setChatbotAvatar = useChatStore((s) => s.setChatbotAvatar);
   const chatbotCustomAvatar = useChatStore((s) => s.chatbotCustomAvatar);
-  const chatbotName = useChatStore((s) => s.chatbotName);
   const setChatbotName = useChatStore((s) => s.setChatbotName);
   const chatbotCustomName = useChatStore((s) => s.chatbotCustomName);
   const setShowChat = useChatStore((s) => s.setShowChat);
@@ -35,6 +33,8 @@ export default function AssistantAvatarPanel() {
   const navigateViaStore = useChatStore((s) => s.navigateViaStore);
   const setIsPreviewMode = useChatStore((s) => s.setIsPreviewMode);
   const setDisableFaqTracking = useChatStore((s) => s.setDisableFaqTracking);
+  const availablePlatforms = useChatStore((s) => s.availablePlatforms);
+  const offHoursData = useChatStore((s) => s.offHoursData);
   const [isOpen, setIsOpen] = useState(false);
   const [isUpgradeDialogOpen, setIsUpgradeDialogOpen] = useState(false);
 
@@ -56,10 +56,6 @@ export default function AssistantAvatarPanel() {
     { icon: 'pixie', title: __('Pixie', 'smashballoon-wpchat-livechat-customer-support'), isPro: true },
   ];
 
-  const botMsg = getInitialMessages('', (url) => {
-    window.location.href = url;
-  });
-
   const handleIconClick = ({ icon, title }) => {
     setChatbotAvatar(icon);
     setChatbotName(title);
@@ -73,12 +69,14 @@ export default function AssistantAvatarPanel() {
   ];
 
   useEffect(() => {
+    // Seed the same initial bot message that clicking "Send us a message" uses on home.
+    const botMsg = getInitialMessages(availablePlatforms, offHoursData, useChatStore);
     navigateViaStore('/chat', { msg: botMsg });
     setShowChat(true);
     setDisableNavigation(false);
     setIsPreviewMode(true); // Set preview mode to prevent analytics logging
     setDisableFaqTracking(true); // Disable FAQ click tracking in customizer preview
-  }, [location.pathname]);
+  }, [location.pathname, availablePlatforms, offHoursData]);
 
   return (
     <>

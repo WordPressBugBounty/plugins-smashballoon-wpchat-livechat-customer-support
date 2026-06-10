@@ -64,9 +64,8 @@ export default function PlatformCoverageWarning({ enabledPlatforms }) {
     telegram: 'Telegram',
     messenger: 'Messenger',
     instagram: 'Instagram',
+    sms: 'SMS',
     phone: 'Phone',
-    message: 'Message',
-    facetime: 'FaceTime',
   };
 
   const uncoveredLabels = uncoveredPlatforms.map(

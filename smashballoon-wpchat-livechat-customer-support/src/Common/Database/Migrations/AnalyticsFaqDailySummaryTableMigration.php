@@ -35,8 +35,7 @@ class AnalyticsFaqDailySummaryTableMigration implements MigrationInterface
 	{
 		$tableName = $this->db->prefix . 'wpchat_faq_daily_summary';
 
-		$sql = <<<SQL
-			CREATE TABLE IF NOT EXISTS `{$tableName}` (
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (
 				`site_id` bigint(20) unsigned NOT NULL,
 				`summary_date` date NOT NULL,
 				`faq_id` int(11) unsigned NOT NULL,
@@ -59,8 +58,7 @@ class AnalyticsFaqDailySummaryTableMigration implements MigrationInterface
 				INDEX `idx_not_helpful_count` (`not_helpful_count`),
 				INDEX `idx_created_at` (`created_at`),
 				INDEX `idx_updated_at` (`updated_at`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-		SQL;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);

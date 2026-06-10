@@ -106,6 +106,19 @@ class ChatPlatformEndpoint extends RestEndpoint
 				),
 			)
 		);
+
+		// Register batch platform links endpoint
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->restBase . '/platform-links',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE, // GET.
+					'callback'            => array($this, 'getAllPlatformLinks'),
+					'permission_callback' => array($this, 'checkPublicPermission'),
+				),
+			)
+		);
 	}
 
 	/**
@@ -126,6 +139,8 @@ class ChatPlatformEndpoint extends RestEndpoint
 				'telegram' => ['enabled' => true, 'value' => ''],
 				'instagram' => ['enabled' => true, 'value' => ''],
 				'messenger' => ['enabled' => true, 'value' => ''],
+				'sms' => ['enabled' => true, 'value' => ''],
+				'phone' => ['enabled' => true, 'value' => ''],
 			];
 
 			// Filter to only include platforms that are both:
@@ -135,15 +150,129 @@ class ChatPlatformEndpoint extends RestEndpoint
 				return isset($enabledPlatforms[$platform]['enabled']) && $enabledPlatforms[$platform]['enabled'] === true;
 			});
 
-			return rest_ensure_response([
+			$responseData = [
 				'success' => true,
 				'platforms' => array_values($availablePlatforms), // Re-index array
 				'count' => count($availablePlatforms)
-			]);
+			];
+
+			// If no platforms available, check if it's due to off-hours
+			if (empty($availablePlatforms)) {
+				$timingsEnabled = $settings['agentSettings']['timings'] ?? false;
+				$offHoursRule = $settings['agentSettings']['offHoursRule'] ?? '';
+
+				if ($timingsEnabled && $offHoursRule === 'disable') {
+					$availability = $this->agentRoutingService->checkAgentAvailability();
+					if (isset($availability['status']) && $availability['status'] === 'off_hours') {
+						$responseData['is_off_hours'] = true;
+						$responseData['off_hours_data'] = $availability['off_hours_info'] ?? null;
+					}
+				}
+			}
+
+			return rest_ensure_response($responseData);
 		} catch (\Exception $e) {
 			return new WP_Error(
 				'platform_check_failed',
 				__('[WPC-NET-003] Failed to check platform availability', 'smashballoon-wpchat-livechat-customer-support'),
+				array('status' => 500)
+			);
+		}
+	}
+
+	/**
+	 * Get redirection links for all available platforms in a single request.
+	 *
+	 * @return WP_REST_Response
+	 */
+	public function getAllPlatformLinks()
+	{
+		try {
+			$agentPlatforms = $this->agentRoutingService->getAvailablePlatforms();
+
+			$settings = $this->settingsService->getAllSettings();
+			$enabledPlatforms = $settings['agentSettings']['platforms'] ?? [
+				'whatsapp' => ['enabled' => true, 'value' => ''],
+				'telegram' => ['enabled' => true, 'value' => ''],
+				'instagram' => ['enabled' => true, 'value' => ''],
+				'messenger' => ['enabled' => true, 'value' => ''],
+				'sms' => ['enabled' => true, 'value' => ''],
+				'phone' => ['enabled' => true, 'value' => ''],
+			];
+
+			$availablePlatforms = array_filter($agentPlatforms, function ($platform) use ($enabledPlatforms) {
+				return isset($enabledPlatforms[$platform]['enabled']) && $enabledPlatforms[$platform]['enabled'] === true;
+			});
+
+			if (empty($availablePlatforms)) {
+				$availability = $this->agentRoutingService->checkAgentAvailability();
+				if ($availability['status'] === 'off_hours') {
+					return rest_ensure_response([
+						'success' => true,
+						'links'   => [],
+						'errors'  => [
+							'_global' => [
+								'error_type'     => 'agents_offline_off_hours',
+								'message'        => __('Agents are currently offline.', 'smashballoon-wpchat-livechat-customer-support'),
+								'off_hours_data' => $availability['off_hours_info'] ?? null,
+							],
+						],
+					]);
+				}
+			}
+
+			$links = [];
+			$errors = [];
+
+			foreach ($availablePlatforms as $platform) {
+				$platformInstance = $this->platformFactory->create($platform);
+				if ($platformInstance === null) {
+					continue;
+				}
+
+				try {
+					$response = $this->getAgentRedirection($platformInstance, $platform, '', '');
+
+					// Track agent assignment only (redirect tracking happens on click)
+					if ($this->analyticsService) {
+						$this->analyticsService->logEvent('AGENT_ASSIGNMENT', [
+							'platform' => $platform,
+							'agent_id' => $response['agent_id'] ?? '',
+							'agent_name' => $response['name'] ?? '',
+							'source' => 'chat',
+							'status' => 'assigned',
+						]);
+					}
+
+					$links[$platform] = [
+						'link' => $response['link'],
+						'name' => $response['name'] ?? '',
+						'phone_number' => $response['phone_number'] ?? '',
+						'avatar' => $response['avatar'] ?? '',
+						'agent_id' => $response['agent_id'] ?? '',
+					];
+				} catch (\Exception $e) {
+					$errorData = json_decode($e->getMessage(), true);
+					if (json_last_error() === JSON_ERROR_NONE && is_array($errorData)) {
+						$errors[$platform] = $errorData;
+					} else {
+						$errors[$platform] = [
+							'error_type' => 'general_error',
+							'message' => $e->getMessage(),
+						];
+					}
+				}
+			}
+
+			return rest_ensure_response([
+				'success' => true,
+				'links' => $links,
+				'errors' => $errors,
+			]);
+		} catch (\Exception $e) {
+			return new WP_Error(
+				'platform_links_failed',
+				__('[WPC-NET-004] Failed to fetch platform links', 'smashballoon-wpchat-livechat-customer-support'),
 				array('status' => 500)
 			);
 		}
@@ -243,6 +372,7 @@ class ChatPlatformEndpoint extends RestEndpoint
 					$platformName = ucfirst($platform);
 					throw new \Exception(esc_html(
 						sprintf(
+							// translators: %s is the platform name (e.g., WhatsApp, Messenger)
 							__('[WPC-AGT-005] No agents available for %s. Please try another platform or contact us later.', 'smashballoon-wpchat-livechat-customer-support'),
 							$platformName
 						)
@@ -298,10 +428,8 @@ class ChatPlatformEndpoint extends RestEndpoint
 			}
 		}
 
-
 		return $agent;
 	}
-
 
 	/**
 	 * Get agent's platform number.
@@ -333,7 +461,7 @@ class ChatPlatformEndpoint extends RestEndpoint
 				'required' => true,
 				'type' => 'string',
 				'validate_callback' => function ($param) {
-					return in_array($param, ['whatsapp', 'telegram', 'messenger', 'instagram'], true);
+					return in_array($param, ['whatsapp', 'telegram', 'messenger', 'instagram', 'sms', 'phone'], true);
 				},
 				'description' => __('The platform to redirect to (e.g., whatsapp, telegram, messenger, instagram).', 'smashballoon-wpchat-livechat-customer-support'),
 			],

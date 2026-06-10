@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 
 /**
@@ -39,6 +43,7 @@ class TranslationService implements ServiceProviderInterface
 	 */
 	public function loadPluginTextdomain(): void
 	{
+		// phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for loading translations from custom languages directory
 		load_plugin_textdomain(
 			self::TEXT_DOMAIN,
 			false,

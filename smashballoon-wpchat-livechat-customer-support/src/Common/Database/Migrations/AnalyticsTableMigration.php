@@ -35,8 +35,7 @@ class AnalyticsTableMigration implements MigrationInterface
 	{
 		$tableName = $this->db->prefix . 'wpchat_analytics';
 
-		$sql = <<<SQL
-			CREATE TABLE IF NOT EXISTS `{$tableName}` (
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (
 				`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 				`site_id` bigint(20) unsigned NOT NULL DEFAULT 1 COMMENT 'WordPress site ID (for multisite compatibility)',
 				`timestamp` datetime NOT NULL COMMENT 'Timestamp of the event',
@@ -53,8 +52,7 @@ class AnalyticsTableMigration implements MigrationInterface
 				INDEX `idx_user_id` (`user_id`),
 				INDEX `idx_event_type` (`event_type`),
 				INDEX `idx_site_id` (`site_id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-		SQL;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);

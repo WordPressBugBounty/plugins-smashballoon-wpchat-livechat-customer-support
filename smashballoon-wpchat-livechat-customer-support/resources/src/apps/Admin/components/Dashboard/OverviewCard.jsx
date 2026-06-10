@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useLocation } from 'react-router';
 import { __ } from '@wordpress/i18n';
 import EmbeddedFrontend from '@AC/EmbeddedFrontend';
 import TitleDescription from '@Components/TitleDescription';

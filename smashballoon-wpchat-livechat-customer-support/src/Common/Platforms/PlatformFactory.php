@@ -37,6 +37,8 @@ class PlatformFactory
 			'telegram' => Telegram::class,
 			'messenger' => Messenger::class,
 			'instagram' => Instagram::class,
+			'sms' => SMS::class,
+			'phone' => Phone::class,
 		];
 
 		return $platformMap[$platformName] ?? null;

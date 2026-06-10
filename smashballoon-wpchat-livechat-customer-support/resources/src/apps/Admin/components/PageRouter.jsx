@@ -34,6 +34,9 @@ const FunnelViews = {
 
 const AgentSettings = lazy(() => import('@AP/Agent/AgentSettings'));
 
+// Dev-only icon catalog — hidden route, not linked anywhere in UI
+const IconCatalog = lazy(() => import('@AP/IconCatalog'));
+
 /** Extract suffix from WordPress admin title */
 function getAdminTitleSuffix(title) {
   if (!title || !title.includes(LEFT_SEPARATOR)) {
@@ -178,6 +181,7 @@ function PageRoutes() {
           <Route path='/customizer' element={<Customizer />} />
           <Route path='/support' element={<Support />} />
           <Route path='/settings' element={<Settings />} />
+          <Route path='/dev/icons' element={<IconCatalog />} />
         </Routes>
       </Suspense>
     </div>

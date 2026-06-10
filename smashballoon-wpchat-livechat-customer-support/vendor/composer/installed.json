@@ -225,12 +225,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:awesomemotive\/sb-common.git",
-                "reference": "77aa1314e55e645ff8c79e17b2f2f4de382facbd"
+                "reference": "a7591f0fc36ed4fd8e8b5a1c1e8acea9f5f23154"
             },
             "dist": {
                 "type": "zip",
-                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/77aa1314e55e645ff8c79e17b2f2f4de382facbd",
-                "reference": "77aa1314e55e645ff8c79e17b2f2f4de382facbd",
+                "url": "https:\/\/api.github.com\/repos\/awesomemotive\/sb-common\/zipball\/a7591f0fc36ed4fd8e8b5a1c1e8acea9f5f23154",
+                "reference": "a7591f0fc36ed4fd8e8b5a1c1e8acea9f5f23154",
                 "shasum": ""
             },
             "require": {
@@ -247,7 +247,7 @@
                 "phpcompatibility\/php-compatibility": "^9.3",
                 "squizlabs\/php_codesniffer": "^3.7"
             },
-            "time": "2026-02-11T20:26:46+00:00",
+            "time": "2026-05-15T15:18:57+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",

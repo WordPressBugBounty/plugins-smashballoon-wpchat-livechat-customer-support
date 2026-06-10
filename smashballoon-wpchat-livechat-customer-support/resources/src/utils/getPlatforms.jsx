@@ -21,4 +21,14 @@ export const freePlatforms = [
     label: __('Instagram', 'smashballoon-wpchat-livechat-customer-support'),
     placeholder: __('Username', 'smashballoon-wpchat-livechat-customer-support'),
   },
+  {
+    slug: 'sms',
+    label: __('SMS', 'smashballoon-wpchat-livechat-customer-support'),
+    placeholder: __('Phone Number', 'smashballoon-wpchat-livechat-customer-support'),
+  },
+  {
+    slug: 'phone',
+    label: __('Phone', 'smashballoon-wpchat-livechat-customer-support'),
+    placeholder: __('Phone Number', 'smashballoon-wpchat-livechat-customer-support'),
+  },
 ];

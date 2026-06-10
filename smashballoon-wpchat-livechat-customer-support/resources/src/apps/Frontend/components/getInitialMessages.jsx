@@ -1,112 +1,47 @@
 import { __ } from '@wordpress/i18n';
-import { getPlatformLink } from '@FDataStore/Chat/chatApi';
-import { createChatMessage } from '@FU/createChatMessage';
-import { getPlatformNameBySlug } from '@Utils/getPlatformNameBySlug';
-import { logFunnelComplete } from '@FDataStore/Chat/analyticsApi';
+import { formatOffHoursMessage } from '@FDataStore/Chat/offHoursHandler';
 
 /**
- * Returns the initial chatbot message with internal logic and store updates.
- * Everything is self-contained in this function.
+ * Returns the initial chatbot message that triggers platform link prefetching.
+ * Instead of creating option buttons with async onClick handlers (which Safari blocks),
+ * this returns a `platform_links` message type that renders native <a> tags.
  *
- * @param {(msg: object) => void} navigateToErrorPage
- * @param {(url: string) => void} openLink
- * @param {Array<string>} availablePlatforms - Array of platform slugs (strings), e.g. ['whatsapp', 'telegram', 'messenger', 'instagram']. Each slug should correspond to a supported platform.
- * @param {Function} storeApi - The Zustand store instance for this chat widget
+ * When no platforms are available (off-hours with "disable contact" enabled),
+ * returns a plain text off-hours message instead of the platform selector.
+ *
+ * @param {Array<string>} availablePlatforms - Array of platform slugs
+ * @param {Object|null} offHoursData - Off-hours data from the API (null if not off-hours)
+ * @param {Object|null} storeApi - The Zustand store instance for this chat widget
  * @returns {object} botMsg
  */
-export function getInitialMessages(navigateToErrorPage, openLink, availablePlatforms = null, storeApi = null) {
-  const errorMessage = __(
-    'Sorry, no agents are available at the moment. Please try again later.',
-    'smashballoon-wpchat-livechat-customer-support',
-  );
+export function getInitialMessages(availablePlatforms = null, offHoursData = null, storeApi = null) {
+  // Distinguish "still loading" (null/undefined) from "loaded but empty" ([]).
+  // If platforms haven't been fetched yet, default to the platform_links message so
+  // PlatformLinks can render its own loading dots and then the fetched result —
+  // avoids a race where a fast click shows "agents offline" before data arrives.
+  const isStillLoading = availablePlatforms === null || availablePlatforms === undefined;
+  const platformsToShow = isStillLoading ? [] : availablePlatforms;
 
-  // Fallback to no-ops when storeApi is not provided (e.g. AssistantAvatarPanel renders
-  // a static preview in the admin customizer and doesn't need a real store).
-  const { setChatMessages, funnelContext, clearFunnelContext } = storeApi
-    ? storeApi.getState()
-    : { setChatMessages: () => {}, funnelContext: null, clearFunnelContext: () => {} };
+  // Only short-circuit to the offline text message when platforms are confirmed empty
+  // AND we have explicit off-hours data from the backend. In every other case, defer to
+  // PlatformLinks which owns the loading + empty-state UX.
+  if (!isStillLoading && platformsToShow.length === 0 && offHoursData) {
+    return {
+      message: formatOffHoursMessage(offHoursData),
+      type: 'text',
+      messageType: 'receive',
+      directAnswer: true,
+    };
+  }
 
-  const handlePlatformClick = async (platform) => {
-    try {
-      // Log funnel completion if we came from a funnel
-      if (funnelContext) {
-        const { funnelId, funnelName, completionBlock, blockMessage } = funnelContext;
-
-        logFunnelComplete(funnelId, funnelName || '', completionBlock, 'converted', {
-          completion_block: completionBlock,
-          block_message: blockMessage,
-          selected_platform: platform,
-        });
-
-        // Small delay to ensure analytics are sent before potential redirect
-        await new Promise(resolve => setTimeout(resolve, 50));
-
-        // Clear the funnel context after logging
-        clearFunnelContext();
-      }
-
-      const agentData = await getPlatformLink(
-        platform,
-        '', // Empty chat message
-        '', // Empty file attachment
-        funnelContext ? 'funnel' : 'chat', // Pass source to backend
-        funnelContext?.funnelId || null // Pass funnel_id if from funnel
-      );
-
-      // Store data for redirect message (can be serialized to localStorage)
-      // Note: User choice message is already added by ChatBubble.handleClick
-      const redirectMsg = {
-        type: 'redirect',
-        messageType: 'receive',
-        data: {
-          name: agentData.name,
-          phone_number: agentData.phone_number,
-          platformName: getPlatformNameBySlug(platform),
-          avatar: agentData.avatar,
-        },
-      };
-      setChatMessages((prev) => [...prev, redirectMsg]);
-
-      setTimeout(() => {
-        if (agentData?.link) {
-          openLink(agentData.link);
-
-          // Store data for fallback message (can be serialized to localStorage)
-          const fallbackMsg = {
-            type: 'fallback_link',
-            messageType: 'receive',
-            data: {
-              platformName: getPlatformNameBySlug(platform),
-              link: agentData.link,
-            },
-          };
-          setChatMessages((prev) => [...prev, fallbackMsg]);
-        } else {
-          navigateToErrorPage(errorMessage);
-        }
-      }, 3000);
-    } catch (error) {
-      navigateToErrorPage(error);
-    }
+  return {
+    message: __('Which platform would you like to talk on?', 'smashballoon-wpchat-livechat-customer-support'),
+    type: 'platform_links',
+    messageType: 'receive',
+    directAnswer: true,
+    data: {
+      platforms: platformsToShow,
+    },
+    storeApi,
   };
-
-  // Use the dynamic available platforms list passed from parent
-  // If no platforms available, show empty options
-  const platformsToShow = availablePlatforms || [];
-
-  // Map platform slugs to display options with proper labels
-  // Filter out any invalid platforms to be safe
-  const platformOptions = platformsToShow
-    .filter(platformSlug => platformSlug && typeof platformSlug === 'string')
-    .map(platformSlug => ({
-      label: getPlatformNameBySlug(platformSlug),
-      onClick: () => handlePlatformClick(platformSlug),
-    }));
-
-  return createChatMessage(
-    __('Which platform would you like to talk on?', 'smashballoon-wpchat-livechat-customer-support'),
-    platformOptions,
-    'receive',
-    true,
-  );
 }

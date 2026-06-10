@@ -127,10 +127,10 @@ export default function AgentSingle() {
         required: false,
       },
       {
-        key: 'message',
-        value: agentData.platforms.message,
+        key: 'sms',
+        value: agentData.platforms.sms,
         validator: isValidPhoneNumber,
-        errorMessage: __('Please enter a valid phone number with country code for iMessage (e.g., +1234567890).', 'smashballoon-wpchat-livechat-customer-support'),
+        errorMessage: __('Please enter a valid phone number with country code for SMS (e.g., +1234567890).', 'smashballoon-wpchat-livechat-customer-support'),
         required: false,
       },
     ];

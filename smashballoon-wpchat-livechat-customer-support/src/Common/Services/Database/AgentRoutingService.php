@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services\Database;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Repositories\AgentsRepository;
 
 class AgentRoutingService
@@ -38,6 +42,10 @@ class AgentRoutingService
 		// Clear cache when agents are updated (added, removed, or modified)
 		add_action('wpchat_agent_updated', [$this, 'clearAvailablePlatformsCache']);
 		add_action('wpchat_agent_updated', [$this, 'clearRequestCache']);
+
+		// Clear cache when settings are updated (e.g., timings toggled, platforms changed)
+		add_action('wpchat_settings_updated', [$this, 'clearAvailablePlatformsCache']);
+		add_action('wpchat_settings_updated', [$this, 'clearRequestCache']);
 	}
 
 	// =========================================================================

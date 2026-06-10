@@ -5,13 +5,24 @@ import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import useFaqsStore from '@FDataStore/faqs/faqsStore';
 import PageRouter from '@FC/PageRouter';
+import PlatformIconsToggle from '@FC/PlatformIconsToggle';
 import { logChatClose, logChatOpen, logFunnelAbandon } from '@FDataStore/Chat/analyticsApi';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { useTransitions } from '@Hooks/useTransitions';
+import { useIsEditingPanel } from '@FU/useIsEditingPanel';
 import { cn } from '@Utils/cn';
 import tailwindStyles from './frontend.css?inline';
 
 const MAX_WIDGET_HEIGHT = 580;
+
+const animationProps = {
+  none: {},
+  bounce: {
+    animate: { y: [0, -10, 0] },
+    transition: { repeat: Infinity, repeatDelay: 0.3, duration: 0.6, ease: 'easeInOut' },
+  },
+  pulse: {},
+};
 
 /**
  * Calculate widget height based on various states
@@ -58,10 +69,18 @@ function Frontend({ fixedHeight }) {
   const chatFunnelLastBlockOrder = useChatStore((s) => s.chatFunnelLastBlockOrder || 1);
   const widgetHeight = useChatStore((s) => s.widgetHeight);
   const fetchAvailablePlatforms = useChatStore((s) => s.fetchAvailablePlatforms);
+  const iconShape = useChatStore((s) => s.iconShape);
+  const iconPosition = useChatStore((s) => s.iconPosition);
+  const iconPositionOffsetX = useChatStore((s) => s.iconPositionOffsetX);
+  const iconPositionOffsetY = useChatStore((s) => s.iconPositionOffsetY);
+  const iconType = useChatStore((s) => s.iconType);
+  const iconAnimation = useChatStore((s) => s.iconAnimation);
+  const isEditingIconPanel = useIsEditingPanel('icon');
   const [isOpen, setIsOpen] = useState(showChat ? showChat : false);
   const [lastEscapeTime, setLastEscapeTime] = useState(0);
 
   const widgetRef = useRef(null);
+  const defaultTransitions = useTransitions({ onTrigger: isOpen });
 
   // Sync isOpen with showChat continuously in preview mode (initial value handles non-preview)
   useEffect(() => {
@@ -69,6 +88,13 @@ function Frontend({ fixedHeight }) {
       setIsOpen(showChat);
     }
   }, [isPreviewMode, showChat]);
+
+  // Prefetch platforms on mount when in platform icon mode so icons render immediately
+  useEffect(() => {
+    if (iconType === 'platform') {
+      fetchAvailablePlatforms();
+    }
+  }, [iconType, fetchAvailablePlatforms]);
 
   // Pre-fetch platforms and FAQs as soon as widget opens
   useEffect(() => {
@@ -94,13 +120,12 @@ function Frontend({ fixedHeight }) {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  });
+  }, [isOpen, lastEscapeTime]);
 
   // Track funnel abandonment on page unload
   useEffect(() => {
     const handleBeforeUnload = () => {
-      // Don't log abandonment if user is being redirected to platform
-      if (chatFunnelId && isOpen && !window.wpChatPlatformRedirecting) {
+      if (chatFunnelId && isOpen) {
         // Use navigator.sendBeacon for reliable tracking when page unloads
         logFunnelAbandon(
           chatFunnelId,
@@ -153,10 +178,16 @@ function Frontend({ fixedHeight }) {
     <div
       data-theme={theme}
       className={cn(
-        'wpchat:z-9 wpchat:flex wpchat:w-[100%] wpchat:max-w-[400px] wpchat:flex-wrap wpchat:justify-end wpchat:p-5 wpchat:antialiased',
-        !disableFixed && 'wpchat:fixed wpchat:end-0 wpchat:bottom-0 wpchat:z-99999',
+        'wpchat:z-9 wpchat:flex wpchat:w-[100%] wpchat:max-w-[400px] wpchat:flex-wrap wpchat:p-5 wpchat:antialiased',
+        iconPosition === 'left' ? 'wpchat:justify-start' : 'wpchat:justify-end',
+        !disableFixed && 'wpchat:fixed wpchat:bottom-0 wpchat:z-99999',
+        !disableFixed && (iconPosition === 'left' ? 'wpchat:start-0' : 'wpchat:end-0'),
         frontendClassName,
       )}
+      style={!disableFixed ? {
+        [iconPosition === 'left' ? 'insetInlineStart' : 'insetInlineEnd']: `${iconPositionOffsetX ?? 12}px`,
+        bottom: `${iconPositionOffsetY ?? 12}px`,
+      } : undefined}
     >
       <motion.div
         ref={widgetRef}
@@ -165,16 +196,62 @@ function Frontend({ fixedHeight }) {
               initial: { opacity: 1 },
               animate: { opacity: 1 },
             }
-          : useTransitions({ onTrigger: isOpen }))}
+          : iconType === 'platform'
+            ? {
+                initial: { scale: 0.95, y: 10, opacity: 0, display: 'none' },
+                animate: isOpen
+                  ? { scale: 1, y: 0, opacity: 1, display: 'block' }
+                  : { scale: 0.95, y: 10, opacity: 0, display: 'none' },
+                transition: {
+                  scale: { type: 'spring', stiffness: 350, damping: 30 },
+                  y: { type: 'spring', stiffness: 350, damping: 30 },
+                  opacity: { duration: 0.2, ease: [0.4, 0, 0.2, 1] },
+                },
+                style: { transformOrigin: iconPosition === 'left' ? 'bottom left' : 'bottom right' },
+              }
+            : defaultTransitions)}
         className='wpchat:relative wpchat:mb-5 wpchat:w-full wpchat:overflow-hidden wpchat:rounded-2xl wpchat:shadow-md wpchat:[background:var(--wpchat-color-widget-bg)]'
         style={{
           height: getWidgetHeight(fixedHeight, chatFunnelId, widgetHeight),
           maxHeight: `${MAX_WIDGET_HEIGHT}px`,
           marginTop: getWidgetMarginTop(fixedHeight, disableFixed, widgetHeight, chatFunnelId),
           transition: 'height 0.25s cubic-bezier(0.25, 0.1, 0.25, 1), margin-top 0.25s cubic-bezier(0.25, 0.1, 0.25, 1)',
-          ...(disableFixed && !isOpen ? { visibility: 'hidden' } : {}),
+          ...(disableFixed && !isOpen && !isEditingIconPanel ? { visibility: 'hidden' } : {}),
+          ...(!isOpen && isEditingIconPanel ? { background: 'transparent', boxShadow: 'none' } : {}),
         }}
       >
+        {/* Platform icons annotation in preview mode */}
+        {!isOpen && isEditingIconPanel && (
+          <div className="wpchat:relative wpchat:flex wpchat:h-full wpchat:flex-col wpchat:items-center wpchat:justify-end wpchat:rounded-2xl wpchat:p-5 wpchat:pb-5">
+            {/* Custom dashed border via SVG for precise dash control */}
+            <svg className="wpchat:pointer-events-none wpchat:absolute wpchat:inset-0 wpchat:h-full wpchat:w-full" preserveAspectRatio="none">
+              <rect
+                x="0.5" y="0.5"
+                width="calc(100% - 1px)" height="calc(100% - 1px)"
+                rx="16" ry="16"
+                fill="var(--wpchat-color-gray-100)"
+                stroke="var(--wpchat-color-gray-500)"
+                strokeWidth="1"
+                strokeDasharray="8 6"
+              />
+            </svg>
+            <p className={cn(
+              'wpchat:m-0 wpchat:max-w-[155px] wpchat:text-center wpchat:text-sm wpchat:leading-[130%] wpchat:text-gray-500 wpchat:relative wpchat:z-1',
+              iconPosition === 'left' ? 'wpchat:rotate-10 wpchat:-left-8' : 'wpchat:rotate-350 wpchat:left-8',
+            )}>
+              {iconType === 'platform'
+                ? 'Platform icons that show up when the chatbot is closed'
+                : 'Custom icon that shows up when the chatbot is closed'}
+            </p>
+            <SvgLoader
+              name="longAngledArrowDown"
+              className={cn(
+                'wpchat:mt-2 wpchat:h-[46px] wpchat:w-[15px] wpchat:fill-gray-500 wpchat:z-1 wpchat:relative',
+                iconPosition === 'left' ? 'wpchat:-left-18 wpchat:-scale-x-100' : 'wpchat:left-18',
+              )}
+            />
+          </div>
+        )}
         {/* Only render PageRouter when chat is actually open to prevent premature funnel processing */}
         {isOpen && (
           <>
@@ -195,18 +272,71 @@ function Frontend({ fixedHeight }) {
 
       {/* Chat Toggle Button */}
       {showChatToggle && (
-        <button
-          onClick={(e) => {
-            e.currentTarget.blur();
-            handleChatToggle();
-          }}
-          className='wpchat:relative wpchat:end-2 wpchat:inline-flex wpchat:h-14 wpchat:w-14 wpchat:cursor-pointer wpchat:items-center wpchat:justify-center wpchat:rounded-full wpchat:transition wpchat:hover:scale-105 wpchat:active:scale-98'
-        >
-          <SvgLoader
-            name={isOpen ? 'chatBubbleChevronDown' : chatToggleIcon}
-            className='wpchat:h-full wpchat:w-full wpchat:fill-widget-accent'
+        iconType === 'platform' ? (
+          <PlatformIconsToggle
+            isOpen={isOpen}
+            onToggle={handleChatToggle}
+            iconShape={iconShape}
+            iconPosition={iconPosition}
+            iconAnimation={iconAnimation}
           />
-        </button>
+        ) : (
+          // Pulse-ring lives on an outer wrapper because the button below sets
+          // overflow-hidden (needed to clip the SVG's rectangular background to
+          // the rounded shape) — which would otherwise clip the pulse's ::before
+          // ring as it expands outward.
+          <div
+            className={cn(
+              'wpchat:relative wpchat:inline-flex',
+              iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
+              !isOpen && iconAnimation === 'pulse' && 'pulse-ring',
+            )}
+            style={{
+              '--pulse-radius': iconShape === 'roundedRectangle' ? '16px' : '100px',
+              '--pulse-inset': '-4px',
+            }}
+          >
+            <motion.button
+              onClick={(e) => {
+                e.currentTarget.blur();
+                handleChatToggle();
+              }}
+              className={cn(
+                'wpchat:relative wpchat:inline-flex wpchat:h-12 wpchat:w-12 wpchat:cursor-pointer wpchat:items-center wpchat:justify-center wpchat:overflow-hidden wpchat:transition wpchat:hover:scale-105 wpchat:active:scale-98',
+                iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
+              )}
+              {...(!isOpen ? animationProps[iconAnimation] || {} : {})}
+            >
+              {isOpen ? (
+                /* Mirror PlatformIconsToggle's close overlay 1:1:
+                   gradient bg + a SEPARATE inner div for the inset highlight
+                   so the bevel renders cleanly above the gradient, plus the
+                   centered white chevron. */
+                <div
+                  className={cn(
+                    'wpchat:absolute wpchat:inset-0 wpchat:flex wpchat:items-center wpchat:justify-center wpchat:overflow-hidden',
+                    iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
+                  )}
+                  style={{ background: 'var(--wpchat-color-close-button-gradient)' }}
+                >
+                  <div
+                    className={cn(
+                      'wpchat:absolute wpchat:inset-0 wpchat:pointer-events-none',
+                      iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
+                    )}
+                    style={{ boxShadow: 'inset 1px 1px 2px 0 rgba(255,255,255,0.45)' }}
+                  />
+                  <SvgLoader name="chevronDown" className="wpchat:h-9 wpchat:w-9 wpchat:fill-white" />
+                </div>
+              ) : (
+                <SvgLoader
+                  name={chatToggleIcon}
+                  className='wpchat:h-full wpchat:w-full wpchat:fill-widget-accent wpchat:bg-widget-accent'
+                />
+              )}
+            </motion.button>
+          </div>
+        )
       )}
     </div>
   );

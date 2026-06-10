@@ -286,21 +286,17 @@ class AgentsEndpoint extends RestEndpoint
 						'type' => 'string',
 						'description' => __('Instagram phone number.', 'smashballoon-wpchat-livechat-customer-support'),
 					),
-					'phone' => array(
-						'type' => 'string',
-						'description' => __('Regular phone number.', 'smashballoon-wpchat-livechat-customer-support'),
-					),
 					'messenger' => array(
 						'type' => 'string',
 						'description' => __('Messenger phone number.', 'smashballoon-wpchat-livechat-customer-support'),
 					),
-					'message' => array(
+					'sms' => array(
 						'type' => 'string',
-						'description' => __('iMessage phone number.', 'smashballoon-wpchat-livechat-customer-support'),
+						'description' => __('SMS phone number.', 'smashballoon-wpchat-livechat-customer-support'),
 					),
-					'facetime' => array(
+					'phone' => array(
 						'type' => 'string',
-						'description' => __('FaceTime phone number.', 'smashballoon-wpchat-livechat-customer-support'),
+						'description' => __('Regular phone number.', 'smashballoon-wpchat-livechat-customer-support'),
 					),
 				),
 			),

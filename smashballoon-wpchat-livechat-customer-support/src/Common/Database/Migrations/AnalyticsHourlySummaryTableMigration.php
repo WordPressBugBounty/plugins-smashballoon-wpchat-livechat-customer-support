@@ -35,8 +35,7 @@ class AnalyticsHourlySummaryTableMigration implements MigrationInterface
 	{
 		$tableName = $this->db->prefix . 'wpchat_hourly_site_summary';
 
-		$sql = <<<SQL
-			CREATE TABLE IF NOT EXISTS `{$tableName}` (
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (
 				`site_id` bigint(20) unsigned NOT NULL,
 				`summary_date` date NOT NULL,
 				`summary_hour` tinyint(2) unsigned NOT NULL COMMENT 'Hour of the day (0-23)',
@@ -57,8 +56,7 @@ class AnalyticsHourlySummaryTableMigration implements MigrationInterface
 				INDEX `idx_summary_hour` (`summary_hour`),
 				INDEX `idx_created_at` (`created_at`),
 				INDEX `idx_updated_at` (`updated_at`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-		SQL;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);

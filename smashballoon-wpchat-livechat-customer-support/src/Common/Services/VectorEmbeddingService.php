@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SQLite3;
 use Exception;
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
@@ -662,30 +666,37 @@ class VectorEmbeddingService implements ServiceProviderInterface
 
 			// Get FAQs not in the vector list.
 			if (empty($vectorIds)) {
+				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 				$sql = $wpdb->prepare(
 					"SELECT id, question, answer FROM {$faqsTable} LIMIT %d",
 					$limit
 				);
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			} else {
 				$placeholders = implode(
 					",",
 					array_fill(0, count($vectorIds), "%d")
 				);
+				// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 				$sql = $wpdb->prepare(
 					"SELECT id, question, answer FROM {$faqsTable} WHERE id NOT IN ({$placeholders}) LIMIT %d",
 					array_merge($vectorIds, [$limit])
 				);
+				// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 			}
 		} else {
 			// Flat file storage - get all FAQs and check against stored vectors.
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 			$sql = $wpdb->prepare(
 				"SELECT id, question, answer FROM {$faqsTable} LIMIT %d",
 				$limit * 2 // Get more since we'll filter out existing ones.
 			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		}
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- SQL is already prepared above using wpdb->prepare(), direct query needed for FAQ fetching
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name is safe, constructed from $wpdb->prefix
 		$faqs = $wpdb->get_results($sql, ARRAY_A);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		// For flat file storage, filter out FAQs that already have vectors.
 		if (!$this->db && !empty($faqs)) {

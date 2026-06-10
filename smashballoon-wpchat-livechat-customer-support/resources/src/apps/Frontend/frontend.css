@@ -1,6 +1,45 @@
 @import '@Assets/css/reset';
 @import '@Assets/css/main.css';
 
+.platform-icon-bubble::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 1px 1px 2px 0 var(--glow-color, transparent);
+  pointer-events: none;
+}
+
+@keyframes pulse-ring {
+  0%   { margin: 0;     opacity: 0; }
+  15%  {                 opacity: 0.55; }
+  100% { margin: -12px;  opacity: 0; }
+}
+
+.pulse-ring {
+  position: relative;
+}
+
+.pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: var(--pulse-inset, 0);
+  border-radius: var(--pulse-radius, inherit);
+  border: 3px solid var(--pulse-color, #0073aa);
+  animation: pulse-ring 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes icon-bounce {
+  0%, 67%, 100% { transform: translateY(0); }
+  33%           { transform: translateY(-10px); }
+}
+
+.icon-bounce {
+  animation: icon-bounce 0.9s ease-in-out infinite;
+  animation-delay: var(--bounce-delay, 0s);
+}
+
 .wpchat-viewport > div {
   display: block !important;
 }

@@ -121,7 +121,7 @@ const FaqCreateEdit = forwardRef(function FaqCreateEdit({
       message:
         currentAnswer ||
         __(
-          'The preview of the answer of your question will appear here once',
+          'The preview of the answer of your question will appear here once you start typing.',
           'smashballoon-wpchat-livechat-customer-support',
         ),
       messageType: 'receive',

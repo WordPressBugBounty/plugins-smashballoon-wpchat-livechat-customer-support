@@ -35,8 +35,7 @@ class AnalyticsAgentDailySummaryTableMigration implements MigrationInterface
 	{
 		$tableName = $this->db->prefix . 'wpchat_agent_daily_summary';
 
-		$sql = <<<SQL
-			CREATE TABLE IF NOT EXISTS `{$tableName}` (
+		$sql = "CREATE TABLE IF NOT EXISTS `{$tableName}` (
 				`site_id` bigint(20) unsigned NOT NULL,
 				`summary_date` date NOT NULL,
 				`agent_id` int(11) unsigned NOT NULL,
@@ -54,8 +53,7 @@ class AnalyticsAgentDailySummaryTableMigration implements MigrationInterface
 				INDEX `idx_total_assignments` (`total_assignments`),
 				INDEX `idx_created_at` (`created_at`),
 				INDEX `idx_updated_at` (`updated_at`)
-			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-		SQL;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;";
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta($sql);

@@ -1,6 +1,20 @@
 import { create } from 'zustand';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * Compute the ordered, visibility-filtered list of platform slugs to render.
+ * Newly-available platforms not yet in the saved order are appended so they
+ * appear on the frontend without needing a customizer save round-trip.
+ */
+export const computeActivePlatformSlugs = (platformOrder, platformVisibility, availablePlatforms) => {
+  const available = availablePlatforms ?? [];
+  const ordered = platformOrder ?? [];
+  const merged = [...ordered, ...available.filter((s) => !ordered.includes(s))];
+  return merged.filter(
+    (slug) => available.includes(slug) && (platformVisibility?.[slug] !== false),
+  );
+};
+
 // Define which keys should be persisted to database
 // All other keys in initialState are runtime-only and won't be saved
 export const persistableKeys = [
@@ -18,7 +32,15 @@ export const persistableKeys = [
   'reorderableKeys',
   'visibleMap',
   'chatInputVariation',
-  'sendMessageIcon'
+  'sendMessageIcon',
+  'iconType',
+  'iconShape',
+  'iconPosition',
+  'iconPositionOffsetX',
+  'iconPositionOffsetY',
+  'iconAnimation',
+  'platformOrder',
+  'platformVisibility'
 ];
 
 // Base initial state (without instance-specific fields)
@@ -57,6 +79,12 @@ const getInitialState = () => ({
     wpChatBranding: true
   },
   chatInputVariation: 'primary',
+  iconType: 'platform',
+  iconShape: 'circle',
+  iconPosition: 'right',
+  iconPositionOffsetX: 0,
+  iconPositionOffsetY: 0,
+  iconAnimation: 'none',
   frontendClassName: '',
   chatbotAvatar: 'juno',
   chatbotName: 'WPChat',
@@ -71,9 +99,12 @@ const getInitialState = () => ({
   isPreviewMode: false,
   reorder: false,
   availablePlatforms: null,
+  offHoursData: null,
   platformsLoading: true,
   widgetHeight: null,
   isRTL: false,
+  platformOrder: null,
+  platformVisibility: null,
 });
 
 /**
@@ -129,6 +160,12 @@ export function createChatStore(instanceId, instanceType) {
     setTheme: (value) => set({ theme: value }),
     setChatInputVariation: (value) => set({ chatInputVariation: value }),
     setChatInputSendIcon: (value) => set({ chatInputSendIcon: value }),
+    setIconType: (value) => set({ iconType: value }),
+    setIconShape: (value) => set({ iconShape: value }),
+    setIconPosition: (value) => set({ iconPosition: value }),
+    setIconPositionOffsetX: (value) => set({ iconPositionOffsetX: value }),
+    setIconPositionOffsetY: (value) => set({ iconPositionOffsetY: value }),
+    setIconAnimation: (value) => set({ iconAnimation: value }),
     setSearchBorder: (flag) => set({ searchBorder: flag }),
     setReorderableKeys: (keys) => set({ reorderableKeys: keys }),
     setVisibleMap: (map) => set({ visibleMap: map }),
@@ -160,9 +197,20 @@ export function createChatStore(instanceId, instanceType) {
     setIsPreviewMode: (flag) => set({ isPreviewMode: flag }),
     setReorder: (flag) => set({ reorder: flag }),
     setAvailablePlatforms: (platforms) => set({ availablePlatforms: platforms }),
+    setOffHoursData: (data) => set({ offHoursData: data }),
     setPlatformsLoading: (loading) => set({ platformsLoading: loading }),
+    setOffHoursData: (data) => set({ offHoursData: data }),
     setWidgetHeight: (height) => set({ widgetHeight: height }),
     setIsRTL: (flag) => set({ isRTL: flag }),
+    setPlatformOrder: (value) => set({ platformOrder: value }),
+    setPlatformVisibility: (value) => set({ platformVisibility: value }),
+    togglePlatformVisibility: (slug) => set((state) => ({
+      platformVisibility: { ...state.platformVisibility, [slug]: !state.platformVisibility?.[slug] },
+    })),
+    getActivePlatformSlugs: () => {
+      const { platformOrder, platformVisibility, availablePlatforms } = get();
+      return computeActivePlatformSlugs(platformOrder, platformVisibility, availablePlatforms);
+    },
 
     /**
      * Fetch and set available platforms.
@@ -183,9 +231,9 @@ export function createChatStore(instanceId, instanceType) {
       try {
         // Always fetch from API to get platforms with actual agent availability
         const { getAvailablePlatforms } = await import('@FDataStore/Chat/chatApi');
-        const platforms = await getAvailablePlatforms();
+        const { platforms, offHoursData } = await getAvailablePlatforms();
 
-        set({ availablePlatforms: platforms, platformsLoading: false });
+        set({ availablePlatforms: platforms, offHoursData, platformsLoading: false });
         return platforms;
       } catch (error) {
         console.error('Failed to fetch available platforms:', error);
@@ -197,7 +245,7 @@ export function createChatStore(instanceId, instanceType) {
         const fallbackPlatforms = Object.keys(enabledPlatforms).filter(p => enabledPlatforms[p]?.enabled);
         const platforms = fallbackPlatforms.length > 0 ? fallbackPlatforms : ['whatsapp'];
 
-        set({ availablePlatforms: platforms, platformsLoading: false });
+        set({ availablePlatforms: platforms, offHoursData: null, platformsLoading: false });
         return platforms;
       }
     },

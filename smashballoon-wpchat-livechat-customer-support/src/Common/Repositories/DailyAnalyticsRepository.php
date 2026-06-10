@@ -41,9 +41,10 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSummaryData(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					total_user_interactions,
@@ -60,8 +61,8 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				ORDER BY summary_date ASC",
 				$site_id,
 				$start_date,
@@ -69,6 +70,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}
@@ -78,9 +80,10 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getSinglePeriodSummary(int $site_id, string $date, $period_unit = null): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					site_id,
 					summary_date,
 					total_user_interactions,
@@ -97,13 +100,14 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 					created_at,
 					updated_at
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date = %s",
 				$site_id,
 				$date
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $result ?: [];
 	}
@@ -113,17 +117,19 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueUsersCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_users) as total_unique_users
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -133,17 +139,19 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getUniqueSessionsCount(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_var(
 			$this->wpdb->prepare(
 				"SELECT SUM(unique_sessions) as total_unique_sessions
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) ($result ?: 0);
 	}
@@ -153,9 +161,10 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getAggregatedTotals(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$result = $this->wpdb->get_row(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					SUM(total_user_interactions) as total_user_interactions,
 					SUM(total_redirects) as total_redirects,
 					SUM(total_bot_opens) as total_bot_opens,
@@ -169,7 +178,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 					AVG(conversion_rate) as avg_conversion_rate,
 					COUNT(DISTINCT summary_date) as active_days
 				FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
@@ -177,6 +186,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		if (!$result) {
 			return [
@@ -230,6 +240,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function upsertDailySummary(int $site_id, string $summary_date, array $data): bool
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$sql = $this->wpdb->prepare(
 			"INSERT INTO {$this->tableName} (
 				site_id,
@@ -281,6 +292,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 		);
 
 		return $this->wpdb->query($sql) !== false;
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 	}
 
 	/**
@@ -293,16 +305,18 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function deleteDailySummaries(int $site_id, string $start_date, string $end_date): int
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$affected_rows = $this->wpdb->query(
 			$this->wpdb->prepare(
 				"DELETE FROM {$this->tableName}
-				WHERE site_id = %d 
+				WHERE site_id = %d
 				AND summary_date BETWEEN %s AND %s",
 				$site_id,
 				$start_date,
 				$end_date
 			)
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return (int) $affected_rows;
 	}
@@ -317,9 +331,10 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 	 */
 	public function getDailySummariesWithTrend(int $site_id, string $start_date, string $end_date): array
 	{
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name is safe, constructed from $wpdb->prefix
 		$results = $this->wpdb->get_results(
 			$this->wpdb->prepare(
-				"SELECT 
+				"SELECT
 					summary_date,
 					total_interactions,
 					total_redirects,
@@ -331,8 +346,8 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 					LAG(total_redirects, 1) OVER (ORDER BY summary_date) as prev_redirects,
 					LAG(unique_users, 1) OVER (ORDER BY summary_date) as prev_unique_users
 				FROM {$this->tableName}
-				WHERE site_id = %d 
-				AND summary_date BETWEEN %s AND %s 
+				WHERE site_id = %d
+				AND summary_date BETWEEN %s AND %s
 				ORDER BY summary_date ASC",
 				$site_id,
 				$start_date,
@@ -340,6 +355,7 @@ class DailyAnalyticsRepository implements AnalyticsRepositoryInterface
 			),
 			ARRAY_A
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 		return $results ?: [];
 	}

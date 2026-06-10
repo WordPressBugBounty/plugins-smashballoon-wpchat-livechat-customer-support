@@ -2,6 +2,10 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
+if (!defined('ABSPATH')) {
+	exit;
+}
+
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\RestAPI\ChatPlatformEndpoint;
 use SmashBalloon\WPChat\Common\RestAPI\SettingsEndpoint;
