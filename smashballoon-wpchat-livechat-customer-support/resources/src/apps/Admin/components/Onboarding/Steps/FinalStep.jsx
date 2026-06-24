@@ -6,6 +6,7 @@ import SummaryCard from '../shared/SummaryCard';
 import UpgradePromoSection from '../shared/UpgradePromoSection';
 import LicenseSection from '../shared/LicenseSection';
 import NewsletterSection from '../shared/NewsletterSection';
+import DataSharingSection from '../shared/DataSharingSection';
 import { useLicenseActions } from '@AH/useLicenseActions';
 import { isPro } from '@Utils/isPro';
 
@@ -13,6 +14,7 @@ export default function FinalStep() {
   const {
     newsletterEmail,
     newsletterSubscribed,
+    dataSharingConsent,
     updateField
   } = useOnboardingStore();
 
@@ -102,6 +104,13 @@ export default function FinalStep() {
           newsletterSubscribed={newsletterSubscribed}
           onEmailChange={(email) => updateField('newsletterEmail', email)}
           onSubscribedChange={(subscribed) => updateField('newsletterSubscribed', subscribed)}
+        />
+      )}
+
+      {!isPro && (
+        <DataSharingSection
+          dataSharingConsent={dataSharingConsent}
+          onConsentChange={(val) => updateField('dataSharingConsent', val)}
         />
       )}
     </div>

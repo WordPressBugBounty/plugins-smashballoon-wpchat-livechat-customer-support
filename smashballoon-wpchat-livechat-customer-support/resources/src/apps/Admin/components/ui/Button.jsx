@@ -25,6 +25,8 @@ const button = tv({
         'wpchat:border wpchat:border-black/10 wpchat:bg-gray-50 wpchat:text-red-700 wpchat:shadow-black/10 wpchat:inset-shadow-white wpchat:hover:bg-gray-100 wpchat:active:inset-shadow-2xs wpchat:active:inset-shadow-black/5 wpchat:[&_svg]:!fill-red-700',
       error:
         'wpchat:border wpchat:border-red-700 wpchat:bg-red-700 wpchat:text-white wpchat:shadow-red-800/30 wpchat:inset-shadow-white/20 wpchat:hover:border-red-800 wpchat:hover:bg-red-800 wpchat:hover:shadow-red-800/20 wpchat:active:inset-shadow-xs wpchat:active:shadow-red-800/30 wpchat:active:inset-shadow-black/30 wpchat:[&_svg]:!fill-white',
+      amber:
+        'wpchat:border wpchat:border-amber-600 wpchat:bg-amber-600 wpchat:text-white wpchat:shadow-amber-800/30 wpchat:inset-shadow-white/20 wpchat:hover:border-amber-600 wpchat:hover:bg-amber-600 wpchat:hover:shadow-amber-800/20 wpchat:active:inset-shadow-xs wpchat:active:shadow-amber-800/30 wpchat:active:inset-shadow-black/30 wpchat:[&_svg]:!fill-white',
       noStyle: 'wpchat:border-0 wpchat:p-0 wpchat:shadow-none',
     },
     isDisabled: {

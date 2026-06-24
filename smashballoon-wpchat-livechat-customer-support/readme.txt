@@ -6,7 +6,7 @@ Author URI: https://wpchat.com
 Requires at least: 5.8
 Tested up to: 7.0
 Requires PHP: 8.0
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -243,6 +243,10 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.2 =
+* New: Rich-text (WYSIWYG) editing for funnel messages and FAQ answers, including an inline link editor.
+* Tweak: Off-hours messages now render HTML, so links and other markup display correctly.
 
 = 1.4.1 =
 * New: Added a Help widget for in-app access to documentation and support.

@@ -44,7 +44,7 @@ const useSettingsStore = create((set, get) => ({
       const response = await saveSettings(updatedData);
       if (response && response.status === 200) {
         set((state) => ({
-          settings: { ...state.settings, ...updatedData },
+          settings: state.settings ? { ...state.settings, ...updatedData } : null,
           saveStatus: 'success',
         }));
         return true;

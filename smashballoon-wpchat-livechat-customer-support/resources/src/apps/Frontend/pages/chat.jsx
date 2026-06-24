@@ -185,6 +185,7 @@ export default function Chat() {
           true,
           rootMessageObj.images,
           rootMessageObj.verifiedQuote,
+          rootMessageObj.allowHtml,
         );
 
         // Set the funnel message as the initial message

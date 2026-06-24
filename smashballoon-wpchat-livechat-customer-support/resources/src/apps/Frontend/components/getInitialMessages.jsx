@@ -27,10 +27,14 @@ export function getInitialMessages(availablePlatforms = null, offHoursData = nul
   // PlatformLinks which owns the loading + empty-state UX.
   if (!isStillLoading && platformsToShow.length === 0 && offHoursData) {
     return {
-      message: formatOffHoursMessage(offHoursData),
+      // Rendered as HTML (allowHtml) so filtered markup/mailto links show, but the
+      // default messages use plain `\n` breaks which HTML collapses — convert them
+      // to <br> so paragraph breaks survive.
+      message: formatOffHoursMessage(offHoursData).replace(/\n/g, '<br />'),
       type: 'text',
       messageType: 'receive',
       directAnswer: true,
+      allowHtml: true,
     };
   }
 

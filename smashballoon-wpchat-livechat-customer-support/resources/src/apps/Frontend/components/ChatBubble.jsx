@@ -5,6 +5,7 @@ import PlatformLinks from '@FC/PlatformLinks';
 import QRCodeMessage from '@FC/QRCodeMessage';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { getCurrentTime } from '@Utils/getCurrentTime';
+import { isRichTextEmpty } from '@Utils/isRichTextEmpty';
 
 /**
  * ChatBubble component represents an individual chat message bubble.
@@ -18,11 +19,12 @@ import { getCurrentTime } from '@Utils/getCurrentTime';
 function ChatBubble({ msg, setChatMessages }) {
   const chatbotAvatar = useChatStore((s) => s.chatbotAvatar);
   const chatbotName = useChatStore((s) => s.chatbotName);
+  const isPreviewMode = useChatStore((s) => s.isPreviewMode);
 
   if (!msg) return null;
 
   // Ensure showMsgOption is always defined
-  const { message, optionsList, messageType, images, verifiedQuote, displayTime: storedDisplayTime, type, data } = msg;
+  const { message, optionsList, messageType, images, verifiedQuote, displayTime: storedDisplayTime, type, data, allowHtml } = msg;
   const showOptions = msg.showMsgOption ?? true;
 
   const name = messageType === 'receive' ? chatbotName : __('You', 'smashballoon-wpchat-livechat-customer-support');
@@ -35,7 +37,37 @@ function ChatBubble({ msg, setChatMessages }) {
 
   if (type === 'qr_code' && data) {
     messageContent = <QRCodeMessage {...data} />;
+  } else if (allowHtml && typeof message === 'string') {
+    // Empty rich text (e.g. a cleared funnel message serialised to `<p></p>`)
+    // should render nothing rather than an empty bubble.
+    messageContent = isRichTextEmpty(message) ? null : (
+      // HTML here is server-sanitized via wp_kses_post (e.g. the
+      // wpchat_off_hours_message filter), so it's safe to render as markup.
+      <span
+        className='wpchat:[&_a]:text-widget-accent-1 wpchat:[&_a]:font-medium wpchat:[&_a]:underline wpchat:[&_a]:underline-offset-2 wpchat:[&_a]:transition-opacity wpchat:[&_a]:hover:opacity-80'
+        // In the admin previews (FAQ/funnel) this is only a mockup, so links
+        // shouldn't navigate away — block clicks on them in preview mode only.
+        onClick={
+          isPreviewMode
+            ? (e) => {
+                if (e.target.closest('a')) e.preventDefault();
+              }
+            : undefined
+        }
+        dangerouslySetInnerHTML={{ __html: message }}
+      />
+    );
   }
+
+  // Whether there is any message content worth rendering a bubble for. Treats
+  // empty rich text as no content so options/images still render without an
+  // empty text bubble.
+  const hasMessageContent =
+    type === 'qr_code'
+      ? !!data
+      : allowHtml && typeof message === 'string'
+        ? !isRichTextEmpty(message)
+        : !!message;
 
   const isImage =
     /\.(png|jpe?g|gif|webp|bmp|ico)$/i.test(chatbotAvatar) ||
@@ -91,7 +123,7 @@ function ChatBubble({ msg, setChatMessages }) {
         )}
       </div>
 
-      {(message || type) && (
+      {(hasMessageContent || images?.length > 0) && (
         <div
           className={`wpchat:rounded-2xl wpchat:px-3 wpchat:py-2 wpchat:text-base wpchat:break-words wpchat:whitespace-pre-line ${
             messageType === 'receive'

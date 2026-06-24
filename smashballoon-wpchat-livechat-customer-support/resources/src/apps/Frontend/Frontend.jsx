@@ -1,11 +1,12 @@
 import root from 'react-shadow';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import useFaqsStore from '@FDataStore/faqs/faqsStore';
 import PageRouter from '@FC/PageRouter';
 import PlatformIconsToggle from '@FC/PlatformIconsToggle';
+import { computeActivePlatformSlugs } from '@FDataStore/Chat/chatStoreFactory';
 import { logChatClose, logChatOpen, logFunnelAbandon } from '@FDataStore/Chat/analyticsApi';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { useTransitions } from '@Hooks/useTransitions';
@@ -75,7 +76,24 @@ function Frontend({ fixedHeight }) {
   const iconPositionOffsetY = useChatStore((s) => s.iconPositionOffsetY);
   const iconType = useChatStore((s) => s.iconType);
   const iconAnimation = useChatStore((s) => s.iconAnimation);
+  const platformOrder = useChatStore((s) => s.platformOrder);
+  const platformVisibility = useChatStore((s) => s.platformVisibility);
+  const availablePlatforms = useChatStore((s) => s.availablePlatforms);
   const isEditingIconPanel = useIsEditingPanel('icon');
+
+  // When "Platform Icons" is selected but no platforms are available — e.g. all
+  // agents are off-hours and the off-hours rule is "Disable contact option" —
+  // PlatformIconsToggle renders nothing, leaving the visitor with no way to open
+  // the widget. Fall back to the custom icon so the toggle stays reachable.
+  // availablePlatforms is null until fetched, so only fall back once it has
+  // resolved to an empty set (avoids flashing the custom icon while loading).
+  const activePlatformSlugs = useMemo(
+    () => computeActivePlatformSlugs(platformOrder, platformVisibility, availablePlatforms),
+    [platformOrder, platformVisibility, availablePlatforms],
+  );
+  const noPlatformsAvailable = availablePlatforms !== null && activePlatformSlugs.length === 0;
+  const effectiveIconType =
+    iconType === 'platform' && noPlatformsAvailable && !isPreviewMode ? 'custom' : iconType;
   const [isOpen, setIsOpen] = useState(showChat ? showChat : false);
   const [lastEscapeTime, setLastEscapeTime] = useState(0);
 
@@ -196,7 +214,7 @@ function Frontend({ fixedHeight }) {
               initial: { opacity: 1 },
               animate: { opacity: 1 },
             }
-          : iconType === 'platform'
+          : effectiveIconType === 'platform'
             ? {
                 initial: { scale: 0.95, y: 10, opacity: 0, display: 'none' },
                 animate: isOpen
@@ -272,7 +290,7 @@ function Frontend({ fixedHeight }) {
 
       {/* Chat Toggle Button */}
       {showChatToggle && (
-        iconType === 'platform' ? (
+        effectiveIconType === 'platform' ? (
           <PlatformIconsToggle
             isOpen={isOpen}
             onToggle={handleChatToggle}

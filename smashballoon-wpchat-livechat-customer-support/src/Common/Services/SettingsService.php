@@ -3,6 +3,7 @@
 namespace SmashBalloon\WPChat\Common\Services;
 
 use SmashBalloon\WPChat\Common\Helpers\Logger;
+use SmashBalloon\WPChat\Common\Helpers\Utility;
 
 use SmashBalloon\WPChat\Common\Contracts\ServiceProviderInterface;
 use SmashBalloon\WPChat\Common\Repositories\OptionsRepository;
@@ -14,8 +15,8 @@ use SmashBalloon\WPChat\Common\Services\SettingsMigrationService;
  *
  * @package WPChat\Common\Services
  */
-class SettingsService implements ServiceProviderInterface
-{
+class SettingsService implements ServiceProviderInterface {
+
 	/**
 	 * The repository instance used for managing settings data.
 	 *
@@ -57,8 +58,7 @@ class SettingsService implements ServiceProviderInterface
 	/**
 	 * @inheritDoc
 	 */
-	public function register(): void
-	{
+	public function register(): void {
 	}
 
 	/**
@@ -66,49 +66,70 @@ class SettingsService implements ServiceProviderInterface
 	 *
 	 * @return array Associative array of chat service settings.
 	 */
-	public function getAllSettings(): array
-	{
-		$defaults = [
+	public function getAllSettings(): array {
+		$isPro = Utility::isProBuild();
+		$defaults = array(
 			'onboardingStatus' => false,
 			'proUpsellStatus' => false,
 			'preserveSettings' => false,
 			'smartSearchEnabled' => true,
 			'claimOfferTokenAmount' => 5000,
-			'agentSettings' => [
+			'notificationsEnabled' => $isPro,
+			'dataSharingConsent' => $isPro,
+			'dataSharingConsentDismissed' => false,
+			'agentSettings' => array(
 				'timings' => false,
-				'platforms' => [
-					'whatsapp' => ['enabled' => true, 'value' => ''],
-					'telegram' => ['enabled' => true, 'value' => ''],
-					'instagram' => ['enabled' => true, 'value' => ''],
-					'messenger' => ['enabled' => true, 'value' => ''],
-					'sms' => ['enabled' => true, 'value' => ''],
-					'phone' => ['enabled' => true, 'value' => ''],
-				],
+				'platforms' => array(
+					'whatsapp'  => array(
+						'enabled' => true,
+						'value'   => '',
+					),
+					'telegram'  => array(
+						'enabled' => true,
+						'value'   => '',
+					),
+					'instagram' => array(
+						'enabled' => true,
+						'value'   => '',
+					),
+					'messenger' => array(
+						'enabled' => true,
+						'value'   => '',
+					),
+					'sms'       => array(
+						'enabled' => false,
+						'value'   => '',
+					),
+					'phone'     => array(
+						'enabled' => false,
+						'value'   => '',
+					),
+				),
 				'offHoursRule' => 'disable',
 				'selectedOffHoursAgent' => '',
-			],
-			'visibilitySettings' => [
+			),
+			'visibilitySettings' => array(
 				'mode' => 'include',
-				'include' => [
-					'pages' => [],
-					'categories' => [],
-					'tags' => [],
-					'postTypes' => []
-				],
-				'exclude' => [
-					'pages' => [],
-					'categories' => [],
-					'tags' => [],
-					'postTypes' => []
-				]
-			],
-			'customizerSettings' => [
+				'include' => array(
+					'pages' => array(),
+					'categories' => array(),
+					'tags' => array(),
+					'postTypes' => array()
+				),
+				'exclude' => array(
+					'pages' => array(),
+					'categories' => array(),
+					'tags' => array(),
+					'postTypes' => array()
+				)
+			),
+			'customizerSettings' => array(
 				'theme' => 'basic',
 				'chatToggleIcon' => 'chatBubbleLogo',
-				'headerHeading' => __('How can we help you?', 'smashballoon-wpchat-livechat-customer-support'),
-				'sendMessageHeading' => __('Send us a message', 'smashballoon-wpchat-livechat-customer-support'),
-				'sendMessageSubHeading' => __('on a platform of your choice', 'smashballoon-wpchat-livechat-customer-support'),
-				'faqHeading' => __('Frequently Asked Questions', 'smashballoon-wpchat-livechat-customer-support'),
+				'headerHeading' => __( 'How can we help you?', 'smashballoon-wpchat-livechat-customer-support' ),
+				'sendMessageHeading' => __( 'Send us a message', 'smashballoon-wpchat-livechat-customer-support' ),
+				'sendMessageSubHeading' => __( 'on a platform of your choice', 'smashballoon-wpchat-livechat-customer-support' ),
+				'faqHeading' => __( 'Frequently Asked Questions', 'smashballoon-wpchat-livechat-customer-support' ),
 				'chatbotAvatar' => 'wpChat',
 				'chatbotName' => 'WPChat',
 				'chatbotCustomAvatar' => '',
@@ -130,16 +151,25 @@ class SettingsService implements ServiceProviderInterface
 				'iconAnimation' => 'none',
 				'platformOrder' => null,
 				'platformVisibility' => null,
-			],
-		];
+			),
+		);
 		$stored_settings = $this->repository->getSettings();
-		$merged_settings = wp_parse_args($stored_settings, $defaults);
+		$merged_settings = wp_parse_args( $stored_settings, $defaults );
 
-		$merged_settings = $this->settingsMigration->migrate($merged_settings, $stored_settings);
+		$merged_settings = $this->settingsMigration->migrate( $merged_settings, $stored_settings );
 
 		// Normalize platforms to new format - idempotent, runs on every read
 		// TODO: Remove this migration code in version 3.0.0
-		$merged_settings = $this->normalizePlatformsStructure($merged_settings, $stored_settings);
+		$merged_settings = $this->normalizePlatformsStructure( $merged_settings, $stored_settings );
+
+		// Pro always opts into telemetry and in-plugin notifications. Override at
+		// read time only - the stored option is left exactly as the user set it
+		// (see updateSettings()/updateSetting(), which ignore writes to these keys
+		// for Pro), so downgrading restores the previous choice.
+		if ( $isPro ) {
+			$merged_settings['dataSharingConsent']  = true;
+			$merged_settings['notificationsEnabled'] = true;
+		}
 
 		return $merged_settings;
 	}
@@ -157,32 +187,34 @@ class SettingsService implements ServiceProviderInterface
 	 * @param array $stored   The raw stored settings (to check for legacy whatsAppPhoneNumber).
 	 * @return array Normalized settings.
 	 */
-	private function normalizePlatformsStructure(array $settings, array $stored): array
-	{
-		if (!isset($settings['agentSettings']['platforms'])) {
+	private function normalizePlatformsStructure(array $settings, array $stored): array {
+		if ( ! isset( $settings['agentSettings']['platforms'] ) ) {
 			return $settings;
 		}
 
-		$legacyWhatsApp = isset($stored['whatsAppPhoneNumber']) ? $stored['whatsAppPhoneNumber'] : '';
+		$legacyWhatsApp = isset( $stored['whatsAppPhoneNumber'] ) ? $stored['whatsAppPhoneNumber'] : '';
 		$platforms = $settings['agentSettings']['platforms'];
 
 		// Quick check: skip if already normalized and no legacy data
-		if (!$legacyWhatsApp && $this->isPlatformsNormalized($platforms)) {
+		if ( ! $legacyWhatsApp && $this->isPlatformsNormalized( $platforms ) ) {
 			return $settings;
 		}
 
 		// Normalize each platform
-		$normalized = [];
-		foreach ($platforms as $id => $platform) {
-			if (is_array($platform) && isset($platform['enabled'])) {
-				$normalized[$id] = $platform;
-			} elseif (is_bool($platform)) {
-				$normalized[$id] = [
+		$normalized = array();
+		foreach ( $platforms as $id => $platform ) {
+			if ( is_array( $platform ) && isset( $platform['enabled'] ) ) {
+				$normalized[ $id ] = $platform;
+			} elseif ( is_bool( $platform ) ) {
+				$normalized[ $id ] = array(
 					'enabled' => $platform,
 					'value' => ($id === 'whatsapp' && $legacyWhatsApp) ? $legacyWhatsApp : ''
-				];
+				);
 			} else {
-				$normalized[$id] = ['enabled' => false, 'value' => ''];
+				$normalized[ $id ] = array(
+'enabled' => false,
+'value' => ''
+);
 			}
 		}
 
@@ -196,10 +228,9 @@ class SettingsService implements ServiceProviderInterface
 	 * @param array $platforms The platforms array to check.
 	 * @return bool True if all platforms are normalized.
 	 */
-	private function isPlatformsNormalized(array $platforms): bool
-	{
-		foreach ($platforms as $platform) {
-			if (!is_array($platform) || !isset($platform['enabled'])) {
+	private function isPlatformsNormalized(array $platforms): bool {
+		foreach ( $platforms as $platform ) {
+			if ( ! is_array( $platform ) || ! isset( $platform['enabled'] ) ) {
 				return false;
 			}
 		}
@@ -216,13 +247,26 @@ class SettingsService implements ServiceProviderInterface
 	 * @param mixed  $value The new value to assign to the setting.
 	 * @return bool Returns true if the settings were successfully updated, false otherwise.
 	 */
-	public function updateSetting(string $key, $value): bool
-	{
+	public function updateSetting(string $key, $value): bool {
+		// Pro forces these on at read time, so persisting UI changes to them would
+		// only desync the stored value from what is actually in effect. No-op.
+		if ( Utility::isProBuild() && in_array( $key, array( 'dataSharingConsent', 'notificationsEnabled' ), true ) ) {
+			return true;
+		}
+
 		$settings = $this->repository->getSettings();
-		$settings[$key] = $value;
-		$result = $this->repository->updateSettings($settings);
-		if ($result) {
-			do_action('wpchat_settings_updated', $settings);
+		$settings[ $key ] = $value;
+
+		// Mirror the coupling in updateSettings(): enabling data sharing consent
+		// forces in-plugin notifications on, so the single-key endpoint can't
+		// leave the two in an inconsistent state.
+		if ( 'dataSharingConsent' === $key && true === $value ) {
+			$settings['notificationsEnabled'] = true;
+		}
+
+		$result = $this->repository->updateSettings( $settings );
+		if ( $result ) {
+			do_action( 'wpchat_settings_updated', $settings );
 		}
 		return $result;
 	}
@@ -234,21 +278,35 @@ class SettingsService implements ServiceProviderInterface
 	 *
 	 * @return bool Returns true if the settings were successfully updated, false otherwise.
 	 */
-	public function updateSettings(array $settings): bool
-	{
+	public function updateSettings(array $settings): bool {
 		$currentSettings = $this->repository->getSettings();
+
+		// Pro forces telemetry + in-plugin notifications on at read time, so never
+		// persist UI changes to these keys - the stored value stays exactly as the
+		// user left it before upgrading.
+		if ( Utility::isProBuild() ) {
+			unset( $settings['dataSharingConsent'], $settings['notificationsEnabled'] );
+		}
+
+		// If data sharing consent is being enabled, force notifications on.
+		if ( isset( $settings['dataSharingConsent'] ) && $settings['dataSharingConsent'] === true ) {
+			$settings['notificationsEnabled'] = true;
+		}
 
 		// Check if this is the onboarding completion (status changing from false to true).
 		if (
-			isset($settings['onboardingStatus']) && $settings['onboardingStatus'] === true &&
-			(!isset($currentSettings['onboardingStatus']) || $currentSettings['onboardingStatus'] === false)
+			isset( $settings['onboardingStatus'] ) && $settings['onboardingStatus'] === true &&
+			( ! isset( $currentSettings['onboardingStatus'] ) || $currentSettings['onboardingStatus'] === false)
 		) {
-			$this->createDefaultAgent($settings);
+			$this->createDefaultAgent( $settings );
 		}
 
-		$result = $this->repository->updateSettings($settings);
-		if ($result) {
-			do_action('wpchat_settings_updated', $settings);
+		// Merge with existing settings so partial updates don't overwrite unrelated keys.
+		$mergedSettings = array_merge( $currentSettings, $settings );
+
+		$result = $this->repository->updateSettings( $mergedSettings );
+		if ( $result ) {
+			do_action( 'wpchat_settings_updated', $mergedSettings );
 		}
 		return $result;
 	}
@@ -258,8 +316,7 @@ class SettingsService implements ServiceProviderInterface
 	 *
 	 * @return bool Returns true if the settings were successfully deleted, false otherwise.
 	 */
-	public function deleteSettings(): bool
-	{
+	public function deleteSettings(): bool {
 		return $this->repository->deleteSettings();
 	}
 
@@ -269,37 +326,36 @@ class SettingsService implements ServiceProviderInterface
 	 * @param array $settings The current settings array.
 	 * @return void
 	 */
-	private function createDefaultAgent(array $settings): void
-	{
+	private function createDefaultAgent(array $settings): void {
 		$existingAgents = $this->agentsService->getAllAgents();
-		if (empty($existingAgents)) {
-			$siteName = get_bloginfo('name');
+		if ( empty( $existingAgents ) ) {
+			$siteName = get_bloginfo( 'name' );
 
 			// Build platforms array from agentSettings.platforms.
-			$platforms = [];
+			$platforms = array();
 
-			if (isset($settings['agentSettings']['platforms']) && is_array($settings['agentSettings']['platforms'])) {
-				foreach ($settings['agentSettings']['platforms'] as $platformId => $platform) {
+			if ( isset( $settings['agentSettings']['platforms'] ) && is_array( $settings['agentSettings']['platforms'] ) ) {
+				foreach ( $settings['agentSettings']['platforms'] as $platformId => $platform ) {
 					// Assume new format: ['enabled' => true, 'value' => '+123']
-					if (isset($platform['enabled']) && $platform['enabled'] && !empty($platform['value'])) {
-						$platforms[$platformId] = $platform['value'];
+					if ( isset( $platform['enabled'] ) && $platform['enabled'] && ! empty( $platform['value'] ) ) {
+						$platforms[ $platformId ] = $platform['value'];
 					}
 				}
 			}
 
 			// Only create agent if we have at least one platform
-			if (!empty($platforms)) {
-				$defaultAgent = [
+			if ( ! empty( $platforms ) ) {
+				$defaultAgent = array(
 					'name' => $siteName,
-					'platforms' => wp_json_encode($platforms),
+					'platforms' => wp_json_encode( $platforms ),
 					'status' => 1,
 					'avatar' => '',
-				];
+				);
 
-				$agentId = $this->agentsService->addAgent($defaultAgent);
-				if (!$agentId) {
+				$agentId = $this->agentsService->addAgent( $defaultAgent );
+				if ( ! $agentId ) {
 					// Log the error but don't fail the settings save operation
-					Logger::error('Failed to create default agent during settings save');
+					Logger::error( 'Failed to create default agent during settings save' );
 				}
 			}
 		}

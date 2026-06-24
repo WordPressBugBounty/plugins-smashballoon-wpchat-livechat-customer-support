@@ -16,8 +16,8 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: wp-chat.php
-#: src/Common/Services/AdminPagesService.php:81
-#: src/Common/Services/AdminPagesService.php:82
+#: src/Common/Services/AdminPagesService.php:78
+#: src/Common/Services/AdminPagesService.php:79
 #: resources/src/apps/Admin/pages/Customizer/Panels/AssistantAvatarPanel.jsx:51
 #: resources/src/apps/Admin/pages/Customizer/Panels/AssistantAvatarPanel.jsx:52
 msgid "WPChat"
@@ -44,18 +44,18 @@ msgid "https://smashballoon.com"
 msgstr ""
 
 #. translators: 1: Timezone name, 2: UTC offset
-#: src/Common/Helpers/Utility.php:42
+#: src/Common/Helpers/Utility.php:54
 #, php-format
 msgid "%1$s (UTC%2$s)"
 msgstr ""
 
 #. translators: %s: UTC offset
-#: src/Common/Helpers/Utility.php:58
+#: src/Common/Helpers/Utility.php:70
 #, php-format
 msgid "UTC%s"
 msgstr ""
 
-#: src/Common/Helpers/Utility.php:62
+#: src/Common/Helpers/Utility.php:74
 msgid "UTC+0:00"
 msgstr ""
 
@@ -431,145 +431,145 @@ msgstr ""
 msgid "[WPC-AUTH-001] Invalid security token. Please refresh the page and try again"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:144
+#: src/Common/RestAPI/SettingsEndpoint.php:140
 msgid "[WPC-VAL-002] Invalid settings data provided. Must be an associative array"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:153
+#: src/Common/RestAPI/SettingsEndpoint.php:150
 msgid "Settings updated successfully"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:159
+#: src/Common/RestAPI/SettingsEndpoint.php:157
 msgid "[WPC-SET-001] Failed to update settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:179
+#: src/Common/RestAPI/SettingsEndpoint.php:176
 msgid "[WPC-VAL-001] Setting key is required"
 msgstr ""
 
 #. translators: %s: Setting key name
-#: src/Common/RestAPI/SettingsEndpoint.php:190
+#: src/Common/RestAPI/SettingsEndpoint.php:187
 #, php-format
 msgid "[WPC-VAL-002] Invalid value for setting key: %s"
 msgstr ""
 
 #. translators: %s: Setting key name
-#: src/Common/RestAPI/SettingsEndpoint.php:198
+#: src/Common/RestAPI/SettingsEndpoint.php:196
 #, php-format
 msgid "Setting \"%s\" updated successfully"
 msgstr ""
 
 #. translators: %s: Setting key name
-#: src/Common/RestAPI/SettingsEndpoint.php:205
+#: src/Common/RestAPI/SettingsEndpoint.php:204
 #, php-format
 msgid "[WPC-SET-001] Failed to update setting \"%s\""
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:222
+#: src/Common/RestAPI/SettingsEndpoint.php:220
 msgid "Preserve settings setting"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:226
+#: src/Common/RestAPI/SettingsEndpoint.php:224
 msgid "Onboarding status setting"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:230
+#: src/Common/RestAPI/SettingsEndpoint.php:228
 msgid "FAQ onboarding status"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:234
+#: src/Common/RestAPI/SettingsEndpoint.php:232
 msgid "Pro upsell banner status"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:238
+#: src/Common/RestAPI/SettingsEndpoint.php:236
 msgid "Smart search enabled status"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:242
+#: src/Common/RestAPI/SettingsEndpoint.php:248
 msgid "Agent settings including timings and platforms"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:246
+#: src/Common/RestAPI/SettingsEndpoint.php:252
 msgid "Agent timing settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:250
+#: src/Common/RestAPI/SettingsEndpoint.php:256
 msgid "Agent platform settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:256
+#: src/Common/RestAPI/SettingsEndpoint.php:262
 msgid "Visibility settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:260
+#: src/Common/RestAPI/SettingsEndpoint.php:266
 msgid "Visibility mode (include/exclude)"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:264
+#: src/Common/RestAPI/SettingsEndpoint.php:270
 msgid "Include settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:268
+#: src/Common/RestAPI/SettingsEndpoint.php:274
 msgid "Exclude settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:274
+#: src/Common/RestAPI/SettingsEndpoint.php:280
 msgid "Customizer settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:278
+#: src/Common/RestAPI/SettingsEndpoint.php:284
 msgid "Theme settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:282
+#: src/Common/RestAPI/SettingsEndpoint.php:288
 msgid "Header heading settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:286
+#: src/Common/RestAPI/SettingsEndpoint.php:292
 msgid "Send message settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:290
+#: src/Common/RestAPI/SettingsEndpoint.php:296
 msgid "Send message heading settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:294
+#: src/Common/RestAPI/SettingsEndpoint.php:300
 msgid "Send message sub heading settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:298
+#: src/Common/RestAPI/SettingsEndpoint.php:304
 msgid "FAQ Heading settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:302
+#: src/Common/RestAPI/SettingsEndpoint.php:308
 msgid "Chatbot Avatar settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:306
+#: src/Common/RestAPI/SettingsEndpoint.php:312
 msgid "Chatbot Custom Avatar settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:310
+#: src/Common/RestAPI/SettingsEndpoint.php:316
 msgid "Chatbot Name settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:314
+#: src/Common/RestAPI/SettingsEndpoint.php:320
 msgid "Chatbot Custom Name settings"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:318
+#: src/Common/RestAPI/SettingsEndpoint.php:324
 msgid "Brand color (Hue value)"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:325
+#: src/Common/RestAPI/SettingsEndpoint.php:331
 msgid "Keys of reorderable sections"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:329
+#: src/Common/RestAPI/SettingsEndpoint.php:335
 msgid "Map of visible sections"
 msgstr ""
 
-#: src/Common/RestAPI/SettingsEndpoint.php:333
+#: src/Common/RestAPI/SettingsEndpoint.php:339
 msgid "Chat input variation"
 msgstr ""
 
@@ -638,13 +638,13 @@ msgstr ""
 msgid "Additional data to send with both registration and newsletter subscription."
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:93
-#: src/Common/Services/AdminPagesService.php:94
+#: src/Common/Services/AdminPagesService.php:90
+#: src/Common/Services/AdminPagesService.php:91
 msgid "Overview"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:106
-#: src/Common/Services/AdminPagesService.php:107
+#: src/Common/Services/AdminPagesService.php:103
+#: src/Common/Services/AdminPagesService.php:104
 #: resources/src/apps/Admin/components/Dashboard/FeatureCards.jsx:10
 #: resources/src/apps/Admin/pages/Customizer/Panels/FAQPanel.jsx:42
 #: resources/src/apps/Admin/pages/Customizer/Panels/SendMessagePanel.jsx:40
@@ -655,13 +655,13 @@ msgstr ""
 msgid "Visibility"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:115
-#: src/Common/Services/AdminPagesService.php:116
+#: src/Common/Services/AdminPagesService.php:112
+#: src/Common/Services/AdminPagesService.php:113
 msgid "Customizer"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:125
-#: src/Common/Services/AdminPagesService.php:126
+#: src/Common/Services/AdminPagesService.php:122
+#: src/Common/Services/AdminPagesService.php:123
 #: resources/src/apps/Admin/components/Dashboard/FeatureCards.jsx:16
 #: resources/src/apps/Admin/pages/Agent/Agent.jsx:113
 #: resources/src/apps/Admin/pages/Agent/AgentSettings.jsx:163
@@ -669,51 +669,52 @@ msgstr ""
 msgid "Agents"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:134
-#: src/Common/Services/AdminPagesService.php:135
+#: src/Common/Services/AdminPagesService.php:131
+#: src/Common/Services/AdminPagesService.php:132
 #: resources/src/apps/Admin/components/Analytics/FrequentQuestions.jsx:54
 #: resources/src/apps/Admin/components/Dashboard/FeatureCards.jsx:28
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:201
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:68
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:202
 msgid "Frequent Questions"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:143
-#: src/Common/Services/AdminPagesService.php:144
+#: src/Common/Services/AdminPagesService.php:140
+#: src/Common/Services/AdminPagesService.php:141
 #: resources/src/apps/Admin/components/Dashboard/FeatureCards.jsx:22
 #: resources/src/apps/Admin/components/Onboarding/Steps/ConfigureFeatures.jsx:71
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:142
 #: resources/src/apps/Admin/pages/Funnel/FunnelWelcome.jsx:62
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:217
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:221
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:141
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelVisibility.jsx:116
 msgid "Chat Funnels"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:152
-#: src/Common/Services/AdminPagesService.php:153
+#: src/Common/Services/AdminPagesService.php:149
+#: src/Common/Services/AdminPagesService.php:150
 #: resources/src/apps/Admin/pages/Agent/AgentSettings.jsx:164
-#: resources/src/apps/Admin/pages/Settings.jsx:307
+#: resources/src/apps/Admin/pages/Settings.jsx:325
 msgid "Settings"
 msgstr ""
 
-#: src/Common/Services/AdminPagesService.php:161
-#: src/Common/Services/AdminPagesService.php:162
+#: src/Common/Services/AdminPagesService.php:158
+#: src/Common/Services/AdminPagesService.php:159
 #: resources/src/apps/Admin/pages/Support/Support.jsx:47
 #: resources/src/pro/apps/Admin/components/Funnels/OptionLink.jsx:73
 msgid "Support"
 msgstr ""
 
+#: src/Common/Services/AdminPagesService.php:168
 #: src/Common/Services/AdminPagesService.php:171
-#: src/Common/Services/AdminPagesService.php:173
 #: resources/src/apps/Admin/components/Faq/FaqToken.jsx:382
-#: resources/src/apps/Admin/components/HeaderLayout.jsx:45
+#: resources/src/apps/Admin/components/HeaderLayout.jsx:47
 #: resources/src/apps/Admin/components/UpgradeToPro.jsx:34
 #: resources/src/apps/Admin/components/UpgradeToProBlurNotice.jsx:209
 #: resources/src/apps/Admin/components/UpgradeToProNotice.jsx:74
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:115
 #: resources/src/apps/Admin/pages/Funnel/FunnelWelcome.jsx:100
-#: resources/src/apps/Admin/pages/Settings.jsx:254
-#: resources/src/apps/Admin/pages/Settings.jsx:463
+#: resources/src/apps/Admin/pages/Settings.jsx:271
+#: resources/src/apps/Admin/pages/Settings.jsx:481
 #: resources/src/apps/Admin/utils/upgradeDialogs.js:33
 msgid "Upgrade"
 msgstr ""
@@ -1114,11 +1115,11 @@ msgstr ""
 msgid "License status check failed: %s"
 msgstr ""
 
-#: src/Common/Services/PluginActivationService.php:154
+#: src/Common/Services/PluginActivationService.php:152
 msgid "WPChat Free and WPChat Pro cannot both be active. We've automatically deactivated WPChat Free."
 msgstr ""
 
-#: src/Common/Services/PluginActivationService.php:156
+#: src/Common/Services/PluginActivationService.php:154
 msgid "WPChat Free and WPChat Pro cannot both be active. We've automatically deactivated WPChat Pro."
 msgstr ""
 
@@ -1167,7 +1168,7 @@ msgstr ""
 msgid "Failed to install Pro plugin: %s"
 msgstr ""
 
-#: src/Common/Services/SettingsService.php:108
+#: src/Common/Services/SettingsService.php:129
 #: resources/src/apps/Admin/pages/Customizer/Panels/HeaderPanel.jsx:23
 #: resources/src/apps/Admin/pages/Customizer/Panels/SendMessagePanel.jsx:80
 #: resources/src/apps/Admin/pages/Customizer/Panels/TalkToAiPanel.jsx:36
@@ -1175,19 +1176,19 @@ msgstr ""
 msgid "How can we help you?"
 msgstr "كيف يمكننا تقديم المساعدة؟"
 
-#: src/Common/Services/SettingsService.php:109
+#: src/Common/Services/SettingsService.php:130
 #: resources/src/apps/Admin/pages/Customizer/Panels/SendMessagePanel.jsx:68
 #: resources/src/apps/Admin/pages/Customizer/Panels/TalkToAiPanel.jsx:24
 #: resources/src/apps/Frontend/data/Chat/chatStoreFactory.js:66
 msgid "Send us a message"
 msgstr "تواصل معنا"
 
-#: src/Common/Services/SettingsService.php:110
+#: src/Common/Services/SettingsService.php:131
 #: resources/src/apps/Frontend/data/Chat/chatStoreFactory.js:67
 msgid "on a platform of your choice"
 msgstr "عبر منصتك المفضلة"
 
-#: src/Common/Services/SettingsService.php:111
+#: src/Common/Services/SettingsService.php:132
 #: resources/src/apps/Admin/components/Onboarding/Steps/ConfigureFeatures.jsx:29
 #: resources/src/apps/Admin/pages/Customizer/Panels/FAQPanel.jsx:56
 #: resources/src/apps/Frontend/data/Chat/chatStoreFactory.js:71
@@ -1280,7 +1281,7 @@ msgid "No funnel IDs provided."
 msgstr ""
 
 #: src/Pro/Services/Database/FunnelsService.php:131
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:138
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:142
 msgid "Name is required."
 msgstr ""
 
@@ -1358,11 +1359,12 @@ msgid "These are platforms customers will get in touch with"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Agent/AgentSingleItem.jsx:109
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:729
 #: resources/src/apps/Admin/pages/Agent/AgentSingle.jsx:231
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:277
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:282
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:216
 #: resources/src/pro/apps/Admin/components/Funnels/VisibilityTags.jsx:80
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:239
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:243
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:163
 msgid "Edit"
 msgstr ""
@@ -1372,7 +1374,7 @@ msgid "You cannot delete the only agent"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Agent/AgentSingleItem.jsx:135
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:313
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:318
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:250
 msgid "Delete"
 msgstr ""
@@ -1641,6 +1643,7 @@ msgid "Bulk Action"
 msgstr ""
 
 #: resources/src/apps/Admin/components/BulkActionSelect.jsx:38
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:702
 msgid "Apply"
 msgstr ""
 
@@ -1698,11 +1701,11 @@ msgstr ""
 
 #: resources/src/apps/Admin/components/Dashboard/OverviewCard.jsx:137
 #: resources/src/apps/Admin/components/Dashboard/OverviewCard.jsx:163
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:194
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:192
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:383
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:195
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:193
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:388
 #: resources/src/apps/Frontend/components/ChatSubSection.jsx:36
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:353
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:357
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:126
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:130
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:249
@@ -1716,12 +1719,14 @@ msgid "Visibility Settings"
 msgstr ""
 
 #: resources/src/apps/Admin/components/DefaultModal.jsx:46
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:699
 #: resources/src/apps/Admin/pages/Agent/AgentSingle.jsx:218
 #: resources/src/apps/Admin/pages/Faq/FaqSingle.jsx:216
 #: resources/src/pro/apps/Admin/components/Funnels/OptionEditor.jsx:109
 msgid "Cancel"
 msgstr ""
 
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:19
 #: resources/src/apps/Admin/components/DefaultModal.jsx:84
 #: resources/src/apps/Admin/components/Onboarding/ProFeaturesModal.jsx:71
 #: resources/src/apps/Admin/pages/Customizer/Customizer.jsx:129
@@ -1761,32 +1766,32 @@ msgstr ""
 msgid "Get faster responses from our support team."
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:115
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:117
 msgid "A preview of your question will appear here"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:149
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:228
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:153
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:229
 msgid "Question"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:151
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:155
 msgid "Your question"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:164
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:168
 msgid "Answer"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:165
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:169
 msgid "Add an answer to your question here"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:182
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:183
 msgid "Image"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:195
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:196
 msgid "How your FAQ will look like in the chatbot"
 msgstr ""
 
@@ -1909,7 +1914,7 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: resources/src/apps/Admin/components/HeaderLayout.jsx:39
+#: resources/src/apps/Admin/components/HeaderLayout.jsx:41
 msgid "You Are using WPChat Lite. Unlock more features when you upgrade"
 msgstr ""
 
@@ -2056,17 +2061,17 @@ msgid "Email"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Onboarding/shared/SummaryCard.jsx:8
-#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:36
+#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:38
 msgid "Add a Whatsapp number"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Onboarding/shared/SummaryCard.jsx:9
-#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:37
+#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:39
 msgid "Configure theme"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Onboarding/shared/SummaryCard.jsx:10
-#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:38
+#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:40
 msgid "Set up website visibility"
 msgstr ""
 
@@ -2162,11 +2167,11 @@ msgstr ""
 msgid "Configure features"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:78
+#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:80
 msgid "Already have a license key?"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:79
+#: resources/src/apps/Admin/components/Onboarding/Steps/FinalStep.jsx:81
 msgid "Upgrade in a single click by adding your license key below"
 msgstr ""
 
@@ -2175,6 +2180,7 @@ msgid "Phone number is not valid"
 msgstr ""
 
 #: resources/src/apps/Admin/components/Onboarding/Steps/SelectTheme.jsx:76
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:13
 msgid "Theme"
 msgstr ""
 
@@ -2270,7 +2276,8 @@ msgstr ""
 msgid "Start typing to search for a page, category, tag or custom post type."
 msgstr ""
 
-#: resources/src/apps/Admin/components/ui/TextField.jsx:112
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:606
+#: resources/src/apps/Admin/components/ui/TextField.jsx:119
 #, js-format
 msgid "%1$d/%2$d characters"
 msgstr ""
@@ -2544,7 +2551,7 @@ msgid "Invalid"
 msgstr ""
 
 #: resources/src/apps/Admin/data/license/licenseApi.js:249
-#: resources/src/apps/Admin/pages/Settings.jsx:111
+#: resources/src/apps/Admin/pages/Settings.jsx:116
 msgid "Lite"
 msgstr ""
 
@@ -2558,12 +2565,12 @@ msgid "Failed to deactivate license"
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:46
-#: resources/src/apps/Admin/pages/Settings.jsx:205
+#: resources/src/apps/Admin/pages/Settings.jsx:222
 msgid "Please enter a license key"
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:60
-#: resources/src/apps/Admin/pages/Settings.jsx:218
+#: resources/src/apps/Admin/pages/Settings.jsx:235
 msgid "Upgrading to WPChat Pro..."
 msgstr ""
 
@@ -2573,28 +2580,28 @@ msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:101
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:105
-#: resources/src/apps/Admin/pages/Settings.jsx:240
-#: resources/src/apps/Admin/pages/Settings.jsx:244
+#: resources/src/apps/Admin/pages/Settings.jsx:257
+#: resources/src/apps/Admin/pages/Settings.jsx:261
 msgid "Upgrading to Pro..."
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:106
-#: resources/src/apps/Admin/pages/Settings.jsx:245
+#: resources/src/apps/Admin/pages/Settings.jsx:262
 msgid "Activating..."
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:109
-#: resources/src/apps/Admin/pages/Settings.jsx:248
+#: resources/src/apps/Admin/pages/Settings.jsx:265
 msgid "Deactivating..."
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:112
-#: resources/src/apps/Admin/pages/Settings.jsx:251
+#: resources/src/apps/Admin/pages/Settings.jsx:268
 msgid "Deactivate"
 msgstr ""
 
 #: resources/src/apps/Admin/hooks/useLicenseActions.js:116
-#: resources/src/apps/Admin/pages/Settings.jsx:255
+#: resources/src/apps/Admin/pages/Settings.jsx:272
 msgid "Activate"
 msgstr ""
 
@@ -2654,16 +2661,16 @@ msgstr ""
 #: resources/src/apps/Admin/pages/Agent/AgentSettings.jsx:136
 #: resources/src/apps/Admin/pages/Customizer/Customizer.jsx:61
 #: resources/src/apps/Admin/pages/Onboarding.jsx:248
-#: resources/src/apps/Admin/pages/Settings.jsx:164
+#: resources/src/apps/Admin/pages/Settings.jsx:181
 msgid "Settings saved successfully"
 msgstr ""
 
 #: resources/src/apps/Admin/pages/Agent/AgentSettings.jsx:152
 #: resources/src/apps/Admin/pages/Agent/AgentSingle.jsx:214
 #: resources/src/apps/Admin/pages/Faq/FaqSingle.jsx:208
-#: resources/src/apps/Admin/pages/Settings.jsx:295
+#: resources/src/apps/Admin/pages/Settings.jsx:312
 #: resources/src/apps/Admin/pages/Visibility.jsx:112
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:262
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:266
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelVisibility.jsx:103
 msgid "Save Changes"
 msgstr ""
@@ -2672,10 +2679,10 @@ msgstr ""
 #: resources/src/apps/Admin/pages/Agent/AgentSingle.jsx:215
 #: resources/src/apps/Admin/pages/Customizer/Customizer.jsx:107
 #: resources/src/apps/Admin/pages/Faq/FaqSingle.jsx:211
-#: resources/src/apps/Admin/pages/Settings.jsx:296
+#: resources/src/apps/Admin/pages/Settings.jsx:313
 #: resources/src/apps/Admin/pages/Visibility.jsx:114
 #: resources/src/pro/apps/Admin/components/Funnels/OptionEditor.jsx:105
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:264
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:268
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelVisibility.jsx:104
 msgid "Save"
 msgstr ""
@@ -2747,7 +2754,7 @@ msgid "[WPC-AGT-007] Error saving agent data"
 msgstr ""
 
 #: resources/src/apps/Admin/pages/Agent/AgentSingle.jsx:232
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:238
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:242
 msgid "Create"
 msgstr ""
 
@@ -2804,6 +2811,7 @@ msgstr ""
 msgid "Choose from pre-selected colors that look great"
 msgstr ""
 
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:664
 #: resources/src/apps/Admin/pages/Customizer/Panels/FAQPanel.jsx:53
 #: resources/src/apps/Admin/pages/Customizer/Panels/HeaderPanel.jsx:20
 #: resources/src/apps/Admin/pages/Customizer/Panels/SendMessagePanel.jsx:65
@@ -2855,36 +2863,36 @@ msgstr ""
 msgid "Like the theme but need different colors? Customise them"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:185
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:186
 msgid "New Question"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:298
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:303
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:233
 msgid "Clone"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:332
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:337
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:270
 msgid "«"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:341
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:346
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:278
 msgid "‹"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:345
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:350
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:281
 msgid "of"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:355
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:360
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:290
 msgid "›"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Faq/Faq.jsx:364
+#: resources/src/apps/Admin/pages/Faq/Faq.jsx:369
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:298
 msgid "»"
 msgstr ""
@@ -2987,8 +2995,8 @@ msgstr ""
 
 #: resources/src/apps/Admin/pages/Funnel/Funnel.jsx:115
 #: resources/src/apps/Admin/pages/Funnel/FunnelWelcome.jsx:100
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:223
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:231
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:227
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:235
 msgid "New Funnel"
 msgstr ""
 
@@ -3028,7 +3036,7 @@ msgstr ""
 msgid "Create multi-message funnels and get detailed analytics for all of them. Start creating your first funnel today."
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Home/Dashboard.jsx:23
+#: resources/src/apps/Admin/pages/Home/Dashboard.jsx:70
 msgid "Dashboard"
 msgstr ""
 
@@ -3101,75 +3109,75 @@ msgstr ""
 msgid "Connection Failed"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:169
+#: resources/src/apps/Admin/pages/Settings.jsx:186
 msgid "[WPC-SET-001] Failed to save settings"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:187
+#: resources/src/apps/Admin/pages/Settings.jsx:204
 msgid "License deactivated successfully"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:193
+#: resources/src/apps/Admin/pages/Settings.jsx:210
 msgid "[WPC-LIC-003] Failed to deactivate license"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:223
+#: resources/src/apps/Admin/pages/Settings.jsx:240
 msgid "License activated successfully"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:230
+#: resources/src/apps/Admin/pages/Settings.jsx:247
 msgid "[WPC-LIC-002] Failed to activate license"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:280
+#: resources/src/apps/Admin/pages/Settings.jsx:297
 msgid "License status refreshed"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:286
+#: resources/src/apps/Admin/pages/Settings.jsx:303
 msgid "[WPC-LIC-004] Failed to refresh license status"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:312
+#: resources/src/apps/Admin/pages/Settings.jsx:330
 msgid "License Key"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:319
+#: resources/src/apps/Admin/pages/Settings.jsx:337
 msgid "You are using the Lite version of the plugin – no license needed. Enjoy!"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:325
+#: resources/src/apps/Admin/pages/Settings.jsx:343
 msgid "To unlock more features, consider"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:335
+#: resources/src/apps/Admin/pages/Settings.jsx:353
 msgid "Upgrading to Pro"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:337
+#: resources/src/apps/Admin/pages/Settings.jsx:355
 msgid " . As a valued user of our Lite plugin, you receive a 50% OFF, automatically applied at checkout!"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:344
+#: resources/src/apps/Admin/pages/Settings.jsx:362
 msgid "Already purchased? Enter your license key to upgrade to WPChat Pro."
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:351
+#: resources/src/apps/Admin/pages/Settings.jsx:369
 msgid "Your license key provides access to updates and support"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:364
+#: resources/src/apps/Admin/pages/Settings.jsx:382
 msgid "Enter license key"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:414
+#: resources/src/apps/Admin/pages/Settings.jsx:432
 msgid "Manage License"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:476
+#: resources/src/apps/Admin/pages/Settings.jsx:491
 msgid "Preserve settings if plugin is removed"
 msgstr ""
 
-#: resources/src/apps/Admin/pages/Settings.jsx:480
+#: resources/src/apps/Admin/pages/Settings.jsx:496
 msgid "This will make sure that all of your chatbot data and settings are still saved even if the plugin is uninstalled"
 msgstr ""
 
@@ -3429,20 +3437,20 @@ msgstr ""
 msgid "Analytic modal upsell"
 msgstr ""
 
-#: resources/src/apps/Frontend/components/ChatBubble.jsx:28
+#: resources/src/apps/Frontend/components/ChatBubble.jsx:30
 msgid "You"
 msgstr "أنت"
 
-#: resources/src/apps/Frontend/components/ChatBubble.jsx:73
+#: resources/src/apps/Frontend/components/ChatBubble.jsx:105
 #: resources/src/apps/Frontend/components/ChatConversationIntro.jsx:27
 msgid "Chatbot Avatar"
 msgstr ""
 
-#: resources/src/apps/Frontend/components/ChatBubble.jsx:109
+#: resources/src/apps/Frontend/components/ChatBubble.jsx:141
 msgid "Message image"
 msgstr ""
 
-#: resources/src/apps/Frontend/components/ChatBubble.jsx:121
+#: resources/src/apps/Frontend/components/ChatBubble.jsx:153
 msgid "Verified quote"
 msgstr "معلومة موثَّقة"
 
@@ -3454,16 +3462,16 @@ msgstr "ابحث في الأسئلة الشائعة"
 msgid "Searching..."
 msgstr "جارٍ البحث..."
 
-#: resources/src/apps/Frontend/components/ChatFAQ.jsx:211
+#: resources/src/apps/Frontend/components/ChatFAQ.jsx:213
 msgid "We couldn't find any answer matching that result. Please try another keyword."
 msgstr "لم نعثر على إجابة تطابق بحثك. جرّب كلمة مفتاحية أخرى."
 
-#: resources/src/apps/Frontend/components/PlatformLinks.jsx:66
-#: resources/src/apps/Frontend/components/PlatformLinks.jsx:77
+#: resources/src/apps/Frontend/components/PlatformLinks.jsx:71
+#: resources/src/apps/Frontend/components/PlatformLinks.jsx:82
 msgid "Sorry, no agents are available at the moment. Please try again later."
 msgstr ""
 
-#: resources/src/apps/Frontend/components/getInitialMessages.jsx:38
+#: resources/src/apps/Frontend/components/getInitialMessages.jsx:42
 msgid "Which platform would you like to talk on?"
 msgstr "اختر المنصة التي تفضل التواصل معنا عبرها"
 
@@ -3559,15 +3567,15 @@ msgstr ""
 msgid "Pastel"
 msgstr ""
 
-#: resources/src/apps/Frontend/Frontend.jsx:261
+#: resources/src/apps/Frontend/Frontend.jsx:279
 msgid "Close Chat"
 msgstr ""
 
-#: resources/src/apps/Frontend/pages/chat.jsx:253
+#: resources/src/apps/Frontend/pages/chat.jsx:254
 msgid "Got it!.. But, have no clue"
 msgstr ""
 
-#: resources/src/apps/Frontend/pages/chat.jsx:370
+#: resources/src/apps/Frontend/pages/chat.jsx:371
 msgid "Type a message"
 msgstr ""
 
@@ -3786,22 +3794,22 @@ msgstr ""
 msgid "Start writing your message"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:147
+#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:144
 #: resources/src/pro/apps/Admin/components/Funnels/InteractionCard.jsx:58
 msgid "Options"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:163
+#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:160
 #: resources/src/pro/apps/Admin/components/Funnels/InteractionCard.jsx:98
 #: resources/src/pro/apps/Admin/components/Funnels/OptionLink.jsx:45
 msgid "Unnamed Option"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:183
+#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:180
 msgid "No options available for this block."
 msgstr ""
 
-#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:192
+#: resources/src/pro/apps/Admin/components/Funnels/EditSingle.jsx:189
 msgid "Add Option"
 msgstr ""
 
@@ -3966,82 +3974,82 @@ msgstr ""
 msgid "[WPC-FUN-015] Error saving visibility"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:72
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:74
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelVisibility.jsx:68
 msgid "[WPC-FUN-008] Failed to load funnel"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:145
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:149
 msgid "[WPC-FUN-006] Cannot save an empty funnel"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:164
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:168
 msgid "Funnel updated successfully"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:172
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:176
 msgid "Funnel saved successfully"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:180
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:184
 msgid "[WPC-FUN-002] Error saving funnel"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:195
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:199
 msgid "New message block"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:199
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:203
 msgid "First Option"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:250
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:254
 msgid "Hide Preview"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:251
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:255
 msgid "Show Preview"
 msgstr ""
 
 #: resources/src/apps/Admin/pages/Customizer/DrillMenu.jsx:134
 #: resources/src/apps/Admin/pages/Customizer/DrillMenu.jsx:151
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:255
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:259
 msgid "Hide"
 msgstr ""
 
 #: resources/src/apps/Admin/pages/Customizer/DrillMenu.jsx:134
 #: resources/src/apps/Admin/pages/Customizer/DrillMenu.jsx:151
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:256
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:260
 msgid "Show"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:278
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:287
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:282
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:291
 msgid "Funnel Name"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:279
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:283
 msgid "Choose a name to easily identify this funnel"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:328
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:332
 #: resources/src/pro/apps/Admin/pages/Funnel/FunnelSingle.jsx:225
 msgid "No blocks created yet."
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:331
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:335
 msgid "Start by adding your first message block below."
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:354
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:358
 msgid "See your funnel in action as you build it"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:367
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:371
 msgid "Quick View"
 msgstr ""
 
-#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:376
+#: resources/src/pro/apps/Admin/pages/Funnel/FunnelCreateEdit.jsx:380
 msgid "Play Full Funnel"
 msgstr ""
 
@@ -4228,7 +4236,7 @@ msgstr ""
 msgid "Display a single custom icon at bottom right"
 msgstr ""
 
-#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:123
+#: resources/src/apps/Admin/components/Faq/FaqCreateEdit.jsx:124
 msgid "The preview of the answer of your question will appear here once you start typing."
 msgstr ""
 
@@ -4487,6 +4495,7 @@ msgstr ""
 msgid "No platforms configured. Go to Agent Settings to add platforms."
 msgstr ""
 
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:39
 #: resources/src/apps/Admin/pages/Customizer/Panels/IconPanel.jsx:265
 msgid "Icon"
 msgstr ""
@@ -4596,11 +4605,164 @@ msgstr ""
 msgid "Our agents are currently offline."
 msgstr ""
 
-#: resources/src/apps/Frontend/pages/chat.jsx:329
+#: resources/src/apps/Frontend/pages/chat.jsx:330
 msgid "View older messages"
 msgstr ""
 
 #: resources/src/utils/getPlatforms.jsx:27
 #: resources/src/utils/getPlatforms.jsx:32
 msgid "Phone Number"
+msgstr ""
+
+#: src/Common/RestAPI/NotificationsEndpoint.php:134
+msgid "Notification dismissed"
+msgstr ""
+
+#: src/Common/RestAPI/NotificationsEndpoint.php:142
+msgid "[WPC-NTF-001] Failed to dismiss notification"
+msgstr ""
+
+#: src/Common/RestAPI/SettingsEndpoint.php:240
+#: resources/src/apps/Admin/pages/Settings.jsx:521
+msgid "Data sharing consent"
+msgstr ""
+
+#: src/Common/RestAPI/SettingsEndpoint.php:244
+msgid "Data sharing consent modal dismissed"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:40
+msgid "Welcome to WPChat!"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:44
+msgid "Help us build the best chat plugin for WordPress. By sharing anonymous usage data, you'll help our team prioritize the features that matter most."
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:47
+msgid "In return, we'll keep you in the loop with product updates and helpful tips. You can change your mind anytime in Settings."
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:55
+#: resources/src/apps/Admin/components/Onboarding/shared/DataSharingSection.jsx:29
+#: resources/src/apps/Admin/pages/Settings.jsx:534
+msgid "What permissions are being granted?"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:58
+#: resources/src/apps/Admin/components/Onboarding/shared/DataSharingSection.jsx:32
+#: resources/src/apps/Admin/pages/Settings.jsx:537
+#: resources/src/apps/Admin/pages/Settings.jsx:607
+msgid "Terms & Conditions"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:61
+#: resources/src/apps/Admin/components/Onboarding/shared/DataSharingSection.jsx:35
+#: resources/src/apps/Admin/pages/Settings.jsx:540
+#: resources/src/apps/Admin/pages/Settings.jsx:610
+msgid "Privacy"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:70
+msgid "Skip"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Dashboard/DataSharingConsentModal.jsx:74
+msgid "Accept & Continue"
+msgstr ""
+
+#: resources/src/apps/Admin/components/NotificationStack.jsx:293
+msgid "Dismiss notification"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Onboarding/shared/DataSharingSection.jsx:8
+msgid "Help improve WPChat"
+msgstr ""
+
+#: resources/src/apps/Admin/components/Onboarding/shared/DataSharingSection.jsx:9
+msgid "Share anonymised usage data with WPChat and Smash Balloon to help improve our products. This also enables in-plugin notifications for updates, fixes, and new features."
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:570
+msgid "Bold"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:577
+msgid "Italic"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:585
+msgid "Add or edit link"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:668
+msgid "Link text"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:673
+msgid "URL"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:677
+msgid "Enter a URL"
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:684
+msgid "Please enter a valid URL."
+msgstr ""
+
+#: resources/src/apps/Admin/components/ui/RichTextField.jsx:732
+msgid "Remove"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:21
+msgid "Color Palette"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:31
+msgid "Header"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:47
+msgid "Assistant Avatar"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:56
+msgid "Sections"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:61
+msgid "Send Message"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Customizer/menuData.jsx:78
+msgid "WPChat Branding"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:526
+msgid "Share anonymised usage data with WPChat and Smash Balloon to help improve our products."
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:560
+msgid "In-plugin notifications"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:567
+msgid "Receive notifications about WPChat updates, fixes, and new features. This is enabled, if you opt into telemetry."
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:571
+msgid "Receive important updates, tips, and announcements directly within the plugin dashboard"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:591
+msgid "Data sharing"
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:596
+msgid "To keep your WPChat and Smash Balloon plugins secure and up to date, we collect limited, anonymised usage data. We never collect your chat content or your visitors' personal information. We'll also send you occasional in-plugin notifications about updates, fixes, and new features."
+msgstr ""
+
+#: resources/src/apps/Admin/pages/Settings.jsx:604
+msgid "What data is collected?"
 msgstr ""

@@ -1,27 +1,30 @@
 <?php
 
-if (!defined("ABSPATH")) {
-    exit(); // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
 }
 
-// Check if our classes are already loaded (happens during upgrade when both plugins are active)
-if (!class_exists("SmashBalloon\WPChat\Common\Services\ServiceContainer")) {
-    // autoloader.
-    require_once "vendor/autoload.php";
+// Check if our classes are already loaded (happens during upgrade when both plugins are active).
+if ( ! class_exists( 'SmashBalloon\WPChat\Common\Services\ServiceContainer' ) ) {
+	// Autoloader.
+	require_once 'vendor/autoload.php';
 }
 
-// define constants - check if not already defined to avoid conflicts during upgrade
-if (!defined("WPCHAT_PLUGIN_DIR")) {
-    define("WPCHAT_PLUGIN_DIR", plugin_dir_path(__FILE__));
+// Define constants - check if not already defined to avoid conflicts during upgrade.
+if ( ! defined( 'WPCHAT_PLUGIN_DIR' ) ) {
+	define( 'WPCHAT_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
-if (!defined("WPCHAT_PLUGIN_URL")) {
-    define("WPCHAT_PLUGIN_URL", plugin_dir_url(__FILE__));
+if ( ! defined( 'WPCHAT_PLUGIN_URL' ) ) {
+	define( 'WPCHAT_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
-if (!defined("WPCHAT_API_URL")) {
-    define("WPCHAT_API_URL", "https://api.wpchat.com/api/v1");
+if ( ! defined( 'WPCHAT_API_URL' ) ) {
+	define( 'WPCHAT_API_URL', 'https://api.wpchat.com/api/v1' );
 }
-if (!defined("WPCHAT_STORE_URL")) {
-    define("WPCHAT_STORE_URL", "https://wpchat.com");
+if ( ! defined( 'WPCHAT_STORE_URL' ) ) {
+	define( 'WPCHAT_STORE_URL', 'https://wpchat.com' );
+}
+if ( ! defined( 'WPCHAT_NOTIFICATIONS_URL' ) ) {
+	define( 'WPCHAT_NOTIFICATIONS_URL', 'https://plugin.smashballoon.com/notifications.json' );
 }
 
 // Initialize the deactivation feedback survey.

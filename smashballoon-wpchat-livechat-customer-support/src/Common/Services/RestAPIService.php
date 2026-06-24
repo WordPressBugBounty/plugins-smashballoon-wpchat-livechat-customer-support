@@ -2,7 +2,7 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -15,6 +15,7 @@ use SmashBalloon\WPChat\Common\RestAPI\SmartSearchEndpoint;
 use SmashBalloon\WPChat\Common\RestAPI\WPChatApiEndpoint;
 use SmashBalloon\WPChat\Common\RestAPI\LicenseEndpoint;
 use SmashBalloon\WPChat\Common\RestAPI\AnalyticsEndpoint;
+use SmashBalloon\WPChat\Common\RestAPI\NotificationsEndpoint;
 
 /**
  * Class RestAPIService
@@ -22,36 +23,34 @@ use SmashBalloon\WPChat\Common\RestAPI\AnalyticsEndpoint;
  *
  * @package SmashBalloon\WPChat\Common\Services
  */
-class RestAPIService implements ServiceProviderInterface
-{
+class RestAPIService implements ServiceProviderInterface {
+
 	/**
 	 * Array to hold instances of registered endpoints.
 	 *
 	 * @var RestEndpoint[]
 	 */
-	protected $endpoints = [];
+	protected $endpoints = array();
 
 	/**
 	 * Registers all REST API endpoints.
 	 * This method should be called during plugin initialization (e.g., on 'rest_api_init' action).
 	 */
-	public function register(): void
-	{
+	public function register(): void {
 		$this->registerCoreEndpoints(); // Register core plugin endpoints.
 		$this->registerAdditionalEndpoints(); // Register any additional endpoints (can be extended).
 
-		add_action('rest_api_init', array($this, 'initEndpoints'));
+		add_action( 'rest_api_init', array($this, 'initEndpoints') );
 	}
 
 	/**
 	 * Registers core plugin endpoints.
 	 * Add instances of your main endpoint classes here.
 	 */
-	private function registerCoreEndpoints()
-	{
+	private function registerCoreEndpoints() {
 		$container = SingletonContainer::getInstance();
 
-		$endpointsClasses = [
+		$endpointsClasses = array(
 			SettingsEndpoint::class,
 			ChatPlatformEndpoint::class,
 			AgentsEndpoint::class,
@@ -60,10 +59,11 @@ class RestAPIService implements ServiceProviderInterface
 			WPChatApiEndpoint::class,
 			LicenseEndpoint::class,
 			AnalyticsEndpoint::class,
-		];
+			NotificationsEndpoint::class,
+		);
 
-		foreach ($endpointsClasses as $endpointClass) {
-			$this->endpoints[] = $container->get($endpointClass);
+		foreach ( $endpointsClasses as $endpointClass ) {
+			$this->endpoints[] = $container->get( $endpointClass );
 		}
 	}
 
@@ -72,8 +72,7 @@ class RestAPIService implements ServiceProviderInterface
 	 * Child classes can extend this method to register more endpoints if needed.
 	 * This is a hook for extensibility.
 	 */
-	protected function registerAdditionalEndpoints()
-	{
+	protected function registerAdditionalEndpoints() {
 		// For extensibility - plugins can hook in here to register more endpoints.
 	}
 
@@ -81,9 +80,8 @@ class RestAPIService implements ServiceProviderInterface
 	 * Initializes and registers the routes for all registered endpoints.
 	 * This is hooked to the 'rest_api_init' action.
 	 */
-	public function initEndpoints()
-	{
-		foreach ($this->endpoints as $endpoint) {
+	public function initEndpoints() {
+		foreach ( $this->endpoints as $endpoint ) {
 			$endpoint->registerRoutes(); // Call registerRoutes() on each endpoint.
 		}
 	}

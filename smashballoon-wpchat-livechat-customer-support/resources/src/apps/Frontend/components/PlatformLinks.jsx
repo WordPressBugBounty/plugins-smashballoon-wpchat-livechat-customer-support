@@ -40,6 +40,10 @@ function LoadingDots() {
 export default function PlatformLinks({ platforms, storeApi }) {
   const [links, setLinks] = useState(null);
   const [error, setError] = useState(null);
+  // Only the off-hours message may legitimately contain HTML (a mailto link from
+  // the wpchat_off_hours_message filter, server-sanitized via wp_kses_post). All
+  // other error strings are plain text and must be rendered as escaped React children.
+  const [errorAllowHtml, setErrorAllowHtml] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,6 +63,7 @@ export default function PlatformLinks({ platforms, storeApi }) {
             );
             if (offHoursError) {
               setError(formatOffHoursMessage(offHoursError.off_hours_data));
+              setErrorAllowHtml(true);
             } else {
               const firstError = Object.values(result.errors)[0];
               setError(
@@ -107,6 +112,19 @@ export default function PlatformLinks({ platforms, storeApi }) {
   };
 
   if (error) {
+    // Off-hours messages may contain HTML (e.g. a mailto link from the
+    // wpchat_off_hours_message filter, server-sanitized via wp_kses_post). Render
+    // those as markup with the same link styling as ChatBubble's allowHtml path so
+    // this runtime path matches the initial-message display path. Every other error
+    // is plain text and is rendered as an escaped React child.
+    if (errorAllowHtml) {
+      return (
+        <div
+          className='wpchat:[&_a]:text-widget-accent-1 wpchat:[&_a]:font-medium wpchat:[&_a]:underline wpchat:[&_a]:underline-offset-2 wpchat:[&_a]:transition-opacity wpchat:[&_a]:hover:opacity-80'
+          dangerouslySetInnerHTML={{ __html: error }}
+        />
+      );
+    }
     return <div>{error}</div>;
   }
 

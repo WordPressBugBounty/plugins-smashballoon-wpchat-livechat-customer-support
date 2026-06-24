@@ -175,6 +175,8 @@ export default function ChatFAQ() {
                   message: faq.answer,
                   messageType: 'receive',
                   verifiedQuote: true,
+                  // FAQ answers may contain server-sanitized HTML (WYSIWYG); render as markup.
+                  allowHtml: true,
                 };
 
                 if (faq.image) {

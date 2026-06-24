@@ -8,21 +8,21 @@ import { composeTailwindRenderProps, focusRing } from './utils';
 
 const track = tv({
   extend: focusRing,
-  base: 'wpchat:relative wpchat:flex wpchat:h-4 wpchat:w-7 wpchat:shrink-0 wpchat:cursor-default wpchat:items-center wpchat:rounded-full wpchat:border wpchat:border-transparent wpchat:px-px wpchat:shadow-inner wpchat:transition wpchat:duration-200 wpchat:ease-in-out',
+  base: 'wpchat:relative wpchat:flex wpchat:h-4 wpchat:w-7 wpchat:shrink-0 wpchat:cursor-pointer wpchat:items-center wpchat:rounded-full wpchat:border wpchat:border-transparent wpchat:px-px wpchat:shadow-inner wpchat:transition wpchat:duration-200 wpchat:ease-in-out',
   variants: {
     isSelected: {
       false: 'group-pressed:wpchat:bg-gray-500 wpchat:bg-gray-400',
       true: 'group-pressed:wpchat:bg-gray-800 wpchat:bg-wp-light-blue-500',
     },
     isDisabled: {
-      true: 'forced-colors:wpchat:group-selected wpchat:bg-gray-200',
+      true: 'forced-colors:wpchat:group-selected wpchat:bg-gray-200 wpchat:cursor-not-allowed wpchat:opacity-60',
     },
   },
   compoundVariants: [
     {
       isSelected: true,
       isDisabled: true,
-      className: 'wpchat:bg-[#B6DDAD]',
+      className: 'wpchat:bg-wp-light-blue-500',
     },
   ],
 });

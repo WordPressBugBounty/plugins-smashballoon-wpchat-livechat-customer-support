@@ -4,7 +4,7 @@
  * Plugin Name: WPChat - Livechat Customer Support Suite
  * Plugin URI: https://wpchat.com
  * Description: Connect with your website visitors through simple and reliable live chat widget for WordPress.
- * Version: 1.4.1
+ * Version: 1.4.2
  * Author: Smash Balloon
  * Author URI: https://smashballoon.com
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if (!defined('WPCHAT_PLUGIN_NAME')) {
 	define('WPCHAT_PLUGIN_NAME', 'WPChat');
 }
 if (!defined('WPCHAT_VERSION')) {
-	define('WPCHAT_VERSION', '1.4.1');
+	define('WPCHAT_VERSION', '1.4.2');
 }
 if (!defined('WPCHAT_PLUGIN_FILE')) {
 	define('WPCHAT_PLUGIN_FILE', __FILE__);

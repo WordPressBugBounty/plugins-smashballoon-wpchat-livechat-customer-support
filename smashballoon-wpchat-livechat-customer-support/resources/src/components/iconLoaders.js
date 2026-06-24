@@ -116,6 +116,7 @@ export const iconLoaders = {
   messageReplyOutline: () => import('@Assets/svg/message-reply-outline.svg?react'),
   noteStack: () => import('@Assets/svg/note-stack.svg?react'),
   addLink: () => import('@Assets/svg/add-link.svg?react'),
+  link: () => import('@Assets/svg/link.svg?react'),
   autoplay: () => import('@Assets/svg/autoplay.svg?react'),
   chatBubbleOutline: () => import('@Assets/svg/chat-bubble-outline.svg?react'),
   availableOffHours: () => import('@Assets/svg/available-off-hours.svg?react'),

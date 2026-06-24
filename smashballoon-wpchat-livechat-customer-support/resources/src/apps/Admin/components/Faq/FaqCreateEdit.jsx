@@ -4,10 +4,12 @@ import { __ } from '@wordpress/i18n';
 import EmbeddedFrontend from '@AC/EmbeddedFrontend';
 import ImageUpload from '@AC/ImageUpload';
 import PageLayout from '@AC/PageLayout';
+import RichTextField from '@AC/ui/RichTextField';
 import { TextField } from '@AC/ui/TextField';
 import TitleDescription from '@Components/TitleDescription';
 import useFaqsStore from '@DataStore/faqs/faqsStore';
 import { useChatStore } from '@FDataStore/Chat/chatStore';
+import { isRichTextEmpty } from '@Utils/isRichTextEmpty';
 
 const QUESTION_MAX_LENGTH = 140;
 const ANSWER_MAX_LENGTH = 600;
@@ -61,7 +63,7 @@ const FaqCreateEdit = forwardRef(function FaqCreateEdit({
       image: file,
     }),
     isValid: () => {
-      return currentQuestion.trim() !== '' && currentAnswer.trim() !== '';
+      return currentQuestion.trim() !== '' && !isRichTextEmpty(currentAnswer);
     },
   }));
 
@@ -103,7 +105,7 @@ const FaqCreateEdit = forwardRef(function FaqCreateEdit({
   useEffect(() => {
     if (!isInitialized) return;
 
-    const isValid = currentQuestion.trim() !== '' && currentAnswer.trim() !== '';
+    const isValid = currentQuestion.trim() !== '' && !isRichTextEmpty(currentAnswer);
     onValidationChange?.(isValid);
   }, [currentQuestion, currentAnswer, isInitialized, onValidationChange]);
 
@@ -118,15 +120,17 @@ const FaqCreateEdit = forwardRef(function FaqCreateEdit({
     };
 
     const receivedMsg = {
-      message:
-        currentAnswer ||
-        __(
-          'The preview of the answer of your question will appear here once you start typing.',
-          'smashballoon-wpchat-livechat-customer-support',
-        ),
+      message: isRichTextEmpty(currentAnswer)
+        ? __(
+            'The preview of the answer of your question will appear here once you start typing.',
+            'smashballoon-wpchat-livechat-customer-support',
+          )
+        : currentAnswer,
       messageType: 'receive',
       images: file ? [file] : [],
       verifiedQuote: true,
+      // The answer is rich text (server-sanitized via wp_kses_post); render as markup.
+      allowHtml: true,
     };
 
     setReplaceMode(true);
@@ -160,22 +164,19 @@ const FaqCreateEdit = forwardRef(function FaqCreateEdit({
             isRequired
             helperText={`${currentQuestion.length}/${QUESTION_MAX_LENGTH}`}
           />
-          <TextField
+          <RichTextField
             label={__('Answer', 'smashballoon-wpchat-livechat-customer-support')}
             placeholder={__(
               'Add an answer to your question here',
               'smashballoon-wpchat-livechat-customer-support',
             )}
             name='answer'
-            type='text'
             onChange={setCurrentAnswer}
             value={currentAnswer}
             maxLength={ANSWER_MAX_LENGTH}
             showMaxLength={true}
             inputClassName='wpchat:w-full wpchat:py-3 wpchat:text-base'
-            as='textarea'
             isRequired
-            helperText={`${currentAnswer.length}/${ANSWER_MAX_LENGTH}`}
           />
           <div>
             <h6 className='wpchat:mt-3.5 wpchat:mb-2'>

@@ -2,7 +2,7 @@
 
 namespace SmashBalloon\WPChat\Common\Services;
 
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
@@ -17,8 +17,8 @@ use SmashBalloon\WPChat\Common\Helpers\UTMUrlGenerator;
  *
  * @package SmashBalloon\WPChat\Common\Services
  */
-class AssetsManagerService implements ServiceProviderInterface
-{
+class AssetsManagerService implements ServiceProviderInterface {
+
 	/**
 	 * The visibility service instance.
 	 *
@@ -62,6 +62,13 @@ class AssetsManagerService implements ServiceProviderInterface
 	private $privateSettingsService;
 
 	/**
+	 * Notification service.
+	 *
+	 * @var NotificationService
+	 */
+	private $notificationService;
+
+	/**
 	 * AssestManagerService constructor.
 	 *
 	 * @param VisibilityServiceInterface $visibilityService The visibility service instance.
@@ -71,14 +78,14 @@ class AssetsManagerService implements ServiceProviderInterface
 	 * @param EntitlementDataService     $entitlementDataService The entitlement data service instance.
 	 * @param PrivateSettingsService     $privateSettingsService The private settings service instance.
 	 */
-	public function __construct(VisibilityServiceInterface $visibilityService, SupportService $supportService, Utility $utility, SettingsService $settingsService, EntitlementDataService $entitlementDataService, PrivateSettingsService $privateSettingsService)
-	{
-		$this->visibilityService = $visibilityService;
-		$this->supportService = $supportService;
-		$this->utility = $utility;
-		$this->settingsService = $settingsService;
+	public function __construct( VisibilityServiceInterface $visibilityService, SupportService $supportService, Utility $utility, SettingsService $settingsService, EntitlementDataService $entitlementDataService, PrivateSettingsService $privateSettingsService, NotificationService $notificationService ) {
+		$this->visibilityService      = $visibilityService;
+		$this->supportService         = $supportService;
+		$this->utility                = $utility;
+		$this->settingsService        = $settingsService;
 		$this->entitlementDataService = $entitlementDataService;
 		$this->privateSettingsService = $privateSettingsService;
+		$this->notificationService    = $notificationService;
 	}
 
 
@@ -88,22 +95,24 @@ class AssetsManagerService implements ServiceProviderInterface
 	 * @param string $entryName The entry name (e.g., 'admin', 'frontend').
 	 * @return string|false The file URL or false if not found.
 	 */
-	private function getHashedEntryFile(string $entryName)
-	{
-		$jsDir = WPCHAT_PLUGIN_DIR . 'public/js/';
+	private function getHashedEntryFile( string $entryName ) {
+		$jsDir   = WPCHAT_PLUGIN_DIR . 'public/js/';
 		$pattern = $jsDir . 'wp-chat-' . $entryName . '-*.js';
-		$files = glob($pattern);
+		$files   = glob( $pattern );
 
-		if (empty($files)) {
+		if ( empty( $files ) ) {
 			return false;
 		}
 
 		// Get the most recently modified file (in case multiple exist during deployment)
-		usort($files, function ($a, $b) {
-			return filemtime($b) - filemtime($a);
-		});
+usort(
+    $files,
+    function ( $a, $b ) {
+    return filemtime( $b ) - filemtime( $a );
+    }
+);
 
-		$filename = basename($files[0]);
+		$filename = basename( $files[0] );
 		return WPCHAT_PLUGIN_URL . 'public/js/' . $filename;
 	}
 
@@ -135,14 +144,13 @@ class AssetsManagerService implements ServiceProviderInterface
 	 *
 	 * @return void
 	 */
-	public function maybeStartSession(): void
-	{
+	public function maybeStartSession(): void {
 		// Only start session on frontend, not admin or AJAX/REST requests
-		if (is_admin() || wp_doing_ajax() || defined('REST_REQUEST')) {
+		if ( is_admin() || wp_doing_ajax() || defined( 'REST_REQUEST' ) ) {
 			return;
 		}
 
-		if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+		if ( session_status() === PHP_SESSION_NONE && ! headers_sent() ) {
 			session_start();
 		}
 	}
@@ -153,9 +161,8 @@ class AssetsManagerService implements ServiceProviderInterface
 	 * @param string $classes Existing admin body classes.
 	 * @return string Modified admin body classes.
 	 */
-	public function addAdminBodyClass($classes): string
-	{
-		if ($this->shouldEnqueueAdminAssets()) {
+	public function addAdminBodyClass( $classes ): string {
+		if ( $this->shouldEnqueueAdminAssets() ) {
 			$classes .= ' wp-chat-admin-body';
 		}
 		return $classes;
@@ -166,17 +173,15 @@ class AssetsManagerService implements ServiceProviderInterface
 	 *
 	 * @return bool
 	 */
-	private function shouldEnqueueAdminAssets(): bool
-	{
+	private function shouldEnqueueAdminAssets(): bool {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		return is_admin() && !empty($_GET['page']) && strpos(sanitize_text_field(wp_unslash($_GET['page'])), 'wp-chat') !== false;
+		return is_admin() && ! empty( $_GET['page'] ) && strpos( sanitize_text_field( wp_unslash( $_GET['page'] ) ), 'wp-chat' ) !== false;
 	}
 
 	/**
 	 * Enqueue scripts and styles.
 	 */
-	public function registerStyles(): void
-	{
+	public function registerStyles(): void {
 		$this->loadFonts();
 	}
 
@@ -187,87 +192,132 @@ class AssetsManagerService implements ServiceProviderInterface
 	 * and applies it to the WordPress admin area. It ensures
 	 * the font is available for styling elements in the admin UI.
 	 */
-	public function loadFonts(): void
-	{
-		wp_register_style('wpchat-inter-font', WPCHAT_PLUGIN_URL . 'public/assets/fonts/inter/inter.css', [], WPCHAT_VERSION);
+	public function loadFonts(): void {
+		wp_register_style( 'wpchat-inter-font', WPCHAT_PLUGIN_URL . 'public/assets/fonts/inter/inter.css', array(), WPCHAT_VERSION );
 	}
 
 	/**
 	 * Enqueue scripts and styles.
 	 */
-	public function enqueueAdminScripts(): void
-	{
+	public function enqueueAdminScripts(): void {
 		// Enqueue admin scripts only on our admin pages.
-		if ($this->shouldEnqueueAdminAssets()) {
-			wp_enqueue_style('wpchat-inter-font');
+		if ( $this->shouldEnqueueAdminAssets() ) {
+			wp_enqueue_style( 'wpchat-inter-font' );
 
-			$adminScriptUrl = $this->getHashedEntryFile('admin');
-			if (!$adminScriptUrl) {
+			$adminScriptUrl = $this->getHashedEntryFile( 'admin' );
+			if ( ! $adminScriptUrl ) {
 				return;
 			}
 
-			wp_register_script(
-				'wp-chat-admin',
-				$adminScriptUrl,
-				['wp-api-fetch', 'wp-i18n'],
-				WPCHAT_VERSION,
-				true
-			);
+wp_register_script(
+    'wp-chat-admin',
+    $adminScriptUrl,
+    array( 'wp-api-fetch', 'wp-i18n' ),
+    WPCHAT_VERSION,
+    true
+);
 
-			$getSystemInfo = $this->supportService->getSystemInfo();
+			$getSystemInfo   = $this->supportService->getSystemInfo();
 			$timezoneDisplay = $this->utility->getFormattedTimezone();
 
-
-			$settings = $this->settingsService->getAllSettings();
+			$settings         = $this->settingsService->getAllSettings();
 			$onboardingStatus = $settings['onboardingStatus'] ?? false;
 
 			// Check if pro license exists in free version
 			$hasProLicenseInFree = false;
-			if (defined('WPCHAT_LITE') && WPCHAT_LITE) {
-				$licenseKey = $this->privateSettingsService->getSetting('license_key');
-				$hasProLicenseInFree = !empty($licenseKey);
+			if ( defined( 'WPCHAT_LITE' ) && WPCHAT_LITE ) {
+				$licenseKey          = $this->privateSettingsService->getSetting( 'license_key' );
+				$hasProLicenseInFree = ! empty( $licenseKey );
 			}
 
-			wp_localize_script('wp-chat-admin', 'wpChatAdmin', [
-				'pluginUrl' => WPCHAT_PLUGIN_URL,
-				'pluginImageUrl' => WPCHAT_PLUGIN_URL . 'public/assets/images',
-				'restNonce' => wp_create_nonce('wp_rest'),
-				'restUrl' => rest_url('wpchat/v1/'),
-				'mainPageUrl' => admin_url('admin.php?page=wp-chat'),
-				'apiUrl' => WPCHAT_API_URL,
+			$legalCampaign          = Utility::isProBuild() ? 'wpchat-pro' : 'wpchat-free';
+			$legalBaseUrl           = defined( 'WPCHAT_STORE_URL' ) ? WPCHAT_STORE_URL : 'https://wpchat.com';
+			$legalPaths             = array(
+				'permissions' => array(
+					'path'   => 'data-sharing-permissions/',
+					'medium' => 'docs',
+				),
+				'terms'       => array(
+					'path'   => 'terms-and-conditions/',
+					'medium' => 'legal',
+				),
+				'privacy'     => array(
+					'path'   => 'privacy-policy/',
+					'medium' => 'legal',
+				),
+			);
+			$buildLegalLinks        = static function ( string $source ) use ( $legalCampaign, $legalBaseUrl, $legalPaths ): array {
+				$links = array();
+				foreach ( $legalPaths as $key => $info ) {
+					$links[ $key ] = rtrim( $legalBaseUrl, '/' ) . '/' . $info['path']
+						. '?utm_campaign=' . $legalCampaign
+						. '&utm_source=' . $source
+						. '&utm_medium=' . $info['medium'];
+				}
+				return $links;
+			};
+			$legalLinks             = $buildLegalLinks( 'settings-consent' );
+			$consentModalLinks      = $buildLegalLinks( 'consent-modal' );
+			$onboardingConsentLinks = $buildLegalLinks( 'onboarding-consent' );
+
+wp_localize_script(
+    'wp-chat-admin',
+    'wpChatAdmin',
+    array(
+		'pluginUrl'                   => WPCHAT_PLUGIN_URL,
+		'pluginImageUrl'              => WPCHAT_PLUGIN_URL . 'public/assets/images',
+		'restNonce'                   => wp_create_nonce( 'wp_rest' ),
+		'restUrl'                     => rest_url( 'wpchat/v1/' ),
+		'mainPageUrl'                 => admin_url( 'admin.php?page=wp-chat' ),
+		'apiUrl'                      => WPCHAT_API_URL,
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				'currentPage' => isset($_GET['page']) ? sanitize_text_field(wp_unslash($_GET['page'])) : '',
-				'timezone'        => $timezoneDisplay,
-				'systemInfo'      => $getSystemInfo,
-				'systemInfoPlain' => str_replace('<br />', "\n", $getSystemInfo),
-				'onboardingStatus' => $onboardingStatus,
-				'accountUrl' => 'https://wpchat.com/account',
-				'upgradeUrl' => 'https://wpchat.com/pricing',
-				'adminEmail' => get_option('admin_email'),
-				'productName' => defined('WPCHAT_PRODUCT_NAME') ? WPCHAT_PRODUCT_NAME : '',
-				'storeUrl' => defined('WPCHAT_STORE_URL') ? WPCHAT_STORE_URL : 'https://wpchat.com',
-				'urls' => [
-					'upgrade' => UTMUrlGenerator::upgradeUrl(),
-					'pricing' => UTMUrlGenerator::pricingUrl(),
-					'support' => UTMUrlGenerator::supportUrl(),
-					'manageLicense' => UTMUrlGenerator::generateUrl('/account/billing', ['utm_campaign' => 'license-management']),
-					'downloadPro' => UTMUrlGenerator::generateUrl('/account/downloads/', [
-						'utm_source' => 'wpchat-lite',
-						'utm_medium' => 'admin-notice',
-						'utm_campaign' => 'pro-license-detected',
-					])
-				],
-				// Entitlement data
-				'entitlement' => $this->entitlementDataService->getEntitlementData(),
-				'features' => $this->entitlementDataService->getFeatureFlags(),
-				'hasProLicenseInFree' => $hasProLicenseInFree
-			]);
+		'currentPage'                 => isset( $_GET['page'] ) ? sanitize_text_field( wp_unslash( $_GET['page'] ) ) : '',
+		'timezone'                    => $timezoneDisplay,
+		'systemInfo'                  => $getSystemInfo,
+		'systemInfoPlain'             => str_replace( '<br />', "\n", $getSystemInfo ),
+		'onboardingStatus'            => $onboardingStatus,
+		'accountUrl'                  => 'https://wpchat.com/account',
+		'upgradeUrl'                  => 'https://wpchat.com/pricing',
+		'adminEmail'                  => get_option( 'admin_email' ),
+		'productName'                 => defined( 'WPCHAT_PRODUCT_NAME' ) ? WPCHAT_PRODUCT_NAME : '',
+		'storeUrl'                    => defined( 'WPCHAT_STORE_URL' ) ? WPCHAT_STORE_URL : 'https://wpchat.com',
+		'urls'                        => array(
+			'upgrade'                => UTMUrlGenerator::upgradeUrl(),
+			'pricing'                => UTMUrlGenerator::pricingUrl(),
+			'support'                => UTMUrlGenerator::supportUrl(),
+			'manageLicense'          => UTMUrlGenerator::generateUrl( '/account/billing', array( 'utm_campaign' => 'license-management' ) ),
+			'downloadPro'            => UTMUrlGenerator::generateUrl(
+                '/account/downloads/',
+                array(
+					'utm_source'   => 'wpchat-lite',
+					'utm_medium'   => 'admin-notice',
+					'utm_campaign' => 'pro-license-detected',
+                )
+			),
+			'legalLinks'             => $legalLinks,
+			'consentModalLinks'      => $consentModalLinks,
+			'onboardingConsentLinks' => $onboardingConsentLinks,
+		),
+		// Entitlement data
+		'entitlement'                 => $this->entitlementDataService->getEntitlementData(),
+		'features'                    => $this->entitlementDataService->getFeatureFlags(),
+		'hasProLicenseInFree'         => $hasProLicenseInFree,
+		'notificationCount'           => ! empty( $settings['notificationsEnabled'] ) ? $this->notificationService->getCount() : 0,
+		'notificationsEnabled'        => ! empty( $settings['notificationsEnabled'] ),
+		'dataSharingConsent'          => ! empty( $settings['dataSharingConsent'] ),
+		'dataSharingConsentDismissed' => ! empty( $settings['dataSharingConsentDismissed'] ),
+    )
+);
 
 			// Localize license specific data
-			wp_localize_script('wp-chat-admin', 'wpchatLicense', [
-				'is_lite' => defined('WPCHAT_LITE') && WPCHAT_LITE,
-				'is_pro' => defined('WPCHAT_PRO') && WPCHAT_PRO
-			]);
+wp_localize_script(
+    'wp-chat-admin',
+    'wpchatLicense',
+    array(
+		'is_lite' => defined( 'WPCHAT_LITE' ) && WPCHAT_LITE,
+		'is_pro'  => defined( 'WPCHAT_PRO' ) && WPCHAT_PRO,
+    )
+);
 
 			wp_enqueue_script('wp-chat-admin');
 			wp_set_script_translations('wp-chat-admin', 'smashballoon-wpchat-livechat-customer-support', WPCHAT_PLUGIN_DIR . 'languages');
@@ -278,19 +328,18 @@ class AssetsManagerService implements ServiceProviderInterface
 	/**
 	 * Enqueue scripts and styles.
 	 */
-	public function enqueueAdminStyles(): void
-	{
+	public function enqueueAdminStyles(): void {
 		// Enqueue admin styles only on our admin pages.
-		if ($this->shouldEnqueueAdminAssets()) {
+		if ( $this->shouldEnqueueAdminAssets() ) {
 			$this->loadFonts();
-			wp_register_style(
-				'wp-chat-admin-style',
-				WPCHAT_PLUGIN_URL . 'public/assets/wp-chat-admin.css',
-				[],
-				WPCHAT_VERSION
-			);
+wp_register_style(
+    'wp-chat-admin-style',
+    WPCHAT_PLUGIN_URL . 'public/assets/wp-chat-admin.css',
+    array(),
+    WPCHAT_VERSION
+);
 
-			wp_enqueue_style('wp-chat-admin-style');
+			wp_enqueue_style( 'wp-chat-admin-style' );
 		}
 	}
 
@@ -299,16 +348,15 @@ class AssetsManagerService implements ServiceProviderInterface
 	 *
 	 * @return array|false Returns visibility result array if assets should be loaded, false otherwise.
 	 */
-	private function shouldLoadFrontendAssets()
-	{
-		if (!$this->shouldEnqueueFrontendAssets()) {
+	private function shouldLoadFrontendAssets() {
+		if ( ! $this->shouldEnqueueFrontendAssets() ) {
 			return false;
 		}
 
 		// Get visibility result - consistent array format from both free and pro
 		$visibilityResult = $this->visibilityService->shouldIncludeChatbot();
 
-		if (!$visibilityResult['should_include']) {
+		if ( ! $visibilityResult['should_include'] ) {
 			return false;
 		}
 
@@ -318,31 +366,29 @@ class AssetsManagerService implements ServiceProviderInterface
 	/**
 	 * Enqueue frontend styles.
 	 */
-	public function enqueueFrontendStyles(): void
-	{
+	public function enqueueFrontendStyles(): void {
 		$visibilityResult = $this->shouldLoadFrontendAssets();
-		if (!$visibilityResult) {
+		if ( ! $visibilityResult ) {
 			return;
 		}
 
 		$this->loadFonts();
-		wp_enqueue_style('wpchat-inter-font');
+		wp_enqueue_style( 'wpchat-inter-font' );
 	}
 
 	/**
 	 * Enqueue scripts and styles.
 	 */
-	public function enqueueFrontendScripts(): void
-	{
+	public function enqueueFrontendScripts(): void {
 		$visibilityResult = $this->shouldLoadFrontendAssets();
-		if (!$visibilityResult) {
+		if ( ! $visibilityResult ) {
 			return;
 		}
 
 		$funnelId = $visibilityResult['funnel_id'];
 
-		$frontendScriptUrl = $this->getHashedEntryFile('frontend');
-		if (!$frontendScriptUrl) {
+		$frontendScriptUrl = $this->getHashedEntryFile( 'frontend' );
+		if ( ! $frontendScriptUrl ) {
 			return;
 		}
 
@@ -364,7 +410,7 @@ class AssetsManagerService implements ServiceProviderInterface
 			'brandingLogoUrl' => UTMUrlGenerator::brandingLogoUrl(),
 			'sessionId' => session_id(),
 			'connectionErrorMessage' => apply_filters('wpchat_connection_error_message', ''),
-			'offHoursMessage' => apply_filters('wpchat_off_hours_message', ''),
+			'offHoursMessage' => wp_kses_post(apply_filters('wpchat_off_hours_message', '')),
 		]);
 	}
 
@@ -373,9 +419,8 @@ class AssetsManagerService implements ServiceProviderInterface
 	 *
 	 * @return bool
 	 */
-	public function shouldEnqueueFrontendAssets(): bool
-	{
-		return apply_filters('wp_chat_should_enqueue_frontend_assets', !is_admin());
+	public function shouldEnqueueFrontendAssets(): bool {
+		return apply_filters( 'wp_chat_should_enqueue_frontend_assets', ! is_admin() );
 	}
 
 	/**

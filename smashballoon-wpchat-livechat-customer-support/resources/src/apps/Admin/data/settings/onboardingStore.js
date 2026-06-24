@@ -17,10 +17,11 @@ const useOnboardingStore = create((set, get) => ({
     exclude: { pages: [], categories: [], tags: [], postTypes: [] },
     include: { pages: [], categories: [], tags: [], postTypes: [] }
   },
-  // License and newsletter fields
+  // License, newsletter, and consent fields
   licenseKey: '',
   newsletterEmail: window.wpChatAdmin?.adminEmail || '',
   newsletterSubscribed: true,
+  dataSharingConsent: false,
 
   // Internal state
   settings: null,
@@ -75,7 +76,8 @@ const useOnboardingStore = create((set, get) => ({
           // Get license key from license store
           licenseKey: useLicenseStore.getState().licenseKey || '',
           newsletterEmail: window.wpChatAdmin?.adminEmail || '',
-          newsletterSubscribed: true // Default to subscribed
+          newsletterSubscribed: true, // Default to subscribed
+          dataSharingConsent: settings.dataSharingConsent || false
         });
       }
     } catch (error) {
@@ -105,7 +107,9 @@ const useOnboardingStore = create((set, get) => ({
         theme: state.selectedTheme
       },
       visibilitySettings: state.visibilitySettings,
-      onboardingStatus: true
+      onboardingStatus: true,
+      dataSharingConsent: state.dataSharingConsent,
+      notificationsEnabled: state.dataSharingConsent ? true : (state.settings?.notificationsEnabled || false)
     };
   },
 

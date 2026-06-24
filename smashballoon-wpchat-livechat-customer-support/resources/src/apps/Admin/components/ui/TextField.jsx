@@ -47,6 +47,7 @@ export function TextField({
 }) {
   const InputComponent = as === 'textarea' ? TextArea : Input;
   const characterCount = value ? value.length : 0;
+  const isOverLimit = maxLength ? characterCount >= maxLength : false;
   const isHorizontal = layout === 'horizontal';
   const isIconRight = iconPosition === 'right';
 
@@ -58,7 +59,7 @@ export function TextField({
       className={composeTailwindRenderProps(
         props.className,
         cn(
-          'wpchat:flex',
+          'wpchat:group wpchat:flex',
           isHorizontal
             ? 'wpchat:flex-row wpchat:items-center wpchat:gap-2'
             : 'wpchat:w-full wpchat:flex-col wpchat:gap-1',
@@ -104,7 +105,13 @@ export function TextField({
       {showMaxLength && maxLength && (
         <Description
           className={cn(
-            'wpchat:inline-block wpchat:text-sm wpchat:leading-relaxed wpchat:text-gray-700',
+            'wpchat:inline-block wpchat:text-sm wpchat:leading-relaxed wpchat:transition-opacity',
+            // Only reveal on focus; reserve the line's height the rest of the time
+            // so the layout doesn't jump. When the limit is hit, keep it visible in
+            // dark red to flag the error regardless of focus.
+            isOverLimit
+              ? 'wpchat:text-red-700 wpchat:opacity-100'
+              : 'wpchat:text-gray-700 wpchat:opacity-0 wpchat:group-focus-within:opacity-100',
             descriptionClassName,
           )}
         >

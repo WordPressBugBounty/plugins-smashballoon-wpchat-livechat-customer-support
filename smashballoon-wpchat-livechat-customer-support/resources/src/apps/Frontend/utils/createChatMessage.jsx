@@ -8,6 +8,7 @@
  * @param {boolean} [directAnswer=false] - Indicates if the message is a direct answer (e.g., a response to a question).
  * @param {Array<Object>} [images=[]] - An array of image objects, each with `imageName` and `altText` properties.
  * @param {boolean} [verifiedQuote=false] - Indicates if the message includes a verified quote (e.g., from a trusted source).
+ * @param {boolean} [allowHtml=false] - Whether the message content should be rendered as (server-sanitized) HTML.
  *
  * @returns {Object|null} A chat message object or null if message is not valid.
  */
@@ -18,6 +19,7 @@ export const createChatMessage = (
   directAnswer = false,
   images = [],
   verifiedQuote = false,
+  allowHtml = false,
 ) => {
   if (!message || typeof message !== 'string' || message.trim() === '') {
     return null;
@@ -36,6 +38,7 @@ export const createChatMessage = (
             directAnswer,
             images,
             verifiedQuote,
+            allowHtml,
           );
           onClick?.();
           return chatMessage;
@@ -46,5 +49,6 @@ export const createChatMessage = (
     directAnswer,
     images,
     verifiedQuote,
+    allowHtml,
   };
 };

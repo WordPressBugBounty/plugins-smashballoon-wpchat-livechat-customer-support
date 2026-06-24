@@ -3,6 +3,7 @@ import { cn } from '@Utils/cn';
 import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import { useProUpsellBanner } from '@AH/useProUpsellBanner';
+import useNotificationsStore from '@DataStore/notifications/notificationsStore';
 
 /**
  * Renders a layout wrapper for the header.
@@ -13,6 +14,7 @@ import { useProUpsellBanner } from '@AH/useProUpsellBanner';
  */
 function HeaderLayout({ children }) {
   const { shouldShowBanner, dismissBanner } = useProUpsellBanner();
+  const isNotificationsExpanded = useNotificationsStore((s) => s.isExpanded);
 
   const handleCloseBanner = async () => {
     await dismissBanner();
@@ -56,9 +58,13 @@ function HeaderLayout({ children }) {
       {/* Main header */}
       <div
         className={cn(
-          'wpchat-admin-header wpchat-pf-width wpchat:top-10.5 wpchat:z-99991 wpchat:min-h-[66px] wpchat:border-b wpchat:border-gray-300 wpchat:bg-white wpchat:px-4 wpchat:py-2 wpchat:min-[783px]:fixed wpchat:md:px-13 wpchat:md:py-3',
+          'wpchat-admin-header wpchat-pf-width wpchat:top-10.5 wpchat:min-h-[66px] wpchat:border-b wpchat:border-gray-300 wpchat:bg-white wpchat:px-4 wpchat:py-2 wpchat:min-[783px]:fixed wpchat:md:px-13 wpchat:md:py-3',
           shouldShowBanner ? 'wpchat:min-[783px]:top-16' : 'wpchat:min-[783px]:top-8',
         )}
+        style={{
+          zIndex: isNotificationsExpanded ? 110 : 99991,
+          transition: isNotificationsExpanded ? 'z-index 0s' : 'z-index 0s 0.3s',
+        }}
       >
         {children}
       </div>

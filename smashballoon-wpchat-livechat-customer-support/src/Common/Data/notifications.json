@@ -1,0 +1,89 @@
+[
+	{
+		"id": "local-wpc-1",
+		"plugin": ["wpchat"],
+		"type": ["free", "pro"],
+		"title": "Loving WPChat? Leave us a review",
+		"content": "A quick 5-star review on WordPress.org helps other site owners discover WPChat and supports our continued development. Takes less than a minute!",
+		"content_html": "<!-- wp:paragraph -->\n<p>A quick 5-star review on WordPress.org helps other site owners discover WPChat and supports our continued development. Takes less than a minute!</p>\n<!-- /wp:paragraph -->",
+		"presets": "default",
+		"image": "balloon",
+		"image_url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTIiIHZpZXdCb3g9IjAgMCAyNCAzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMy4xODM3IDE1LjA5ODNDMjMuMTgzNyA3LjE2NjY5IDE4LjAyNzcgMC43MzY4MTYgMTEuNjY1MSAwLjczNjgxNkM1LjMwMjQ2IDAuNzM2ODE2IDAuMTQ0MDQzIDcuMTY2NjkgMC4xNDQwNDMgMTUuMDk4M0MwLjE0NDA0MyAyMi43MDIgNC44Njg4NyAyOC45MDYxIDEwLjg1MjEgMjkuNDI2NUwxMC4yMTU4IDMxLjQ1ODFMMTQuMjA1NCAzMS4xMTU5TDEyLjgwNTYgMjkuMzkwOEMxOC42MzA5IDI4LjY3OCAyMy4xODM3IDIyLjU1MjMgMjMuMTgzNyAxNS4wOTgzWiIgZmlsbD0iI0ZFNTQ0RiI+PC9wYXRoPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQuNDExOSA1Ljc4NTY0TDE0Ljk2NjMgMTEuNTUzMkwyMC43MTAyIDExLjcxOTZMMTYuNTU1MiAxNS42MTUxTDE5LjgzNjkgMjAuNDAxM0wxNC4zMDgzIDE5LjM1MzRMMTIuNjMyMiAyNC45MjgyTDEwLjA4NzMgMTkuOTM2TDQuOTQ4ODYgMjIuMzEwMUw2LjkyNTU1IDE2Ljk1ODNMMS45MTQwNiAxNC40MDk1TDcuMjc4NzIgMTIuNjY5OEw1Ljc5ODQgNy4zNDA5OUwxMC44NzM3IDEwLjI1ODZMMTQuNDExOSA1Ljc4NTY0WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4g",
+		"btns": {
+			"primary": {
+				"text": "Leave a review",
+				"url": "https://wordpress.org/plugins/smashballoon-wpchat-livechat-customer-support/?utm_campaign=fallback-notifications&utm_content=leave-a-review&utm_source={wpc_utm_source}&utm_medium=in-plugin-notification#reviews",
+				"attr": ["targetblank"]
+			}
+		}
+	},
+	{
+		"id": "local-wpc-2",
+		"plugin": ["wpchat"],
+		"type": ["free", "pro"],
+		"title": "Show your chat widget exactly where you want it",
+		"content": "WPChat's Visibility Controls let you show or hide the chat widget on specific pages, categories, post types, and more so it only appears where it actually makes sense.",
+		"content_html": "<!-- wp:paragraph -->\n<p>WPChat's Visibility Controls let you show or hide the chat widget on specific pages, categories, post types, and more so it only appears where it actually makes sense.</p>\n<!-- /wp:paragraph -->",
+		"presets": "default",
+		"image": "balloon",
+		"image_url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTIiIHZpZXdCb3g9IjAgMCAyNCAzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMy4xODM3IDE1LjA5ODNDMjMuMTgzNyA3LjE2NjY5IDE4LjAyNzcgMC43MzY4MTYgMTEuNjY1MSAwLjczNjgxNkM1LjMwMjQ2IDAuNzM2ODE2IDAuMTQ0MDQzIDcuMTY2NjkgMC4xNDQwNDMgMTUuMDk4M0MwLjE0NDA0MyAyMi43MDIgNC44Njg4NyAyOC45MDYxIDEwLjg1MjEgMjkuNDI2NUwxMC4yMTU4IDMxLjQ1ODFMMTQuMjA1NCAzMS4xMTU5TDEyLjgwNTYgMjkuMzkwOEMxOC42MzA5IDI4LjY3OCAyMy4xODM3IDIyLjU1MjMgMjMuMTgzNyAxNS4wOTgzWiIgZmlsbD0iI0ZFNTQ0RiI+PC9wYXRoPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQuNDExOSA1Ljc4NTY0TDE0Ljk2NjMgMTEuNTUzMkwyMC43MTAyIDExLjcxOTZMMTYuNTU1MiAxNS42MTUxTDE5LjgzNjkgMjAuNDAxM0wxNC4zMDgzIDE5LjM1MzRMMTIuNjMyMiAyNC45MjgyTDEwLjA4NzMgMTkuOTM2TDQuOTQ4ODYgMjIuMzEwMUw2LjkyNTU1IDE2Ljk1ODNMMS45MTQwNiAxNC40MDk1TDcuMjc4NzIgMTIuNjY5OEw1Ljc5ODQgNy4zNDA5OUwxMC44NzM3IDEwLjI1ODZMMTQuNDExOSA1Ljc4NTY0WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4g",
+		"btns": {
+			"primary": {
+				"text": "Set up visibility controls",
+				"url": "{wpc_admin_url}#/visibility"
+			}
+		}
+	},
+	{
+		"id": "local-wpc-3",
+		"plugin": ["wpchat"],
+		"type": ["free", "pro"],
+		"title": "Set your agents' availability hours",
+		"content": "Use Configurable Agent Timings to let visitors know when your team is online. You can set custom working hours per agent so your chat widget reflects real availability.",
+		"content_html": "<!-- wp:paragraph -->\n<p>Use Configurable Agent Timings to let visitors know when your team is online. You can set custom working hours per agent so your chat widget reflects real availability.</p>\n<!-- /wp:paragraph -->",
+		"presets": "default",
+		"image": "balloon",
+		"image_url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTIiIHZpZXdCb3g9IjAgMCAyNCAzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMy4xODM3IDE1LjA5ODNDMjMuMTgzNyA3LjE2NjY5IDE4LjAyNzcgMC43MzY4MTYgMTEuNjY1MSAwLjczNjgxNkM1LjMwMjQ2IDAuNzM2ODE2IDAuMTQ0MDQzIDcuMTY2NjkgMC4xNDQwNDMgMTUuMDk4M0MwLjE0NDA0MyAyMi43MDIgNC44Njg4NyAyOC45MDYxIDEwLjg1MjEgMjkuNDI2NUwxMC4yMTU4IDMxLjQ1ODFMMTQuMjA1NCAzMS4xMTU5TDEyLjgwNTYgMjkuMzkwOEMxOC42MzA5IDI4LjY3OCAyMy4xODM3IDIyLjU1MjMgMjMuMTgzNyAxNS4wOTgzWiIgZmlsbD0iI0ZFNTQ0RiI+PC9wYXRoPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQuNDExOSA1Ljc4NTY0TDE0Ljk2NjMgMTEuNTUzMkwyMC43MTAyIDExLjcxOTZMMTYuNTU1MiAxNS42MTUxTDE5LjgzNjkgMjAuNDAxM0wxNC4zMDgzIDE5LjM1MzRMMTIuNjMyMiAyNC45MjgyTDEwLjA4NzMgMTkuOTM2TDQuOTQ4ODYgMjIuMzEwMUw2LjkyNTU1IDE2Ljk1ODNMMS45MTQwNiAxNC40MDk1TDcuMjc4NzIgMTIuNjY5OEw1Ljc5ODQgNy4zNDA5OUwxMC44NzM3IDEwLjI1ODZMMTQuNDExOSA1Ljc4NTY0WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4g",
+		"btns": {
+			"primary": {
+				"text": "Configure agent timings",
+				"url": "{wpc_admin_url}#/agents"
+			}
+		}
+	},
+	{
+		"id": "local-wpc-4",
+		"plugin": ["wpchat"],
+		"type": ["free", "pro"],
+		"title": "Ready to do more with WPChat?",
+		"content": "Upgrade to Plus or Elite to unlock unlimited chat funnels, remove WPChat branding, support more agents, and scale your FAQ capacity as your site grows.",
+		"content_html": "<!-- wp:paragraph -->\n<p>Upgrade to Plus or Elite to unlock unlimited chat funnels, remove WPChat branding, support more agents, and scale your FAQ capacity as your site grows.</p>\n<!-- /wp:paragraph -->",
+		"presets": "default",
+		"image": "balloon",
+		"image_url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTIiIHZpZXdCb3g9IjAgMCAyNCAzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMy4xODM3IDE1LjA5ODNDMjMuMTgzNyA3LjE2NjY5IDE4LjAyNzcgMC43MzY4MTYgMTEuNjY1MSAwLjczNjgxNkM1LjMwMjQ2IDAuNzM2ODE2IDAuMTQ0MDQzIDcuMTY2NjkgMC4xNDQwNDMgMTUuMDk4M0MwLjE0NDA0MyAyMi43MDIgNC44Njg4NyAyOC45MDYxIDEwLjg1MjEgMjkuNDI2NUwxMC4yMTU4IDMxLjQ1ODFMMTQuMjA1NCAzMS4xMTU5TDEyLjgwNTYgMjkuMzkwOEMxOC42MzA5IDI4LjY3OCAyMy4xODM3IDIyLjU1MjMgMjMuMTgzNyAxNS4wOTgzWiIgZmlsbD0iI0ZFNTQ0RiI+PC9wYXRoPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQuNDExOSA1Ljc4NTY0TDE0Ljk2NjMgMTEuNTUzMkwyMC43MTAyIDExLjcxOTZMMTYuNTU1MiAxNS42MTUxTDE5LjgzNjkgMjAuNDAxM0wxNC4zMDgzIDE5LjM1MzRMMTIuNjMyMiAyNC45MjgyTDEwLjA4NzMgMTkuOTM2TDQuOTQ4ODYgMjIuMzEwMUw2LjkyNTU1IDE2Ljk1ODNMMS45MTQwNiAxNC40MDk1TDcuMjc4NzIgMTIuNjY5OEw1Ljc5ODQgNy4zNDA5OUwxMC44NzM3IDEwLjI1ODZMMTQuNDExOSA1Ljc4NTY0WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4g",
+		"btns": {
+			"primary": {
+				"text": "See all plans",
+				"url": "https://wpchat.com/pricing/?utm_campaign=fallback-notifications&utm_content=see-all-plans-nudge&utm_source={wpc_utm_source}&utm_medium=in-plugin-notification",
+				"attr": ["targetblank"]
+			}
+		}
+	},
+	{
+		"id": "local-wpc-5",
+		"plugin": ["wpchat"],
+		"type": ["free", "pro"],
+		"title": "Make WPChat match your brand",
+		"content": "Change your widget theme, brand color, and welcome message from WPChat's settings. Small tweaks can make a big difference in how often visitors click to start a chat.",
+		"content_html": "<!-- wp:paragraph -->\n<p>Change your widget theme, brand color, and welcome message from WPChat's settings. Small tweaks can make a big difference in how often visitors click to start a chat.</p>\n<!-- /wp:paragraph -->",
+		"presets": "default",
+		"image": "balloon",
+		"image_url": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4gPHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGhlaWdodD0iNTIiIHZpZXdCb3g9IjAgMCAyNCAzMiIgZmlsbD0ibm9uZSI+PHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0yMy4xODM3IDE1LjA5ODNDMjMuMTgzNyA3LjE2NjY5IDE4LjAyNzcgMC43MzY4MTYgMTEuNjY1MSAwLjczNjgxNkM1LjMwMjQ2IDAuNzM2ODE2IDAuMTQ0MDQzIDcuMTY2NjkgMC4xNDQwNDMgMTUuMDk4M0MwLjE0NDA0MyAyMi43MDIgNC44Njg4NyAyOC45MDYxIDEwLjg1MjEgMjkuNDI2NUwxMC4yMTU4IDMxLjQ1ODFMMTQuMjA1NCAzMS4xMTU5TDEyLjgwNTYgMjkuMzkwOEMxOC42MzA5IDI4LjY3OCAyMy4xODM3IDIyLjU1MjMgMjMuMTgzNyAxNS4wOTgzWiIgZmlsbD0iI0ZFNTQ0RiI+PC9wYXRoPjxwYXRoIGZpbGwtcnVsZT0iZXZlbm9kZCIgY2xpcC1ydWxlPSJldmVub2RkIiBkPSJNMTQuNDExOSA1Ljc4NTY0TDE0Ljk2NjMgMTEuNTUzMkwyMC43MTAyIDExLjcxOTZMMTYuNTU1MiAxNS42MTUxTDE5LjgzNjkgMjAuNDAxM0wxNC4zMDgzIDE5LjM1MzRMMTIuNjMyMiAyNC45MjgyTDEwLjA4NzMgMTkuOTM2TDQuOTQ4ODYgMjIuMzEwMUw2LjkyNTU1IDE2Ljk1ODNMMS45MTQwNiAxNC40MDk1TDcuMjc4NzIgMTIuNjY5OEw1Ljc5ODQgNy4zNDA5OUwxMC44NzM3IDEwLjI1ODZMMTQuNDExOSA1Ljc4NTY0WiIgZmlsbD0id2hpdGUiPjwvcGF0aD48L3N2Zz4g",
+		"btns": {
+			"primary": {
+				"text": "Start customizing",
+				"url": "{wpc_admin_url}#/customizer"
+			}
+		}
+	}
+]

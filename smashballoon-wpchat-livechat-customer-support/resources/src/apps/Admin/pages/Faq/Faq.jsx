@@ -23,6 +23,7 @@ import { useChatStore } from '@FDataStore/Chat/chatStore';
 import { useEntitlements } from '@AH/useEntitlements';
 import { getUpgradeDialogData, upgradeConfigs } from '@AU/upgradeDialogs';
 import { cn } from '@Utils/cn';
+import { htmlToPlainText } from '@Utils/htmlToPlainText';
 
 /**
  * Faq component displays a list of frequently asked questions.
@@ -248,11 +249,15 @@ export default function Faq() {
                       {row.question}
                     </h5>
                   )}
-                  {row.answer && (
-                    <p className='wpchat:m-0 wpchat:text-sm wpchat:text-gray-500'>
-                      {row.answer.length > 150 ? `${row.answer.substring(0, 150)}...` : row.answer}
-                    </p>
-                  )}
+                  {row.answer &&
+                    (() => {
+                      const text = htmlToPlainText(row.answer);
+                      return text ? (
+                        <p className='wpchat:m-0 wpchat:text-sm wpchat:text-gray-500'>
+                          {text.length > 150 ? `${text.substring(0, 150)}...` : text}
+                        </p>
+                      ) : null;
+                    })()}
                 </Cell>
                 <Cell
                   className={cn('wpchat:flex wpchat:items-start wpchat:justify-end wpchat:py-5')}

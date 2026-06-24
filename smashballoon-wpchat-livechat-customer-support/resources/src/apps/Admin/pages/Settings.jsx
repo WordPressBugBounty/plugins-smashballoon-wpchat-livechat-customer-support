@@ -9,6 +9,7 @@ import { HideOnDesktop, HideOnMobile } from '@Components/HideComponent';
 import SvgLoader from '@Components/SvgLoader';
 import TitleDescription from '@Components/TitleDescription';
 import useSettingsStore from '@DataStore/settings/settingsStore';
+import useNotificationsStore from '@DataStore/notifications/notificationsStore';
 import useLicenseStore from '@DataStore/license/licenseStore';
 import SettingsSkeleton from '@AC/Settings/SettingsSkeleton';
 import UpgradeProgress from '../components/UpgradeProgress';
@@ -18,37 +19,37 @@ import { __ } from '@wordpress/i18n';
 
 const PageLayout = lazy(() => import('@AC/PageLayout'));
 
+const STATUS = {
+  IDLE: 'idle',
+  LOADING: 'loading',
+  SUCCESS: 'success',
+  ERROR: 'error',
+};
+
+const statusConfig = {
+  [STATUS.IDLE]: {
+    icon: 'networkSensors',
+    text: __('Test connection', 'smashballoon-wpchat-livechat-customer-support'),
+    color: 'wpchat:[&_svg]:fill-gray-500',
+  },
+  [STATUS.LOADING]: {
+    icon: 'networkSensors',
+    text: __('Testing...', 'smashballoon-wpchat-livechat-customer-support'),
+    color: 'wpchat:[&_svg]:fill-gray-500',
+  },
+  [STATUS.SUCCESS]: {
+    icon: 'checkCircleSolid',
+    text: __('Connection Successful', 'smashballoon-wpchat-livechat-customer-support'),
+    color: 'wpchat:[&_svg]:fill-green-600',
+  },
+  [STATUS.ERROR]: {
+    icon: 'warningSolid',
+    text: __('Connection Failed', 'smashballoon-wpchat-livechat-customer-support'),
+    color: 'wpchat:[&_svg]:fill-red-600',
+  },
+};
+
 export default function Support() {
-  const STATUS = {
-    IDLE: 'idle',
-    LOADING: 'loading',
-    SUCCESS: 'success',
-    ERROR: 'error',
-  };
-
-  const statusConfig = {
-    [STATUS.IDLE]: {
-      icon: 'networkSensors',
-      text: __('Test connection', 'smashballoon-wpchat-livechat-customer-support'),
-      color: 'wpchat:[&_svg]:fill-gray-500',
-    },
-    [STATUS.LOADING]: {
-      icon: 'networkSensors',
-      text: __('Testing...', 'smashballoon-wpchat-livechat-customer-support'),
-      color: 'wpchat:[&_svg]:fill-gray-500',
-    },
-    [STATUS.SUCCESS]: {
-      icon: 'checkCircleSolid',
-      text: __('Connection Successful', 'smashballoon-wpchat-livechat-customer-support'),
-      color: 'wpchat:[&_svg]:fill-green-600',
-    },
-    [STATUS.ERROR]: {
-      icon: 'warningSolid',
-      text: __('Connection Failed', 'smashballoon-wpchat-livechat-customer-support'),
-      color: 'wpchat:[&_svg]:fill-red-600',
-    },
-  };
-
   const { settings, fetchSettings, saveSettings } = useSettingsStore();
   const {
     licenseKey,
@@ -74,6 +75,8 @@ export default function Support() {
 
   const [status, setStatus] = useState(STATUS.IDLE);
   const [preserveSettings, setPreserveSettings] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
+  const [dataSharingConsent, setDataSharingConsent] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '' });
 
@@ -102,6 +105,8 @@ export default function Support() {
   useEffect(() => {
     if (settings) {
       setPreserveSettings(settings.preserveSettings);
+      setNotificationsEnabled(settings.notificationsEnabled ?? false);
+      setDataSharingConsent(settings.dataSharingConsent ?? false);
     }
   }, [settings]);
 
@@ -154,10 +159,22 @@ export default function Support() {
   const handleSaveChanges = async () => {
     setIsSaving(true);
     try {
-      await saveSettings({
+      const payload = {
         ...settings,
         preserveSettings: preserveSettings,
-      });
+        dataSharingConsent: dataSharingConsent,
+        notificationsEnabled: dataSharingConsent ? true : notificationsEnabled,
+      };
+
+      await saveSettings(payload);
+
+      window.wpChatAdmin.notificationsEnabled = payload.notificationsEnabled;
+      window.wpChatAdmin.dataSharingConsent = dataSharingConsent;
+      window.dispatchEvent(new Event('wpchat:settings-updated'));
+
+      if (payload.notificationsEnabled) {
+        useNotificationsStore.getState().refetch();
+      }
 
       setToast({
         show: true,
@@ -299,6 +316,7 @@ export default function Support() {
   );
 
   const { icon, text, color } = statusConfig[status];
+  const badgeData = getBadgeData();
 
   return (
      <Suspense fallback={<SettingsSkeleton />}>
@@ -310,8 +328,8 @@ export default function Support() {
       <Card>
         <TitleDescription
           title={__('License Key', 'smashballoon-wpchat-livechat-customer-support')}
-          badgeType={getBadgeData().badgeType}
-          badgeText={getBadgeData().badgeText}
+          badgeType={badgeData.badgeType}
+          badgeText={badgeData.badgeText}
           description={
             !isPro ? (
               <>
@@ -466,24 +484,135 @@ export default function Support() {
         </div>
       </Card>
 
-      <Card>
-        <Switch
-          className='wpchat:flex wpchat:justify-between'
-          isSelected={preserveSettings}
-          onChange={setPreserveSettings}
-        >
+      <Card className='wpchat:pt-6 wpchat:pb-7'>
+        <div className='wpchat:flex wpchat:justify-between wpchat:gap-5 wpchat:items-start'>
           <TitleDescription
+            className='wpchat:mb-0'
             title={__(
               'Preserve settings if plugin is removed',
               'smashballoon-wpchat-livechat-customer-support',
             )}
+            titleClassName='wpchat:text-base wpchat:leading-[1.6]'
             description={__(
               'This will make sure that all of your chatbot data and settings are still saved even if the plugin is uninstalled',
               'smashballoon-wpchat-livechat-customer-support',
             )}
+            descriptionClassName='wpchat:text-gray-700 wpchat:max-w-[395px] wpchat:leading-[1.6] wpchat:mb-0'
           />
-        </Switch>
+          <Switch
+            isSelected={preserveSettings}
+            onChange={setPreserveSettings}
+          />
+        </div>
       </Card>
+
+      {/*
+        Lite users choose whether to share data / receive in-plugin notifications.
+        Pro always opts in (enforced on the backend, see SettingsService), so the
+        toggles are replaced with a read-only notice explaining what is collected.
+      */}
+      {!isPro ? (
+        <>
+          <Card className='wpchat:pt-6 wpchat:pb-7'>
+            <div className='wpchat:flex wpchat:justify-between wpchat:gap-5 wpchat:items-start'>
+              <div className='wpchat:flex wpchat:flex-col wpchat:gap-3.5'>
+                <TitleDescription
+                  className='wpchat:mb-0'
+                  title={__(
+                    'Data sharing consent',
+                    'smashballoon-wpchat-livechat-customer-support',
+                  )}
+                  titleClassName='wpchat:text-base wpchat:leading-[1.6]'
+                  description={__(
+                    'Share anonymised usage data with WPChat and Smash Balloon to help improve our products.',
+                    'smashballoon-wpchat-livechat-customer-support',
+                  )}
+                  descriptionClassName='wpchat:text-gray-700 wpchat:max-w-[395px] wpchat:leading-[1.6] wpchat:mb-0'
+                />
+                <div className='wpchat:flex wpchat:flex-col wpchat:gap-1 wpchat:md:flex-row wpchat:md:gap-4 wpchat:text-xs wpchat:text-wp-blue-500'>
+                  <a href={window.wpChatAdmin?.urls?.legalLinks?.permissions} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                    {__('What permissions are being granted?', 'smashballoon-wpchat-livechat-customer-support')}
+                  </a>
+                  <a href={window.wpChatAdmin?.urls?.legalLinks?.terms} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                    {__('Terms & Conditions', 'smashballoon-wpchat-livechat-customer-support')}
+                  </a>
+                  <a href={window.wpChatAdmin?.urls?.legalLinks?.privacy} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                    {__('Privacy', 'smashballoon-wpchat-livechat-customer-support')}
+                  </a>
+                </div>
+              </div>
+              <Switch
+                isSelected={dataSharingConsent}
+                onChange={(val) => {
+                  setDataSharingConsent(val);
+                  if (val) {
+                    setNotificationsEnabled(true);
+                  }
+                }}
+              />
+            </div>
+          </Card>
+
+          <Card className='wpchat:pt-6 wpchat:pb-7'>
+            <div className='wpchat:flex wpchat:justify-between wpchat:gap-5 wpchat:items-start'>
+              <TitleDescription
+                className='wpchat:mb-0'
+                title={__(
+                  'In-plugin notifications',
+                  'smashballoon-wpchat-livechat-customer-support',
+                )}
+                titleClassName='wpchat:text-base wpchat:leading-[1.6]'
+                description={
+                  dataSharingConsent
+                    ? __(
+                        'Receive notifications about WPChat updates, fixes, and new features. This is enabled, if you opt into telemetry.',
+                        'smashballoon-wpchat-livechat-customer-support',
+                      )
+                    : __(
+                        'Receive important updates, tips, and announcements directly within the plugin dashboard',
+                        'smashballoon-wpchat-livechat-customer-support',
+                      )
+                }
+                descriptionClassName='wpchat:text-gray-700 wpchat:max-w-[395px] wpchat:leading-[1.6] wpchat:mb-0'
+              />
+              <Switch
+                isSelected={dataSharingConsent ? true : notificationsEnabled}
+                onChange={setNotificationsEnabled}
+                isDisabled={dataSharingConsent}
+              />
+            </div>
+          </Card>
+        </>
+      ) : (
+        <Card className='wpchat:pt-6 wpchat:pb-7'>
+          <div className='wpchat:flex wpchat:flex-col wpchat:gap-3.5'>
+            <TitleDescription
+              className='wpchat:mb-0'
+              title={__(
+                'Data sharing',
+                'smashballoon-wpchat-livechat-customer-support',
+              )}
+              titleClassName='wpchat:text-base wpchat:leading-[1.6]'
+              description={__(
+                "To keep your WPChat and Smash Balloon plugins secure and up to date, we collect limited, anonymised usage data. We never collect your chat content or your visitors' personal information. We'll also send you occasional in-plugin notifications about updates, fixes, and new features.",
+                'smashballoon-wpchat-livechat-customer-support',
+              )}
+              descriptionClassName='wpchat:text-gray-700 wpchat:leading-[1.6] wpchat:mb-0 wpchat:max-w-none'
+            />
+            <div className='wpchat:flex wpchat:flex-col wpchat:gap-1 wpchat:md:flex-row wpchat:md:gap-4 wpchat:text-xs wpchat:text-wp-blue-500'>
+              <a href={window.wpChatAdmin?.urls?.legalLinks?.permissions} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                {__('What data is collected?', 'smashballoon-wpchat-livechat-customer-support')}
+              </a>
+              <a href={window.wpChatAdmin?.urls?.legalLinks?.terms} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                {__('Terms & Conditions', 'smashballoon-wpchat-livechat-customer-support')}
+              </a>
+              <a href={window.wpChatAdmin?.urls?.legalLinks?.privacy} target='_blank' rel='noopener noreferrer' className='wpchat:text-wp-blue-500 wpchat:hover:text-wp-blue-600'>
+                {__('Privacy', 'smashballoon-wpchat-livechat-customer-support')}
+              </a>
+            </div>
+          </div>
+        </Card>
+      )}
 
       <Toast
         show={toast.show}

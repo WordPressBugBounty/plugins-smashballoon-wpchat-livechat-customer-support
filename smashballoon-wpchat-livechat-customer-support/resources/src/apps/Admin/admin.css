@@ -250,3 +250,47 @@ body[class*='wp-chat_page_wp-chat-'] {
       position: relative;
     }
 }
+
+.notification-card-single p {
+  margin-top: 0;
+}
+
+.notification-card-single ul,
+.notification-card-single ol {
+  margin: 0.25rem 0 1em;
+  padding-inline-start: 1.5rem;
+  font-size: 0.875em;
+}
+
+.notification-card-single ul {
+  list-style-type: disc;
+}
+
+.notification-card-single ol {
+  list-style-type: decimal;
+}
+
+.notification-card-single li {
+  margin: 0.125rem 0;
+}
+
+.notification-card-single a {
+  color: var(--wpchat-color-wp-blue-500);
+  text-decoration: underline;
+}
+
+.notification-card-single a:hover {
+  color: var(--wpchat-color-wp-blue-500);
+}
+
+.notification-card-single code {
+  padding: 0.125rem 0.25rem;
+  background-color: #f3f4f6;
+  border-radius: 3px;
+  font-size: 0.875em;
+}
+
+.notification-card-single > code {
+  display: inline-block;
+  margin-bottom: 1em;
+}
