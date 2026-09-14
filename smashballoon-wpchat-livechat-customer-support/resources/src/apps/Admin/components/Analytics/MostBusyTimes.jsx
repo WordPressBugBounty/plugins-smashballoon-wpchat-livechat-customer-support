@@ -1,7 +1,7 @@
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import React, { useState } from 'react';
 import { Button as RACButton } from 'react-aria-components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import UpgradeToProBlurNotice from '@AC/UpgradeToProBlurNotice';
 import { useEntitlements } from '@AH/useEntitlements';
 import { getUpgradeDialogData, upgradeConfigs } from '@AU/upgradeDialogs';
@@ -158,7 +158,23 @@ const MostBusyTimes = ({ busyTimesData, timeBlocks, timeRange, period, timezoneI
             </div>
 
             <div className='wpchat:w-full'>
-              <div className='wpchat:w-full' style={{ height: 220 }}>
+              <div
+                className='wpchat:w-full'
+                style={{ height: 220 }}
+                role='img'
+                aria-label={(() => {
+                  /* Text alternative: name the busiest period (recharts SVG is not SR-readable) */
+                  const top = chartData.reduce((a, b) => (b.value > (a?.value ?? -1) ? b : a), null);
+                  return top
+                    ? sprintf(
+                        /* translators: 1: time label, 2: count */
+                        __('Busiest times bar chart. Peak: %1$s with %2$d', 'smashballoon-wpchat-livechat-customer-support'),
+                        top.label,
+                        top.value,
+                      )
+                    : __('Busiest times bar chart. No data.', 'smashballoon-wpchat-livechat-customer-support');
+                })()}
+              >
                 <ResponsiveContainer width='100%' height='100%'>
                   <BarChart
                     data={chartData}

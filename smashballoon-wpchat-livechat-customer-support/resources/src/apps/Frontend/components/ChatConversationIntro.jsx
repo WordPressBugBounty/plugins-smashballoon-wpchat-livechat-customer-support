@@ -24,16 +24,16 @@ export default function ChatConversationIntro() {
 				{isImage ? (
 					<img
 						src={chatbotAvatar}
-						alt={__('Chatbot Avatar', 'smashballoon-wpchat-livechat-customer-support')}
+						alt={chatbotName || ''}
 						className='wpchat:h-17 wpchat:w-17 wpchat:rounded-full wpchat:object-cover'
 					/>
 				) : (
 					<SvgLoader name={chatbotAvatar} className='wpchat:h-17 wpchat:w-17' />
 				)}
 			</div>
-			<h5 className='wpchat:text-base wpchat:font-semibold wpchat:text-widget-text-3 wpchat:mb-0.5'>
+			<h3 className='wpchat:text-base wpchat:font-semibold wpchat:text-widget-text-3 wpchat:mb-0.5'>
 				{chatbotName}
-			</h5>
+			</h3>
 			<span className='wpchat:text-sm wpchat:text-widget-text-3'>
 				{__('This is the start of your conversation with', 'smashballoon-wpchat-livechat-customer-support')}{' '}
 				{chatbotName}

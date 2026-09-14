@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useMemo } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 
 /**
  * Steps indicator component showing progress through onboarding
@@ -46,11 +46,21 @@ const OnboardingStepsIndicator = ({ currentStep, totalSteps }) => {
   );
 
   return (
-    <div className='wpchat:flex wpchat:items-center'>
+    <div
+      role='img'
+      aria-label={sprintf(
+        /* translators: 1: current step number, 2: total number of steps */
+        __('Step %1$d of %2$d', 'smashballoon-wpchat-livechat-customer-support'),
+        currentStep + 1,
+        totalSteps,
+      )}
+      className='wpchat:flex wpchat:items-center'
+    >
       {statuses.map((status, index) => (
         <Fragment key={index}>
           {index > 0 && <Connector />}
           <div
+            role='img'
             className='wpchat:relative wpchat:flex wpchat:items-center wpchat:justify-center'
             aria-label={
               status === 'completed'

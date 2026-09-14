@@ -4,6 +4,8 @@ import SvgLoader from '@Components/SvgLoader';
 import { Switch } from '@AC/ui/Switch';
 import { Badge } from '@AC/ui/Badge';
 import ProFeaturesModal from '@AC/Onboarding/ProFeaturesModal';
+import { Modal } from '@AC/ui/Modal';
+import { Dialog } from '@AC/ui/Dialog';
 
 const ConfigureFeatures = () => {
   const [showUpgrade, setShowUpgrade] = useState(false);
@@ -121,21 +123,16 @@ const ConfigureFeatures = () => {
         </div>
       </div>
 
-      {showUpgrade && (
-        <div 
-          className='wpchat:fixed wpchat:inset-0 wpchat:z-[2147483647] wpchat:flex wpchat:items-center wpchat:justify-center wpchat:bg-black/30'
-          onClick={() => setShowUpgrade(false)}
-        >
-          <div onClick={(e) => e.stopPropagation()}>
-            <ProFeaturesModal
-              features={rows.filter((r) => r.pro).slice(0, 3)}
-              onPrimary={() => window.open(wpChatAdmin?.upgradeUrl || '#', '_blank')}
-              onSecondary={() => setShowUpgrade(false)}
-              onClose={() => setShowUpgrade(false)}
-            />
-          </div>
-        </div>
-      )}
+      <Modal isOpen={showUpgrade} onOpenChange={setShowUpgrade} isDismissable>
+        <Dialog aria-label={__('Upgrade to Pro', 'smashballoon-wpchat-livechat-customer-support')}>
+          <ProFeaturesModal
+            features={rows.filter((r) => r.pro).slice(0, 3)}
+            onPrimary={() => window.open(wpChatAdmin?.upgradeUrl || '#', '_blank')}
+            onSecondary={() => setShowUpgrade(false)}
+            onClose={() => setShowUpgrade(false)}
+          />
+        </Dialog>
+      </Modal>
     </div>
   );
 };

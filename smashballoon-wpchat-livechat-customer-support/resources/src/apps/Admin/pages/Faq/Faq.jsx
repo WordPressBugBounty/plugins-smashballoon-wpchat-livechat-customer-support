@@ -217,7 +217,7 @@ export default function Faq() {
           </span>
         </div>
         <Table
-          aria-label='FAQs'
+          aria-label={__('FAQs', 'smashballoon-wpchat-livechat-customer-support')}
           selectionMode='multiple'
           selectedKeys={selectedKeys}
           onSelectionChange={setSelectedKeys}
@@ -271,6 +271,7 @@ export default function Faq() {
                       <Button
                         className='wpchat:px-2.5 wpchat:py-2.5 wpchat:text-xs'
                         variant='secondary'
+                        aria-label={__('Edit', 'smashballoon-wpchat-livechat-customer-support')}
                         onPress={() => navigate(`/faqs/edit/${row.id}`)}
                       >
                         <SvgLoader
@@ -286,6 +287,7 @@ export default function Faq() {
                       <Button
                         className='wpchat:px-2.5 wpchat:py-2.5 wpchat:text-xs'
                         variant='secondary'
+                        aria-label={__('Clone', 'smashballoon-wpchat-livechat-customer-support')}
                         onPress={() => {
                           if (!faqLimits.canCreateMore) {
                             setIsOpen(true);
@@ -307,6 +309,7 @@ export default function Faq() {
                       <Button
                         className='[&_svg]:fill-amber-700 wpchat:px-2.5 wpchat:py-2.5 wpchat:text-xs'
                         variant='danger'
+                        aria-label={__('Delete', 'smashballoon-wpchat-livechat-customer-support')}
                         onPress={() => handleDeleteFaq(row.id)}
                       >
                         <SvgLoader
@@ -329,6 +332,7 @@ export default function Faq() {
           <div className='wpchat:mt-2 wpchat:flex wpchat:justify-end'>
             <div className='wpchat:flex wpchat:items-center-safe wpchat:gap-1'>
               <Button
+                aria-label={__('First page', 'smashballoon-wpchat-livechat-customer-support')}
                 onPress={() => loadFaqs(1)}
                 isDisabled={pagination.currentPage === 1}
                 variant='secondary'
@@ -338,6 +342,7 @@ export default function Faq() {
               </Button>
 
               <Button
+                aria-label={__('Previous page', 'smashballoon-wpchat-livechat-customer-support')}
                 onPress={() => loadFaqs(pagination.currentPage - 1)}
                 isDisabled={pagination.currentPage === 1}
                 variant='secondary'
@@ -352,6 +357,7 @@ export default function Faq() {
               </div>
 
               <Button
+                aria-label={__('Next page', 'smashballoon-wpchat-livechat-customer-support')}
                 onPress={() => loadFaqs(pagination.currentPage + 1)}
                 isDisabled={pagination.currentPage === pagination.totalPages}
                 variant='secondary'
@@ -361,6 +367,7 @@ export default function Faq() {
               </Button>
 
               <Button
+                aria-label={__('Last page', 'smashballoon-wpchat-livechat-customer-support')}
                 onPress={() => loadFaqs(pagination.totalPages)}
                 isDisabled={pagination.currentPage === pagination.totalPages}
                 variant='secondary'
@@ -378,13 +385,24 @@ export default function Faq() {
           <FaqToken />
         </div>
       </div>
-      <SideNav isOpen={isOpenSideNav} setIsOpen={setIsOpenSideNav} showLoading={true}>
+      <SideNav
+        isOpen={isOpenSideNav}
+        setIsOpen={setIsOpenSideNav}
+        showLoading={true}
+        ariaLabel={__('Preview', 'smashballoon-wpchat-livechat-customer-support')}
+      >
         <h2 className='wpchat:m-0 wpchat:mb-9 wpchat:flex wpchat:items-center wpchat:gap-1.5 wpchat:border-b-1 wpchat:border-gray-200 wpchat:py-4 wpchat:ps-8 wpchat:text-lg wpchat:leading-relaxed wpchat:font-semibold wpchat:text-gray-900'>
-          <SvgLoader
-            name='chevronLeft'
-            className='wpchat:h-[1.3em] wpchat:w-[1.3em] wpchat:cursor-pointer wpchat:rtl:rotate-180'
+          <button
+            type='button'
+            aria-label={__('Close preview', 'smashballoon-wpchat-livechat-customer-support')}
             onClick={() => setIsOpenSideNav(false)}
-          />
+            className='wpchat:m-0 wpchat:flex wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:p-0'
+          >
+            <SvgLoader
+              name='chevronLeft'
+              className='wpchat:h-[1.3em] wpchat:w-[1.3em] wpchat:rtl:rotate-180'
+            />
+          </button>
           {__('Preview', 'smashballoon-wpchat-livechat-customer-support')}
         </h2>
         <EmbeddedFrontend />

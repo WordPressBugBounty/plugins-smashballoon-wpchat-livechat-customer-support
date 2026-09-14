@@ -63,6 +63,7 @@ export default function ThemePanel() {
       <Select
         selectedKey={theme}
         onSelectionChange={handleSelectionChange}
+        aria-label={__('Theme', 'smashballoon-wpchat-livechat-customer-support')}
         btnClassName='wpchat:w-full wpchat:mb-3'
         className='wpchat:pt-4'
       >
@@ -70,6 +71,7 @@ export default function ThemePanel() {
           <SelectItem
             key={option.slug}
             id={option.slug}
+            textValue={option.name}
             isPro={option.isPro}
             isSelectedCustom={__('Current', 'smashballoon-wpchat-livechat-customer-support')}
           >

@@ -183,6 +183,7 @@ function FaqToken() {
                 value={progressPercentage}
                 max={100}
                 showValueLabel
+                aria-label={__('Token usage', 'smashballoon-wpchat-livechat-customer-support')}
                 className='wpchat:mb-3 wpchat:w-full'
               />
 
@@ -313,6 +314,7 @@ function FaqToken() {
               <div className='wpchat:flex wpchat:items-start wpchat:gap-x-2'>
                 <TextField
                   placeholder={__('Email Address', 'smashballoon-wpchat-livechat-customer-support')}
+                  aria-label={__('Email address', 'smashballoon-wpchat-livechat-customer-support')}
                   name='email-address'
                   type='email'
                   maxLength={50}

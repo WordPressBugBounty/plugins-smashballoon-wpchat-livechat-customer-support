@@ -137,6 +137,7 @@ function StepThree({ email, onEmailChange, showEmailError, newsletterStatus, set
       />
       <TextField
         placeholder={__('Your email address', 'smashballoon-wpchat-livechat-customer-support')}
+        aria-label={__('Email address', 'smashballoon-wpchat-livechat-customer-support')}
         name='email'
         type='email'
         value={email}

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { useCombobox, useMultipleSelection } from 'downshift';
 import debounce from 'lodash.debounce';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import { cn } from '@Utils/cn';
 
@@ -24,16 +24,21 @@ const SelectedItem = ({ item, onRemove, getSelectedItemProps, index }) => {
       })}
     >
       {item.title}
-      <span
-        className='wpchat:cursor-pointer wpchat:px-1'
+      <button
+        type='button'
+        className='wpchat:m-0 wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:px-1'
         onClick={(e) => {
           e.stopPropagation();
           onRemove(item);
         }}
-        aria-label={`Remove ${item.title}`}
+        aria-label={sprintf(
+          /* translators: %s: name of the selected item */
+          __('Remove %s', 'smashballoon-wpchat-livechat-customer-support'),
+          item.title,
+        )}
       >
         &#10005;
-      </span>
+      </button>
     </span>
   );
 };
@@ -417,7 +422,7 @@ export function MultipleComboBox({
               {inputValue || (isFocused ? `Search a ${placeholder}` : `Add ${placeholder}`)}
             </span>
             <button
-              aria-label='toggle menu'
+              aria-label={__('Toggle menu', 'smashballoon-wpchat-livechat-customer-support')}
               className='wpchat:hidden wpchat:px-2'
               type='button'
               {...getToggleButtonProps()}

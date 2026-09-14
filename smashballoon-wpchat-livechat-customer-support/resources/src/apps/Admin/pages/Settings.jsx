@@ -379,6 +379,7 @@ export default function Support() {
             <TextField
               name='license-key'
               type='text'
+              aria-label={__('License key', 'smashballoon-wpchat-livechat-customer-support')}
               placeholder={__('Enter license key', 'smashballoon-wpchat-livechat-customer-support')}
               onChange={(value) => {
                 setLicenseKey(value);
@@ -459,8 +460,9 @@ export default function Support() {
           >
             <SvgLoader name={icon} className='wpchat:h-[1.15em] wpchat:w-[1.15em]' />
             {text}
+            {/* decorative: the surrounding Button re-runs the test (clicks bubble) */}
             {(status === STATUS.SUCCESS || status === STATUS.ERROR) && (
-              <span onClick={handleConnectionTest} className='wpchat:p-.5 wpchat:cursor-pointer'>
+              <span className='wpchat:p-.5'>
                 <SvgLoader
                   name='rotate'
                   className='wpchat:!fill-wp-blue-500 wpchat:bg-wp-blue-50 wpchat:h-[1.15em] wpchat:w-[1.15em] wpchat:rounded-sm'
@@ -502,6 +504,10 @@ export default function Support() {
           <Switch
             isSelected={preserveSettings}
             onChange={setPreserveSettings}
+            aria-label={__(
+              'Preserve settings if plugin is removed',
+              'smashballoon-wpchat-livechat-customer-support',
+            )}
           />
         </div>
       </Card>
@@ -549,6 +555,10 @@ export default function Support() {
                     setNotificationsEnabled(true);
                   }
                 }}
+                aria-label={__(
+                  'Data sharing consent',
+                  'smashballoon-wpchat-livechat-customer-support',
+                )}
               />
             </div>
           </Card>
@@ -579,6 +589,10 @@ export default function Support() {
                 isSelected={dataSharingConsent ? true : notificationsEnabled}
                 onChange={setNotificationsEnabled}
                 isDisabled={dataSharingConsent}
+                aria-label={__(
+                  'In-plugin notifications',
+                  'smashballoon-wpchat-livechat-customer-support',
+                )}
               />
             </div>
           </Card>

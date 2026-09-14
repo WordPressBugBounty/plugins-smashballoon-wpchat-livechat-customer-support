@@ -116,6 +116,10 @@ export default function Customizer() {
         <Button
           variant='secondary'
           onPress={() => setIsOpenSideNav((prev) => !prev)}
+          aria-label={isOpenSideNav
+            ? __('Close settings panel', 'smashballoon-wpchat-livechat-customer-support')
+            : __('Open settings panel', 'smashballoon-wpchat-livechat-customer-support')}
+          aria-expanded={isOpenSideNav}
           className='wpchat:block wpchat:md:hidden'
         >
           <SvgLoader name={isOpenSideNav ? 'close' : 'hamburger'} className="wpchat:h-4 wpchat:w-4"/>
@@ -145,7 +149,7 @@ export default function Customizer() {
       <div className='p-4 max-w-xs mx-auto'>
         <SideNav
           isOpen={isOpenSideNav}
-          setIsOpen={setIsOpenSideNav}
+          ariaLabel={__('Customizer settings', 'smashballoon-wpchat-livechat-customer-support')}
           position='left'
           className='wpchat:md:w-[384px]'
           showLoading={true}

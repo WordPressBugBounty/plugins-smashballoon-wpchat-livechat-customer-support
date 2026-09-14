@@ -39,8 +39,7 @@ function Header({
 
             {breadcrumb?.length > 0 && (
               <nav
-                aria-label='breadcrumb'
-                role='breadcrumb'
+                aria-label={__('Breadcrumb', 'smashballoon-wpchat-livechat-customer-support')}
                 className='wpchat:flex wpchat:items-center wpchat:ps-3 wpchat:text-sm wpchat:md:ps-5 wpchat:md:text-lg'
               >
                 {breadcrumb.map((item, index) => (

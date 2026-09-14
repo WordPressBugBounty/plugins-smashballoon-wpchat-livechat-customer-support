@@ -62,6 +62,7 @@ export default function Chat() {
   const [oldMessages, setOldMessages] = useState([]);
   const [oldMessagesDisplayDate, setOldMessagesDisplayDate] = useState(null);
   const scrollPositionRef = useRef(null);
+  const oldMessagesIntroRef = useRef(null);
   const isPreviewMode = useChatStore((s) => s.isPreviewMode);
   const instanceId = useChatStore((s) => s.instanceId);
 
@@ -118,6 +119,9 @@ export default function Chat() {
             const newScrollHeight = container.scrollHeight;
             container.scrollTop = newScrollHeight - oldScrollHeight + oldScrollTop;
             container.style.visibility = 'visible';
+            // Move keyboard focus to the start of the revealed history —
+            // the 'View older messages' button unmounted while focused.
+            oldMessagesIntroRef.current?.focus();
           }
         });
       });
@@ -282,7 +286,12 @@ export default function Chat() {
     setShowOldMessagesButton(false);
 
     // Only proceed with scroll handling if there are messages
-    if (archived.length === 0 || !scrollContainerRef.current) return;
+    if (archived.length === 0 || !scrollContainerRef.current) {
+      // The focused button unmounts either way — keep keyboard position in
+      // the transcript instead of letting focus drop to <body>.
+      scrollContainerRef.current?.focus();
+      return;
+    }
 
     const container = scrollContainerRef.current;
     const oldScrollHeight = container.scrollHeight;
@@ -311,6 +320,10 @@ export default function Chat() {
         <ScrollableSection>
           <div
             ref={scrollContainerRef}
+            role="log"
+            aria-live="polite"
+            aria-label={__('Chat messages', 'smashballoon-wpchat-livechat-customer-support')}
+            tabIndex={0} /* keyboard-scrollable: a text-only transcript has no focusable children */
             className={cn(
               'wpchat:overflow-y-auto',
               showChatInput ? 'wpchat:h-[410px]' : 'wpchat:h-[493px]',
@@ -335,7 +348,11 @@ export default function Chat() {
             {/* Old messages from previous session */}
             {oldMessages.length > 0 && (
               <>
-                <ChatConversationIntro />
+                {/* tabIndex={-1}: focus target for the 'View older messages'
+                    button, which removes itself (while focused) on activation */}
+                <div ref={oldMessagesIntroRef} tabIndex={-1} className='wpchat:outline-none'>
+                  <ChatConversationIntro />
+                </div>
                 <ChatDateSeparator displayDate={oldMessagesDisplayDate} />
                 {oldMessages.map((msg, index) =>
                   msg ? (

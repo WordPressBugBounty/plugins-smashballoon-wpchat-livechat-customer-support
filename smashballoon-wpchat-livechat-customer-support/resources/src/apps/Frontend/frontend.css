@@ -40,6 +40,20 @@
   animation-delay: var(--bounce-delay, 0s);
 }
 
+/* Vestibular safety: stop the infinite attention animations (and skeleton
+   shimmer) for users who ask for reduced motion. Framer Motion transitions
+   are handled separately via <MotionConfig reducedMotion="user">. */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-ring::before {
+    animation: none;
+    opacity: 0;
+  }
+  .icon-bounce,
+  .wpchat\:animate-pulse {
+    animation: none;
+  }
+}
+
 .wpchat-viewport > div {
   display: block !important;
 }

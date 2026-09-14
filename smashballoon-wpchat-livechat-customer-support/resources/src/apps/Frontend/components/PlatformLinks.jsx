@@ -121,11 +121,12 @@ export default function PlatformLinks({ platforms, storeApi }) {
       return (
         <div
           className='wpchat:[&_a]:text-widget-accent-1 wpchat:[&_a]:font-medium wpchat:[&_a]:underline wpchat:[&_a]:underline-offset-2 wpchat:[&_a]:transition-opacity wpchat:[&_a]:hover:opacity-80'
+          role='status'
           dangerouslySetInnerHTML={{ __html: error }}
         />
       );
     }
-    return <div>{error}</div>;
+    return <div role='status'>{error}</div>;
   }
 
   if (!links) {

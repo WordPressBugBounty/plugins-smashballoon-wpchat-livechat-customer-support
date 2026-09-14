@@ -107,9 +107,14 @@ export default function Home() {
     const platformsToShow = availablePlatforms || [];
 
     return (
-      <ChatSubSection onClick={handleChatSectionClick} className="wpchat:pr-9">
+      <ChatSubSection
+        onClick={handleChatSectionClick}
+        ariaLabel={sendMessageHeading || __('Send us a message', 'smashballoon-wpchat-livechat-customer-support')}
+        className="wpchat:pr-9"
+      >
         {sendMessageIcon && platformsToShow.length > 0 && !platformsLoading && (
-          <ul className='wpchat:flex wpchat:cursor-pointer wpchat:gap-3 wpchat:mb-5 wpchat:items-center wpchat:min-h-[22px]'>
+          // aria-hidden: decorative icons inside an already-named role=button card — without it SRs announce an empty list
+          <ul aria-hidden='true' className='wpchat:flex wpchat:cursor-pointer wpchat:gap-3 wpchat:mb-5 wpchat:items-center wpchat:min-h-[22px]'>
             {platformsToShow.map((platform) => (
               <li key={platform} className='wpchat:flex wpchat:h-[22px] wpchat:w-[22px] wpchat:items-center wpchat:justify-center'>
                 <SvgLoader
@@ -121,9 +126,9 @@ export default function Home() {
           </ul>
         )}
         {sendMessageHeading && (
-          <h6 className='wpchat:m-0 wpchat:text-base wpchat:font-semibold wpchat:text-widget-text-1'>
+          <h3 className='wpchat:m-0 wpchat:text-base wpchat:font-semibold wpchat:text-widget-text-1'>
             {sendMessageHeading}
-          </h6>
+          </h3>
         )}
         {sendMessageSubHeading && (
           <p className='wpchat:text-sm wpchat:text-widget-text-2'>{sendMessageSubHeading}</p>

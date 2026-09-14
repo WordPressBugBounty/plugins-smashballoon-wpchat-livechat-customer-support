@@ -23,9 +23,9 @@ const modalVariants = {
   exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2, ease: 'easeIn' } },
 };
 
-export function Modal(props) {
+export function Modal({ isDismissable, ...props }) {
   return (
-    <ModalOverlay {...props}>
+    <ModalOverlay isDismissable={isDismissable} {...props}>
       <motion.div
         initial='hidden'
         animate='visible'

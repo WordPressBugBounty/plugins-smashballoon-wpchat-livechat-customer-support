@@ -12,10 +12,21 @@ import { cn } from '@Utils/cn';
  * @param {Function} [props.onClick] - Optional click handler function.
  * @param {string} [props.className] - Optional additional CSS classes.
  * @param {boolean} [props.isPreview] - Show preview banner indicating not visible on live site.
+ * @param {string} [props.ariaLabel] - Accessible name when the section is clickable.
  *
  * @returns {JSX.Element} The rendered ChatSubSection component.
  */
-export default function ChatSubSection({ children, onClick, className, isPreview }) {
+export default function ChatSubSection({ children, onClick, className, isPreview, ariaLabel }) {
+  // The clickable card hosts flow content (heading/list/paragraph), which a
+  // native <button> can't contain — so it stays a div with button semantics
+  // and explicit Enter/Space handling.
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick(event);
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -24,7 +35,12 @@ export default function ChatSubSection({ children, onClick, className, isPreview
         className
       )}
       onClick={onClick}
-      {...(onClick && { role: 'button', tabIndex: 0 })}
+      {...(onClick && {
+        role: 'button',
+        tabIndex: 0,
+        onKeyDown: handleKeyDown,
+        'aria-label': ariaLabel,
+      })}
     >
       {isPreview && (
         <div

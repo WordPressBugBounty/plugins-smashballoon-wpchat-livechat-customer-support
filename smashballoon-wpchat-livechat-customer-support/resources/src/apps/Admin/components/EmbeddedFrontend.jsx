@@ -1,4 +1,5 @@
 import { createRoot } from 'react-dom/client';
+import { __ } from '@wordpress/i18n';
 import { useEffect, useRef, useState } from 'react';
 import FrontendShadow from '@Frontend/Frontend';
 import { chatSettingsInitializer, useChatStore } from '@FDataStore/Chat/chatStore';
@@ -78,6 +79,8 @@ export default function EmbeddedFrontend({className, fixedHeight, showLoader = f
     <div className={cn('wpchat:relative', className)}>
       <div
         ref={containerRef}
+        role='region'
+        aria-label={__('Widget preview', 'smashballoon-wpchat-livechat-customer-support')}
         className={cn(
           showLoader && 'wpchat:transition-opacity wpchat:duration-200',
           showLoader && isLoading ? 'wpchat:opacity-0' : 'wpchat:opacity-100'

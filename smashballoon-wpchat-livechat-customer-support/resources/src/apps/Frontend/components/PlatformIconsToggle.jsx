@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { __, sprintf } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { computeActivePlatformSlugs } from '@FDataStore/Chat/chatStoreFactory';
@@ -61,7 +62,7 @@ function getRotation(index, count) {
   return 30 + 330 * (distFromRight / maxDist);
 }
 
-export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconPosition = 'right', iconAnimation = 'none' }) {
+export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconPosition = 'right', iconAnimation = 'none', panelId, toggleRef }) {
   const platformOrder = useChatStore((s) => s.platformOrder);
   const platformVisibility = useChatStore((s) => s.platformVisibility);
   const availablePlatforms = useChatStore((s) => s.availablePlatforms);
@@ -109,6 +110,17 @@ export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconP
     wasOpenRef.current = isOpen;
     onToggle();
   };
+
+  // Accessible name: the dock is ONE control that opens the chat; surface the
+  // platform identities (otherwise hover-tooltip-only) in the label.
+  const platformNames = activeSlugs.map((slug) => PLATFORM_DISPLAY_NAMES[slug] || slug).join(', ');
+  const toggleLabel = isOpen
+    ? __('Close chat', 'smashballoon-wpchat-livechat-customer-support')
+    : sprintf(
+        /* translators: %s: comma-separated list of messaging platforms (e.g. WhatsApp, Telegram) */
+        __('Open chat — %s', 'smashballoon-wpchat-livechat-customer-support'),
+        platformNames,
+      );
 
   function getMargin(index) {
     if (isOpen) return index === 0 ? 0 : -48;
@@ -165,14 +177,21 @@ export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconP
   }
 
   return (
-    <motion.div
+    <motion.button
+      ref={toggleRef}
+      type='button'
+      aria-label={toggleLabel}
+      aria-expanded={isOpen}
+      aria-controls={panelId}
       className={cn(
-        'wpchat:group wpchat:relative wpchat:flex wpchat:items-center wpchat:isolate',
+        'wpchat:group wpchat:pointer-events-auto wpchat:relative wpchat:flex wpchat:items-center wpchat:isolate wpchat:m-0 wpchat:border-0 wpchat:bg-transparent wpchat:p-0',
         iconAnimation === 'pulse' && !isOpen && 'pulse-ring',
       )}
       onClick={handleClick}
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => { setIsHovered(false); setIsPressed(false); }}
+      onFocus={() => setIsHovered(true)}
+      onBlur={() => { setIsHovered(false); setIsPressed(false); }}
       onTapStart={() => setIsPressed(true)}
       onTap={() => setIsPressed(false)}
       onTapCancel={() => setIsPressed(false)}
@@ -189,6 +208,8 @@ export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconP
           of icons and looks like a stray glow when there's only one. */}
       {!isSingle && (
         <motion.div
+          aria-hidden='true'
+          tabIndex={-1}
           className="wpchat:absolute wpchat:inset-x-[-14px] wpchat:inset-y-[-10px] wpchat:rounded-[32px]"
           style={{
             zIndex: -1,
@@ -212,7 +233,7 @@ export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconP
         />
       )}
 
-      {/* Platform icons */}
+      {/* Platform icons — decorative inside the named button (label carries the names) */}
       <AnimatePresence initial={false}>
       {activeSlugs.map((slug, i) => {
         const isLast = i === count - 1;
@@ -389,6 +410,6 @@ export default function PlatformIconsToggle({ isOpen, onToggle, iconShape, iconP
       })}
       </AnimatePresence>
 
-    </motion.div>
+    </motion.button>
   );
 }

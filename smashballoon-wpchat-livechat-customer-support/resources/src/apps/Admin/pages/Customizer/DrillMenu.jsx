@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 import { AnimatePresence, Reorder, motion } from 'motion/react';
 import { TooltipTrigger, Button as RACButton } from 'react-aria-components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import UpgradeToProDialog from '@AC/UpgradeToProDialog';
 import { Dialog } from '@AC/ui/Dialog';
 import { Modal } from '@AC/ui/Modal';
@@ -38,6 +38,10 @@ export const DrillMenu = ({ data, className }) => {
   const [isSectionOrderDialogOpen, setIsSectionOrderDialogOpen] = useState(false);
   const [menuItem, setMenuItem] = useState(null);
   const [isInitialMount, setIsInitialMount] = useState(true);
+  // SR announcement for keyboard reordering
+  const [reorderAnnouncement, setReorderAnnouncement] = useState('');
+  const panelHeadingRef = useRef(null);
+  const panelContainerRef = useRef(null);
 
   const entitlements = useEntitlements();
   const { hasFullCustomizerEntitlement, hasWhiteLabelEntitlement, isPro: isProPlan } = entitlements;
@@ -131,7 +135,13 @@ export const DrillMenu = ({ data, className }) => {
         <TooltipTrigger delay={0}>
           <RACButton
             data-draggable="false"
-            aria-label={visibleMap[item?.slug] ? __('Hide', 'smashballoon-wpchat-livechat-customer-support') : __('Show', 'smashballoon-wpchat-livechat-customer-support')}
+            aria-label={sprintf(
+              /* translators: %s: section name */
+              visibleMap[item?.slug]
+                ? __('Hide %s', 'smashballoon-wpchat-livechat-customer-support')
+                : __('Show %s', 'smashballoon-wpchat-livechat-customer-support'),
+              item?.title ?? '',
+            )}
             className="wpchat:bg-transparent wpchat:border-none wpchat:p-0 wpchat:outline-none wpchat:cursor-not-allowed"
             onPress={handleClick}
             excludeFromTabOrder={isDisabled}
@@ -149,6 +159,13 @@ export const DrillMenu = ({ data, className }) => {
         disabled={isDisabled}
         onClick={handleClick}
         title={visibleMap[item?.slug] ? __('Hide', 'smashballoon-wpchat-livechat-customer-support') : __('Show', 'smashballoon-wpchat-livechat-customer-support')}
+        aria-label={sprintf(
+          /* translators: %s: section name */
+          visibleMap[item?.slug]
+            ? __('Hide %s', 'smashballoon-wpchat-livechat-customer-support')
+            : __('Show %s', 'smashballoon-wpchat-livechat-customer-support'),
+          item?.title ?? '',
+        )}
       >
         {buttonContent}
       </button>
@@ -165,6 +182,22 @@ export const DrillMenu = ({ data, className }) => {
     // After initial render, set to false
     setIsInitialMount(false);
   }, []);
+
+  // a11y: when a panel is pushed/popped, move focus to the new panel's
+  // heading so keyboard/SR users land on the context change.
+  useEffect(() => {
+    if (isInitialMount) {
+      return;
+    }
+    requestAnimationFrame(() => {
+      // During the exit animation the ref can still point at the OUTGOING
+      // panel's heading — only use it if it belongs to the current panel.
+      const heading = panelHeadingRef.current;
+      const target = heading && heading.dataset.slug === (current.slug ?? '') ? heading : panelContainerRef.current;
+      target?.focus();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current.slug]);
 
   const handleBack = () => {
     navigateViaStore('/');
@@ -225,6 +258,38 @@ export const DrillMenu = ({ data, className }) => {
     setReorderableKeys(newKeys);
   };
 
+  // Keyboard alternative to pointer drag: Arrow Up/Down on the drag handle
+  const moveSortableItem = (item, delta) => {
+    // Free/basic users can't reorder — surface the upsell and do NOT announce
+    // a move that never happened (handleReorder would early-return here too).
+    if (!hasFullCustomizerEntitlement) {
+      setIsSectionOrderDialogOpen(true);
+      return;
+    }
+    const sortableValues = items.filter(
+      (i) =>
+        i && i.sortable && i.draggable !== false && (i.upsellLevel !== 'menu' || hasFullCustomizerEntitlement),
+    );
+    const from = sortableValues.indexOf(item);
+    const to = from + delta;
+    if (from === -1 || to < 0 || to >= sortableValues.length) {
+      return;
+    }
+    const next = [...sortableValues];
+    next.splice(from, 1);
+    next.splice(to, 0, item);
+    handleReorder(next);
+    setReorderAnnouncement(
+      sprintf(
+        /* translators: 1: section name, 2: new position, 3: total number of sections */
+        __('%1$s moved to position %2$d of %3$d', 'smashballoon-wpchat-livechat-customer-support'),
+        item.title,
+        to + 1,
+        next.length,
+      ),
+    );
+  };
+
   const renderHeadingSection = (item, key) => (
     <div
       key={key}
@@ -263,6 +328,7 @@ export const DrillMenu = ({ data, className }) => {
       <Reorder.Item
         key={key}
         value={item}
+        as='div'
         className='wpchat:mb-0 wpchat:relative wpchat:flex wpchat:cursor-move wpchat:items-center wpchat:justify-between wpchat:py-2.5 wpchat:pe-3 wpchat:ps-5 wpchat:hover:bg-gray-50'
         onDragStart={(event) => {
           if (isDragLocked) {
@@ -303,9 +369,24 @@ export const DrillMenu = ({ data, className }) => {
           }
         }}
       >
-        <div className='wpchat:pe-2.5'>
+        <button
+          type='button'
+          data-draggable='false'
+          aria-label={sprintf(
+            /* translators: %s: section name */
+            __('Reorder %s — use arrow keys to move up or down', 'smashballoon-wpchat-livechat-customer-support'),
+            item.title,
+          )}
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+              event.preventDefault();
+              moveSortableItem(item, event.key === 'ArrowUp' ? -1 : 1);
+            }
+          }}
+          className='wpchat:m-0 wpchat:flex wpchat:cursor-move wpchat:items-center wpchat:border-0 wpchat:bg-transparent wpchat:p-0 wpchat:pe-2.5'
+        >
           <SvgLoader name='drag' className='wpchat:h-3 wpchat:w-1.5' />
-        </div>
+        </button>
         {renderVisibilityButton(item, isMenuLocked)}
         <div className='wpchat:flex wpchat:flex-1 wpchat:flex-col wpchat:gap-0.5 wpchat:ps-3'>
           <div className='wpchat:flex wpchat:items-center wpchat:gap-2'>
@@ -319,12 +400,17 @@ export const DrillMenu = ({ data, className }) => {
           {drillable && (
             <button
               data-draggable="false"
+              aria-label={sprintf(
+                /* translators: %s: section name */
+                __('Open %s settings', 'smashballoon-wpchat-livechat-customer-support'),
+                item.title,
+              )}
               onClick={() => {
                 if (isMenuLocked) {
                   setMenuItem(item);
                   setIsUpgradeDialogOpen(true);
                 } else {
-                  item?.children || item?.component && push(item)
+                  (item?.children || item?.component) && push(item)
                 }
               }}
               className='wpchat:cursor-pointer'
@@ -348,13 +434,26 @@ export const DrillMenu = ({ data, className }) => {
             ? 'wpchat:px-5 wpchat:cursor-pointer'
             : 'wpchat:px-9 wpchat:pe-3'
         )}
+        {...(!item?.sortable && {
+          role: 'button',
+          tabIndex: 0,
+          'aria-label': item.title,
+        })}
         onClick={() => {
           if (isMenuLocked) {
             setMenuItem(item);
             setIsUpgradeDialogOpen(true);
           } else {
             // For content-level upselling, allow navigation - blocking happens inside the component
-            item?.children || item?.component && push(item)
+            (item?.children || item?.component) && push(item)
+          }
+        }}
+        onKeyDown={(event) => {
+          // Only react to keys on the row itself, not bubbled from inner buttons
+          if (event.target !== event.currentTarget) return;
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            event.currentTarget.click();
           }
         }}
       >
@@ -383,10 +482,28 @@ export const DrillMenu = ({ data, className }) => {
             <p className='wpchat:m-0 wpchat:text-xs wpchat:text-gray-500'>{item.visibilityDisabledMessage}</p>
           )}
         </div>
+        {/* Real drill affordance: the row itself can't be a button (it nests the visibility toggle) */}
         {item?.sortable && (item?.children || item?.component) && (
-          <>
+          <button
+            type='button'
+            aria-label={sprintf(
+              /* translators: %s: section name */
+              __('Open %s settings', 'smashballoon-wpchat-livechat-customer-support'),
+              item.title,
+            )}
+            onClick={(event) => {
+              event.stopPropagation();
+              if (isMenuLocked) {
+                setMenuItem(item);
+                setIsUpgradeDialogOpen(true);
+              } else {
+                (item?.children || item?.component) && push(item);
+              }
+            }}
+            className='wpchat:m-0 wpchat:flex wpchat:cursor-pointer wpchat:items-center wpchat:border-0 wpchat:bg-transparent wpchat:p-0'
+          >
             <SvgLoader name='chevronRight' className='wpchat:rtl:rotate-180' />
-          </>
+          </button>
         )}
       </div>
     );
@@ -440,11 +557,16 @@ export const DrillMenu = ({ data, className }) => {
 
   return (
     <div
+      ref={panelContainerRef}
+      tabIndex={-1}
       className={cn(
-        'wpchat:relative wpchat:h-[calc(100vh-100px)] wpchat:w-full wpchat:overflow-x-hidden wpchat:overflow-y-auto wpchat:md:max-w-sm',
+        'wpchat:relative wpchat:h-[calc(100vh-100px)] wpchat:w-full wpchat:overflow-x-hidden wpchat:overflow-y-auto wpchat:outline-none wpchat:md:max-w-sm',
         className,
       )}
     >
+      <div role='status' aria-live='polite' className='wpchat:sr-only'>
+        {reorderAnnouncement}
+      </div>
       <AnimatePresence custom={direction}>
         <motion.div
           key={current.slug}
@@ -468,7 +590,12 @@ export const DrillMenu = ({ data, className }) => {
                 />
                 {__('Back', 'smashballoon-wpchat-livechat-customer-support')}
               </button>
-              <h2 className='wpchat:m-0 wpchat:flex wpchat:items-center wpchat:gap-2 wpchat:text-2xl wpchat:leading-relaxed wpchat:font-semibold wpchat:text-black'>
+              <h2
+                ref={panelHeadingRef}
+                data-slug={current.slug ?? ''}
+                tabIndex={-1}
+                className='wpchat:m-0 wpchat:flex wpchat:items-center wpchat:gap-2 wpchat:text-2xl wpchat:leading-relaxed wpchat:font-semibold wpchat:text-black wpchat:outline-none'
+              >
                 {current.title}
                 {current.upsellLevel === 'content' && !isPro && <SvgLoader name='lockedBadgeText' />}
               </h2>
@@ -479,10 +606,24 @@ export const DrillMenu = ({ data, className }) => {
             <div className='wpchat:px-5'>
               {current.upsellLevel === 'content' && !hasRequiredEntitlement(current) ? (
                 <div
+                  role='button'
+                  tabIndex={0}
+                  aria-label={sprintf(
+                    /* translators: %s: feature name */
+                    __('Upgrade to unlock %s', 'smashballoon-wpchat-livechat-customer-support'),
+                    current.title,
+                  )}
                   className='wpchat:relative wpchat:cursor-pointer wpchat:select-none'
                   onClick={() => {
                     setIsUpgradeDialogOpen(true);
                     setMenuItem(current);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setIsUpgradeDialogOpen(true);
+                      setMenuItem(current);
+                    }
                   }}
                 >
                   <div className='wpchat:pointer-events-none'>

@@ -51,7 +51,7 @@ function VisibilityTabs({ value, onChange }) {
       {/* Visibility Tabs */}
       <Tabs className='wpchat:mb-4' selectedKey={tab} onSelectionChange={handleTabChange}>
         <TabList
-          aria-label='Chatbot Visibility Settings'
+          aria-label={__('Chatbot Visibility Settings', 'smashballoon-wpchat-livechat-customer-support')}
           className='wpchat:mb-8 wpchat:grid wpchat:gap-2.5 wpchat:md:mb-7.5 wpchat:md:grid-cols-2'
         >
           {tabsData.map(({ id, title, description }) => (

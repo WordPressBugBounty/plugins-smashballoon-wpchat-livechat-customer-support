@@ -117,19 +117,35 @@ class NotificationService implements ServiceProviderInterface {
 	public function register(): void {
 		add_action( self::CRON_HOOK, array( $this, 'cronRefreshRemoteNotifications' ) );
 
-		$settings = $this->settingsService->getAllSettings();
-		$shouldFetchRemote = $this->shouldFetchRemote( $settings );
+		// Decide cron scheduling on `init`, not at plugin-load. This call chain
+		// reaches SettingsService::getAllSettings(), whose customizer defaults are
+		// built with __(). Resolving those translations before the `init` action
+		// triggers WP 6.7+'s _load_textdomain_just_in_time "translation loading
+		// triggered too early" notice for the plugin text domain.
+		add_action( 'init', array( $this, 'maybeScheduleRemoteRefresh' ) );
 
-		if ( $shouldFetchRemote ) {
+		add_action( 'wpchat_plugin_deactivated', array( $this, 'clearCron' ) );
+		add_action( 'wpchat_settings_updated', array( $this, 'onSettingsUpdated' ) );
+	}
+
+	/**
+	 * Schedule (or clear) the daily remote-notifications cron based on settings.
+	 *
+	 * Deferred to the `init` action: the settings read resolves translated
+	 * customizer defaults, so it must not run before translations may load.
+	 *
+	 * @return void
+	 */
+	public function maybeScheduleRemoteRefresh(): void {
+		$settings = $this->settingsService->getAllSettings();
+
+		if ( $this->shouldFetchRemote( $settings ) ) {
 			if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
 				wp_schedule_event( time(), 'daily', self::CRON_HOOK );
 			}
 		} else {
 			$this->clearCron();
 		}
-
-		add_action( 'wpchat_plugin_deactivated', array( $this, 'clearCron' ) );
-		add_action( 'wpchat_settings_updated', array( $this, 'onSettingsUpdated' ) );
 	}
 
 	/**

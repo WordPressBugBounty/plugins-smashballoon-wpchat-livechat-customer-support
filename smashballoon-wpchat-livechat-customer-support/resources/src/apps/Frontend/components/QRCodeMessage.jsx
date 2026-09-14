@@ -15,7 +15,15 @@ export default function QRCodeMessage({ platformName, link, platform }) {
   return (
     <div>
       <p className='wpchat:mb-3'>{message}</p>
-      <div className='wpchat:flex wpchat:justify-center wpchat:rounded-3xl wpchat:px-6.5 wpchat:py-5.5 wpchat:bg-white'>
+      <div
+        role='img'
+        aria-label={sprintf(
+          /* translators: %s: the tel:/sms: link encoded in the QR code (e.g. "sms:+15551234567") */
+          __('QR code linking to %s', 'smashballoon-wpchat-livechat-customer-support'),
+          link,
+        )}
+        className='wpchat:flex wpchat:justify-center wpchat:rounded-3xl wpchat:px-6.5 wpchat:py-5.5 wpchat:bg-white'
+      >
         <QRCode
           value={link}
           size={1024}

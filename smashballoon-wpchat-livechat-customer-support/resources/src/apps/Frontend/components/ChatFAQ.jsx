@@ -120,9 +120,9 @@ export default function ChatFAQ() {
     <>
       <ChatSubSection isPreview={isShowingDummyFaqs}>
         {faqHeading && (
-          <h6 className='wpchat:pb-3 wpchat:text-sm wpchat:font-semibold wpchat:text-widget-text-1'>
+          <h3 className='wpchat:pb-3 wpchat:text-sm wpchat:font-semibold wpchat:text-widget-text-1'>
             {faqHeading}
-          </h6>
+          </h3>
         )}
         {showSearch && (
           <div className='wpchat:relative wpchat:mx-auto wpchat:mb-3 wpchat:text-gray-600'>
@@ -134,12 +134,13 @@ export default function ChatFAQ() {
             </div>
             <input
               className={cn(
-                'focus:wpchat:outline-none wpchat:h-10 wpchat:w-full wpchat:rounded-sm wpchat:bg-widget-bg-1 wpchat:ps-9 wpchat:text-sm wpchat:text-widget-text wpchat:placeholder-widget-text',
+                'wpchat:h-10 wpchat:w-full wpchat:rounded-sm wpchat:bg-widget-bg-1 wpchat:ps-9 wpchat:text-sm wpchat:text-widget-text wpchat:placeholder-widget-text',
                 searchBorder ? 'wpchat:border wpchat:border-widget-border' : 'wpchat:border-0',
               )}
               type='search'
               name='search'
               placeholder={__('Search Questions', 'smashballoon-wpchat-livechat-customer-support')}
+              aria-label={__('Search Questions', 'smashballoon-wpchat-livechat-customer-support')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -189,17 +190,23 @@ export default function ChatFAQ() {
                   <li
                     key={faq.id}
                     className={cn(
-                      'wpchat:relative wpchat:w-full wpchat:cursor-pointer wpchat:py-3 wpchat:ps-6 wpchat:text-start wpchat:text-sm wpchat:text-widget-text-1',
                       index !== displayedFaqs.length - 1 && 'wpchat:border-b-1 wpchat:border-widget-border',
-                      'wpchat:font-cn wpchat:leading-relaxed' // CN support
                     )}
-                    onClick={() => !isTracking && handleFaqClick(faq, userMsg, botMsg)}
                   >
-                    <SvgLoader
-                      name='chevronRight'
-                      className='wpchat:absolute wpchat:start-0 wpchat:fill-widget-icon-3 wpchat:object-center wpchat:rtl:rotate-180'
-                    />
-                    {faq.question}
+                    <button
+                      type='button'
+                      className={cn(
+                        'wpchat:relative wpchat:block wpchat:w-full wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:py-3 wpchat:ps-6 wpchat:text-start wpchat:text-sm wpchat:text-widget-text-1',
+                        'wpchat:font-cn wpchat:leading-relaxed' // CN support
+                      )}
+                      onClick={() => !isTracking && handleFaqClick(faq, userMsg, botMsg)}
+                    >
+                      <SvgLoader
+                        name='chevronRight'
+                        className='wpchat:absolute wpchat:start-0 wpchat:fill-widget-icon-3 wpchat:object-center wpchat:rtl:rotate-180'
+                      />
+                      {faq.question}
+                    </button>
                   </li>
                 );
               })}

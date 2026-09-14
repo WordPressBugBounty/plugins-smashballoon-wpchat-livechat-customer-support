@@ -40,6 +40,7 @@ export default function PlatformFieldRow({
   const isPhone = platform.inputType === 'phone';
   const PlatformIcon = platform.icon;
   const borderClass = getBorderClass(validationStatus, isFocused);
+  const labelId = `wpchat-platform-label-${platform.slug || platform.id}`;
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => {
@@ -63,7 +64,10 @@ export default function PlatformFieldRow({
         ) : (
           <SvgLoader name={platform.slug + 'Color'} className='wpchat:w-5 wpchat:h-5 wpchat:shrink-0' />
         )}
-        <p className='wpchat:text-sm wpchat:leading-[1.6] wpchat:text-gray-900 wpchat:font-normal wpchat:my-0'>
+        <p
+          id={labelId}
+          className='wpchat:text-sm wpchat:leading-[1.6] wpchat:text-gray-900 wpchat:font-normal wpchat:my-0'
+        >
           {platform.name || platform.label}
         </p>
       </div>
@@ -79,6 +83,7 @@ export default function PlatformFieldRow({
             onFocus={handleFocus}
             onBlur={handleBlur}
             placeholder={platform.placeholder}
+            aria-labelledby={labelId}
             className={cn(
               'wpchat:w-full wpchat:bg-white wpchat:border wpchat:rounded-lg wpchat:shadow-[0px_1px_2px_0px_#3c425712] wpchat:overflow-hidden wpchat:min-w-0 wpchat:h-[42px]',
               borderClass
@@ -104,6 +109,7 @@ export default function PlatformFieldRow({
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 placeholder={platform.placeholder}
+                aria-labelledby={labelId}
                 className='wpchat:w-full wpchat:text-sm wpchat:leading-[1.6] wpchat:text-gray-900 wpchat:font-normal wpchat:bg-transparent wpchat:border-none wpchat:outline-none placeholder:wpchat:text-gray-500 wpchat:focus:outline-none wpchat:focus:ring-0 wpchat:min-w-0'
               />
             </div>

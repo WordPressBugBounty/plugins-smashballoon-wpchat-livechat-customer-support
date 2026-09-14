@@ -1,6 +1,7 @@
 // Toast.jsx
 import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { __ } from '@wordpress/i18n';
 import { useTransitions } from '@Hooks/useTransitions';
 import SvgLoader from '@Components/SvgLoader';
 
@@ -46,7 +47,14 @@ export const Toast = ({ message, show, onClose, type = 'success' }) => {
   const styles = getStyles();
 
   return (
-    <div className="wpchat:fixed wpchat:bottom-6 wpchat:end-6 wpchat:z-50 wpchat:max-w-md">
+    // Persistent live region (consumers mount Toast unconditionally and toggle
+    // `show`) so save/error feedback is announced to screen readers.
+    <div
+      role={type === 'error' ? 'alert' : 'status'}
+      aria-live={type === 'error' ? 'assertive' : 'polite'}
+      aria-atomic='true'
+      className="wpchat:fixed wpchat:bottom-6 wpchat:end-6 wpchat:z-50 wpchat:max-w-md"
+    >
       <AnimatePresence>
         {show && (
           <motion.div
@@ -64,7 +72,9 @@ export const Toast = ({ message, show, onClose, type = 'success' }) => {
               {message}
             </span>
             <button
+              type='button'
               onClick={onClose}
+              aria-label={__('Dismiss notification', 'smashballoon-wpchat-livechat-customer-support')}
               className={`wpchat:flex-shrink-0 wpchat:cursor-pointer wpchat:p-1 wpchat:rounded wpchat:transition-colors hover:wpchat:bg-black/5 ${styles.text}`}
             >
               <SvgLoader

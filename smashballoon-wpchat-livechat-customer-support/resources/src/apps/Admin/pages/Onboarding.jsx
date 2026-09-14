@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { __ } from '@wordpress/i18n';
 import { validatePlatformValue } from '@AC/Agent/PlatformValidation';
@@ -87,6 +87,13 @@ const Onboarding = () => {
     return 0;
   });
 
+  // True only for the very first render — the step rendered on page load
+  // must not steal focus; steps mounted after Next/Back navigation do.
+  const isInitialMountRef = useRef(true);
+  useEffect(() => {
+    isInitialMountRef.current = false;
+  }, []);
+
   const [hasInteracted, setHasInteracted] = useState(() => {
     const savedState = loadOnboardingFromLocalStorage();
     return savedState?.hasInteracted || {};
@@ -98,7 +105,16 @@ const Onboarding = () => {
   // Safety check: ensure step exists and handle out-of-bounds gracefully
   const step = STEPS[currentStep] || STEPS[STEPS.length - 1] || STEPS[0] || {};
   const CurrentStepComponent = step?.component;
-  const transition = useTransitions({ type: 'slideUpFade' });
+  // NOTE: not useTransitions('slideUpFade') — its display:'none' initial makes
+  // framer-motion >=12.23 skip the mount animation entirely, leaving the step
+  // card permanently invisible. Mount-animated cards don't need display
+  // toggling (AnimatePresence removes them from the tree).
+  const transition = {
+    initial: { y: 20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
+    transition: { duration: 0.5, ease: 'easeInOut' },
+  };
 
   // Simple reactive validation - directly in component
   const stepValid = React.useMemo(() => {
@@ -295,6 +311,7 @@ const Onboarding = () => {
             <Step
               title={step.title}
               description={step.description}
+              focusHeadingOnMount={!isInitialMountRef.current}
               bodyClassName={step.bodyClassName}
               contentClassName={step.contentClassName}
               containerClassName={step.containerClassName}

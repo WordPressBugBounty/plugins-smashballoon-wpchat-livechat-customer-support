@@ -1,27 +1,29 @@
 === WPChat – Live Chat & Messaging Widget for Customer Support ===
 Contributors: smashballoon, am, smub, zbtirrell
-Tags: whatsapp, live chat, chat plugin, chat widget, customer support
+Tags: whatsapp, chat button, click-to-chat, chat widget, customer support
 Author: Smash Balloon
 Author URI: https://wpchat.com
 Requires at least: 5.8
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-WordPress WhatsApp chat plugin with a live chat widget for WhatsApp, Messenger, Telegram & Instagram. Includes smart FAQs and chat funnels.
+Click-to-chat button for WordPress. Connect to WhatsApp, Messenger, Telegram, or Instagram in one click. Smart FAQ bot included, funnels in Pro.
 
 == Description ==
 
-[WPChat](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) is a WordPress WhatsApp chat plugin for adding a professional live chat widget to your website. Connect with visitors on WhatsApp, Facebook Messenger, Telegram, and Instagram, all from one customizable chat widget that works with any WordPress theme.
+[WPChat](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) takes visitors from your WordPress site to a real chat in one click. WhatsApp, Messenger, Telegram, or Instagram. No dashboard to manage.
+
+WPChat is not an in-dashboard live chat tool. There's no inbox to manage and no team chat to staff. The conversation happens where your customer already is, on the messaging app they already use.
 
 https://vimeo.com/1174860810
 
-Whether you run an online store or a service business, WPChat makes it easy to add live chat to WordPress and start real conversations with your customers. No coding required. No monthly SaaS fees. A lightweight WordPress chat plugin that helps you turn visitors into paying customers.
+Whether you run an online store or a service business, WPChat makes it easy to connect with your customers in one click. No coding required. No monthly SaaS fees. A lightweight WordPress plugin that helps you turn visitors into paying customers.
 
 > <strong>WPChat Pro</strong><br />
-> This plugin is the lite version of WPChat Pro, which comes with unlimited live chat agents, chat funnels for automated lead qualification, a full analytics dashboard, AI-powered smart search, and complete brand customization. [Click here to get WPChat Pro and unlock all premium live chat features!](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
+> This plugin is the lite version of WPChat Pro, which comes with unlimited chat agents, chat funnels for automated lead qualification, a full analytics dashboard, AI-powered smart search, and complete brand customization. [Click here to get WPChat Pro and unlock all premium features!](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
 
 = 💬 WordPress WhatsApp Chat Plugin for Customer Support =
 
@@ -29,57 +31,57 @@ Your customers are already on WhatsApp. With over 2 billion users worldwide, Wha
 
 Contact forms are slow. Customers fill one out and wait for an email that may come hours later. WPChat lets them tap a chat button and start a WhatsApp conversation instead. The chat continues on their phone even after they leave your site, so you never lose the conversation. Personal, fast, and on the messaging app they already use every day.
 
-= ⚡ Add a Live Chat Widget to WordPress in Minutes =
+= ⚡ Add a Click-to-Chat Widget to WordPress in Minutes =
 
 Adding a WhatsApp chat widget to your WordPress site takes less than 5 minutes with WPChat. Our guided setup wizard walks you through everything step by step, no technical skills or coding required.
 
-Enter your WhatsApp number, pick one of three professionally designed chat widget themes, and choose where to show the live chat bubble on your site. That's it. Your WordPress chat widget is live and ready to receive messages from visitors on WhatsApp, Messenger, Telegram, and Instagram.
+Enter your WhatsApp number, pick one of three professionally designed chat widget themes, and choose where to show the chat bubble on your site. That's it. Your WordPress chat widget is live and ready to receive messages from visitors on WhatsApp, Messenger, Telegram, and Instagram.
 
 WPChat loads asynchronously and uses lightweight, optimized code so your chat widget never slows down your site. Built for performance with no bloated scripts or unnecessary dependencies.
 
-= 🌐 Multi-Platform Live Chat: WhatsApp, Messenger, Telegram & Instagram =
+= 🌐 Multi-Platform Click-to-Chat: WhatsApp, Messenger, Telegram & Instagram =
 
 Not every customer uses WhatsApp. Some prefer Facebook Messenger. Others like Telegram or Instagram. WPChat supports all four messaging platforms in a single chat widget, so every visitor can reach you on the app they already have on their phone.
 
-Set up a single agent profile with your name, photo, and links to all your messaging platforms. Visitors see your chat widget, choose their preferred messaging platform, and start a live chat conversation instantly. Managing customer support chat across WhatsApp, Messenger, Telegram, and Instagram has never been easier. Multi-platform chat support is completely free in the WPChat lite version.
+Set up a single agent profile with your name, photo, and links to all your messaging platforms. Visitors see your chat widget, choose their preferred messaging platform, and start a real conversation instantly. Managing customer support chat across WhatsApp, Messenger, Telegram, and Instagram has never been easier. Multi-platform chat support is completely free in the WPChat lite version.
 
 = 🤖 AI-Powered Smart FAQs for Automated Customer Support Chat =
 
 Stop answering the same questions over and over. WPChat includes a built-in FAQ system right inside your chat widget, providing instant answers to common customer questions 24 hours a day, 7 days a week.
 
-Add up to 10 searchable FAQs in the free version, and visitors can find answers with a smart search bar before starting a live chat. This cuts your support workload and gives customers faster answers. [Upgrade to WPChat Pro](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for unlimited FAQs, AI-powered smart search, and multi-step chat funnels that qualify leads and guide visitors toward a purchase, all automatically.
+Add up to 10 searchable FAQs in the free version, and visitors can find answers with a smart search bar before starting a conversation. This cuts your support workload and gives customers faster answers. [Upgrade to WPChat Pro](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for unlimited FAQs, AI-powered smart search, and multi-step chat funnels that qualify leads and guide visitors toward a purchase, all automatically.
 
-= 🏢 WordPress Live Chat for Every Business & Industry =
+= 🏢 WordPress Click-to-Chat for Every Business & Industry =
 
-WPChat works for any business that wants to add live chat and WhatsApp customer support to their WordPress site:
+WPChat works for any business that wants to add click-to-chat and WhatsApp customer support to their WordPress site:
 
 **E-Commerce & WooCommerce Chat** - Answer product questions, reduce cart abandonment, and close more sales with real-time WhatsApp chat support on your store.
 
-**Agencies & Freelancers** - Let potential clients reach you instantly through your chat widget for faster lead qualification and live chat conversations.
+**Agencies & Freelancers** - Let potential clients reach you instantly through your chat widget for faster lead qualification and real-time conversations.
 
 **Restaurants & Local Businesses** - Accept reservations and answer customer questions through WhatsApp chat on your website.
 
-**SaaS & Tech Companies** - Provide real-time customer support chat and onboarding assistance through your live chat widget.
+**SaaS & Tech Companies** - Provide real-time customer support chat and onboarding assistance through your chat widget.
 
 **Healthcare & Wellness** - Let patients and clients reach your office through WhatsApp chat for appointment inquiries and support.
 
-**Education & Coaching** - Connect with prospective students and clients through a professional live chat widget on your site.
+**Education & Coaching** - Connect with prospective students and clients through a professional chat widget on your site.
 
-**Real Estate** - Engage property buyers and renters through live chat to answer listing questions and schedule viewings.
+**Real Estate** - Engage property buyers and renters through WhatsApp chat to answer listing questions and schedule viewings.
 
 **Nonprofits & Communities** - Make it easy for donors, volunteers, and members to connect with your team via WhatsApp chat.
 
-= ✅ Free WordPress Live Chat Plugin Features =
+= ✅ Free WordPress Click-to-Chat Plugin Features =
 
-The free version of WPChat is a complete multi-platform live chat solution for WordPress. Add a customizable chat widget to your site with WhatsApp chat, Facebook Messenger, Telegram, and Instagram support. Create a professional agent profile, add up to 10 smart FAQs, and choose from three beautiful chat widget themes. No coding required.
+The free version of WPChat is a complete multi-platform click-to-chat solution for WordPress. Add a customizable chat widget to your site with WhatsApp chat, Facebook Messenger, Telegram, and Instagram support. Create a professional agent profile, add up to 10 smart FAQs, and choose from three beautiful chat widget themes. No coding required.
 
 WPChat is 100% mobile responsive, GDPR compliant, loads asynchronously for zero performance impact, and works with every WordPress theme. Add WhatsApp chat to WordPress for free in under 5 minutes.
 
-= 🚀 Pro Live Chat Features: Chat Funnels, Analytics & Unlimited Agents =
+= 🚀 Pro Click-to-Chat Features: Chat Funnels, Analytics & Unlimited Agents =
 
 [WPChat Pro](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) adds features for growing teams:
 
-**Unlimited Live Chat Agents** - Add your entire customer support team with individual profiles, photos, and availability schedules. WPChat Pro intelligently routes incoming chats to available agents for faster response times and balanced workloads.
+**Unlimited Chat Agents** - Add your entire customer support team with individual profiles, photos, and availability schedules. WPChat Pro intelligently routes incoming chats to available agents for faster response times and balanced workloads.
 
 **Chat Funnels** - Create interactive, multi-step conversation flows that qualify leads, answer common questions, and guide visitors toward a purchase, all automatically, 24/7. Build chat funnels for e-commerce product recommendations, B2B lead qualification, onboarding, and more.
 
@@ -89,36 +91,36 @@ WPChat is 100% mobile responsive, GDPR compliant, loads asynchronously for zero 
 
 **Full Brand Customization** - Set custom colors, premium chat icons, personalized messages, and a custom bot avatar to make your chat widget perfectly match your brand identity.
 
-**Advanced Chat Widget Targeting** - Show your live chat widget on specific pages, categories, tags, or custom post types for targeted customer support chat exactly where your visitors need it.
+**Advanced Chat Widget Targeting** - Show your chat widget on specific pages, categories, tags, or custom post types for targeted customer support chat exactly where your visitors need it.
 
 = Full WPChat Feature List =
 
 * [WhatsApp chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Add a WhatsApp chat button to any WordPress site and let visitors start a WhatsApp conversation in one tap.
-* [Facebook Messenger chat](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Let visitors start a Messenger conversation directly from your live chat widget.
+* [Facebook Messenger chat](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Let visitors start a Messenger conversation directly from your chat widget.
 * [Telegram chat support](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Connect with customers on Telegram directly from your WordPress chat widget.
-* [Instagram chat messaging](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Add Instagram messaging to your WordPress live chat widget for social customer support.
+* [Instagram chat messaging](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Add Instagram messaging to your WordPress chat widget for social customer support.
 * [Multi-platform chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Support WhatsApp, Messenger, Telegram, and Instagram chat from one widget.
-* [Guided setup wizard](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Launch your live chat widget in under 5 minutes with no coding required.
+* [Guided setup wizard](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Launch your chat widget in under 5 minutes with no coding required.
 * [Smart FAQ system](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Add searchable FAQs inside your chat widget for instant automated customer support.
 * [AI-powered smart search](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Deliver accurate FAQ results with AI-powered search in your WPChat Pro chat widget.
-* [Chat widget themes](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Choose from 3 professionally designed live chat widget themes.
+* [Chat widget themes](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Choose from 3 professionally designed chat widget themes.
 * [Custom brand colors](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Match your chat widget to your brand identity with custom colors in WPChat Pro.
 * [Premium chat icons](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Select from premium chat bubble icons to fit your site's style.
 * [Custom bot avatar](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Upload your own avatar and give your chat assistant a unique name and personality.
-* [Agent profiles](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Create professional live chat agent profiles with name, photo, and messaging platform links.
+* [Agent profiles](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Create professional chat agent profiles with name, photo, and messaging platform links.
 * [Unlimited chat agents](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Add your full customer support team with unlimited agent profiles in WPChat Pro.
-* [Agent scheduling](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Set online and offline hours for each live chat agent so visitors always reach someone available.
+* [Agent scheduling](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Set online and offline hours for each chat agent so visitors always reach someone available.
 * [Intelligent chat routing](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Distribute incoming chat conversations across available agents automatically.
 * [Chat funnels](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Build multi-step chat conversation flows to qualify leads and guide visitors to purchase.
 * [Chat analytics dashboard](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Track chat interactions, conversion rates, and agent performance in your WordPress dashboard.
-* [Chat conversion tracking](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Measure how your live chat widget drives sales and customer engagement.
-* [Peak hours analysis](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - See your busiest live chat times to schedule agents effectively.
+* [Chat conversion tracking](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Measure how your chat widget drives sales and customer engagement.
+* [Peak hours analysis](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - See your busiest chat times to schedule agents effectively.
 * [Page-level chat targeting](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Control exactly where your chat widget appears on your WordPress site.
-* [Mobile responsive chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Perfect live chat experience on any device, whether mobile or desktop.
+* [Mobile responsive chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Perfect chat experience on any device, whether mobile or desktop.
 * [Async chat widget loading](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Zero performance impact with lightweight, asynchronously loaded chat widget code.
 * [RTL chat support](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Full right-to-left language support for international customer chat.
-* [GDPR compliant live chat](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - 100% GDPR compliant chat widget with no personal data collection.
-* [Remove WPChat branding](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Remove WPChat branding from your live chat widget with WPChat Pro.
+* [GDPR compliant chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - 100% GDPR compliant chat widget with no personal data collection.
+* [Remove WPChat branding](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Remove WPChat branding from your chat widget with WPChat Pro.
 
 = 🧡 Built by Smash Balloon =
 
@@ -136,7 +138,7 @@ WPChat is different. It's a WordPress-native chat plugin that lives right in you
 
 = Branding Guidelines =
 
-WPChat is a product of Smash Balloon LLC. When writing about our WordPress live chat plugin, please use the correct branding:
+WPChat is a product of Smash Balloon LLC. When writing about our WordPress chat plugin, please use the correct branding:
 
 * WPChat (correct)
 * WP Chat (incorrect)
@@ -144,11 +146,11 @@ WPChat is a product of Smash Balloon LLC. When writing about our WordPress live 
 * Wp Chat (incorrect)
 * WP-Chat (incorrect)
 
-= WordPress Live Chat Plugin Resources =
+= WordPress Chat Plugin Resources =
 
 * [WPChat Website](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
 * [WPChat Documentation](https://wpchat.com/help-center/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
-* [WPChat Pro Live Chat Features](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
+* [WPChat Pro Chat Features](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
 * [WPChat Pro Pricing](https://wpchat.com/pricing/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin)
 
 = What's Next =
@@ -186,18 +188,22 @@ Terms of Service: https://wpchat.com/terms-and-conditions
 
 1. Upload the `wpchat` folder to `/wp-content/plugins/` or install via the WordPress Plugins page.
 2. Activate the plugin through the **Plugins** menu in WordPress.
-3. Go to **WPChat → Setup Wizard** and follow the steps to add your WhatsApp number and configure your live chat widget.
+3. Go to **WPChat → Setup Wizard** and follow the steps to add your WhatsApp number and configure your click-to-chat widget.
 4. Customize your chat widget theme and start chatting with visitors instantly.
 
-After activation, you can add your Facebook Messenger, Telegram, and Instagram contact details from your agent profile to enable multi-platform live chat support on your WordPress site.
+After activation, you can add your Facebook Messenger, Telegram, and Instagram contact details from your agent profile to enable multi-platform chat support on your WordPress site.
 
-Want even more live chat power? [Upgrade to WPChat Pro](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for unlimited agents, chat funnels, chat analytics, and full brand customization.
+Want even more chat power? [Upgrade to WPChat Pro](https://wpchat.com/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) for unlimited agents, chat funnels, chat analytics, and full brand customization.
 
 == Frequently Asked Questions ==
 
 = Do I need to know how to code to use WPChat? =
 
-Not at all. WPChat is designed for anyone, regardless of technical ability. Our guided setup wizard walks you through everything. You can have a professional live chat widget running on your WordPress site in under 5 minutes.
+Not at all. WPChat is designed for anyone, regardless of technical ability. Our guided setup wizard walks you through everything. You can have a professional click-to-chat widget running on your WordPress site in under 5 minutes.
+
+= Is WPChat an in-dashboard live chat platform like Tawk.to or Chatway? =
+
+No. WPChat isn't an in-dashboard live chat tool. There's no inbox to manage and no team chat to staff. The conversation happens on WhatsApp, Messenger, Telegram, or Instagram, wherever your customer already is.
 
 = Which messaging platforms does WPChat support? =
 
@@ -213,7 +219,7 @@ The free version includes one agent profile. WPChat Pro lets you add unlimited a
 
 = Does WPChat work with WooCommerce? =
 
-Yes. WPChat works on any WordPress page, including WooCommerce product pages, cart pages, and checkout pages. Add live chat to your online store to answer customer questions and reduce cart abandonment.
+Yes. WPChat works on any WordPress page, including WooCommerce product pages, cart pages, and checkout pages. Add WhatsApp chat to your online store to answer customer questions and reduce cart abandonment.
 
 = Is WPChat GDPR compliant? =
 
@@ -229,11 +235,11 @@ In the free version, you can show or hide the chat widget globally. WPChat Pro a
 
 = How does the FAQ feature work? =
 
-Add up to 10 frequently asked questions in the free version (unlimited in Pro). Visitors see these FAQs inside the chat widget with a search bar, so they can find answers without starting a live chat.
+Add up to 10 frequently asked questions in the free version (unlimited in Pro). Visitors see these FAQs inside the chat widget with a search bar, so they can find answers without starting a chat.
 
 == Screenshots ==
 
-1. WPChat live chat widget on a WordPress website
+1. WPChat click-to-chat widget on a WordPress website
 2. Multi-platform chat support: WhatsApp, Messenger, Telegram, Instagram
 3. Guided setup wizard for quick WhatsApp chat configuration
 4. Smart FAQ system inside the chat widget
@@ -243,6 +249,12 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.3 =
+* Tweak: Confirmed compatibility with WordPress 7.1.
+* Tweak: Improved admin accessibility. Drag-to-reorder lists can now be reordered with the keyboard, with screen-reader announcements confirming each move.
+* Fix: The floating chat button no longer blocks clicks on page content behind it.
+* Fix: Resolved a "translation loading triggered too early" notice on WordPress 6.7 and newer.
 
 = 1.4.2 =
 * New: Rich-text (WYSIWYG) editing for funnel messages and FAQ answers, including an inline link editor.

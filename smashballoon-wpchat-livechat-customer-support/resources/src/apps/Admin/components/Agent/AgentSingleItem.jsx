@@ -1,7 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { TooltipTrigger } from 'react-aria-components';
 import { twMerge } from 'tailwind-merge';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import Avatar from '@Components/Avatar';
 import { Button } from '@AC/ui/Button';
 import { Tooltip } from '@AC/ui/Tooltip';
@@ -117,6 +117,11 @@ export default function AgentSingleItem({
               isLastAgent ? 'wpchat:opacity-50' : ''
             }`}
             variant={isLastAgent ? 'secondary' : 'danger'}
+            aria-label={sprintf(
+              // translators: %s is the agent's name.
+              __('Delete agent %s', 'smashballoon-wpchat-livechat-customer-support'),
+              name,
+            )}
             aria-disabled={isLastAgent}
             onPress={(e) => {
               if (!isLastAgent) {

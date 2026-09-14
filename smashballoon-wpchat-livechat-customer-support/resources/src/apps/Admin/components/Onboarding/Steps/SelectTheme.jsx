@@ -60,6 +60,7 @@ const SelectTheme = ({
       <Select
         selectedKey={value}
         onSelectionChange={handleSelectionChange}
+        aria-label={__('Theme', 'smashballoon-wpchat-livechat-customer-support')}
         btnClassName='wpchat:w-full wpchat:mb-3 wpchat:md:max-w-[251px] wpchat:h-[50px]'
       >
         {availableOptions.map((option) => (

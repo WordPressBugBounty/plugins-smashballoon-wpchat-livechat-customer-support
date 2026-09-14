@@ -1,6 +1,6 @@
 import root from 'react-shadow';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { motion, MotionConfig } from 'motion/react';
 import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import useFaqsStore from '@FDataStore/faqs/faqsStore';
@@ -76,6 +76,7 @@ function Frontend({ fixedHeight }) {
   const iconPositionOffsetY = useChatStore((s) => s.iconPositionOffsetY);
   const iconType = useChatStore((s) => s.iconType);
   const iconAnimation = useChatStore((s) => s.iconAnimation);
+  const chatbotName = useChatStore((s) => s.chatbotName);
   const platformOrder = useChatStore((s) => s.platformOrder);
   const platformVisibility = useChatStore((s) => s.platformVisibility);
   const availablePlatforms = useChatStore((s) => s.availablePlatforms);
@@ -95,9 +96,11 @@ function Frontend({ fixedHeight }) {
   const effectiveIconType =
     iconType === 'platform' && noPlatformsAvailable && !isPreviewMode ? 'custom' : iconType;
   const [isOpen, setIsOpen] = useState(showChat ? showChat : false);
-  const [lastEscapeTime, setLastEscapeTime] = useState(0);
 
   const widgetRef = useRef(null);
+  const toggleRef = useRef(null);
+  const prevOpenRef = useRef(isOpen);
+  const panelId = useId();
   const defaultTransitions = useTransitions({ onTrigger: isOpen });
 
   // Sync isOpen with showChat continuously in preview mode (initial value handles non-preview)
@@ -122,23 +125,44 @@ function Frontend({ fixedHeight }) {
     }
   }, [isOpen]);
 
-  // Double escape handler to toggle chat (only when open)
+  // Escape closes the chat (standard dialog behavior, only when open).
+  // Guarded on focus being within the widget (panel or toggle): the dialog is
+  // non-modal, so Esc pressed while the user is working elsewhere on the page
+  // must not close the chat and yank focus to the toggle. composedPath() is
+  // used because the widget renders in a Shadow DOM root, where
+  // document.activeElement only reports the shadow host.
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        const now = Date.now();
-        if (now - lastEscapeTime < 300) {
-          handleChatToggle();
-          setLastEscapeTime(0);
-        } else {
-          setLastEscapeTime(now);
-        }
+      if (e.key !== 'Escape' || !isOpen) {
+        return;
+      }
+      const path = e.composedPath();
+      if (path.includes(widgetRef.current) || path.includes(toggleRef.current)) {
+        handleChatToggle();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, lastEscapeTime]);
+  }, [isOpen]);
+
+  // Focus management: move focus into the dialog on open and back to the
+  // toggle on close, so keyboard/SR users aren't stranded on <body>.
+  // Skipped in preview mode (the customizer drives open state) and on
+  // initial mount (e.g. data-show-chat instances must not steal page focus).
+  useEffect(() => {
+    const wasOpen = prevOpenRef.current;
+    prevOpenRef.current = isOpen;
+    if (isPreviewMode || isOpen === wasOpen) {
+      return;
+    }
+    if (isOpen) {
+      // Wait a frame so Framer Motion has made the panel displayable.
+      requestAnimationFrame(() => widgetRef.current?.focus());
+    } else {
+      toggleRef.current?.focus();
+    }
+  }, [isOpen, isPreviewMode]);
 
   // Track funnel abandonment on page unload
   useEffect(() => {
@@ -198,7 +222,11 @@ function Frontend({ fixedHeight }) {
       className={cn(
         'wpchat:z-9 wpchat:flex wpchat:w-[100%] wpchat:max-w-[400px] wpchat:flex-wrap wpchat:p-5 wpchat:antialiased',
         iconPosition === 'left' ? 'wpchat:justify-start' : 'wpchat:justify-end',
-        !disableFixed && 'wpchat:fixed wpchat:bottom-0 wpchat:z-99999',
+        // The fixed wrapper is 400px wide and stays as tall as its padding even when
+        // the panel is display:none, so its transparent area would swallow clicks meant
+        // for page content underneath. Interactive direct children (the chat panel and
+        // the toggle) re-enable pointer events on themselves.
+        !disableFixed && 'wpchat:fixed wpchat:bottom-0 wpchat:z-99999 wpchat:pointer-events-none',
         !disableFixed && (iconPosition === 'left' ? 'wpchat:start-0' : 'wpchat:end-0'),
         frontendClassName,
       )}
@@ -209,6 +237,10 @@ function Frontend({ fixedHeight }) {
     >
       <motion.div
         ref={widgetRef}
+        id={panelId}
+        role='dialog'
+        aria-label={chatbotName || __('Chat', 'smashballoon-wpchat-livechat-customer-support')}
+        tabIndex={-1}
         {...(disableFixed
           ? {
               initial: { opacity: 1 },
@@ -228,7 +260,7 @@ function Frontend({ fixedHeight }) {
                 style: { transformOrigin: iconPosition === 'left' ? 'bottom left' : 'bottom right' },
               }
             : defaultTransitions)}
-        className='wpchat:relative wpchat:mb-5 wpchat:w-full wpchat:overflow-hidden wpchat:rounded-2xl wpchat:shadow-md wpchat:[background:var(--wpchat-color-widget-bg)]'
+        className='wpchat:pointer-events-auto wpchat:relative wpchat:mb-5 wpchat:w-full wpchat:overflow-hidden wpchat:rounded-2xl wpchat:shadow-md wpchat:outline-none wpchat:[background:var(--wpchat-color-widget-bg)]'
         style={{
           height: getWidgetHeight(fixedHeight, chatFunnelId, widgetHeight),
           maxHeight: `${MAX_WIDGET_HEIGHT}px`,
@@ -297,6 +329,8 @@ function Frontend({ fixedHeight }) {
             iconShape={iconShape}
             iconPosition={iconPosition}
             iconAnimation={iconAnimation}
+            panelId={panelId}
+            toggleRef={toggleRef}
           />
         ) : (
           // Pulse-ring lives on an outer wrapper because the button below sets
@@ -305,7 +339,7 @@ function Frontend({ fixedHeight }) {
           // ring as it expands outward.
           <div
             className={cn(
-              'wpchat:relative wpchat:inline-flex',
+              'wpchat:pointer-events-auto wpchat:relative wpchat:inline-flex',
               iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
               !isOpen && iconAnimation === 'pulse' && 'pulse-ring',
             )}
@@ -315,10 +349,14 @@ function Frontend({ fixedHeight }) {
             }}
           >
             <motion.button
-              onClick={(e) => {
-                e.currentTarget.blur();
-                handleChatToggle();
-              }}
+              ref={toggleRef}
+              type='button'
+              onClick={handleChatToggle}
+              aria-label={isOpen
+                ? __('Close chat', 'smashballoon-wpchat-livechat-customer-support')
+                : __('Open chat', 'smashballoon-wpchat-livechat-customer-support')}
+              aria-expanded={isOpen}
+              aria-controls={panelId}
               className={cn(
                 'wpchat:relative wpchat:inline-flex wpchat:h-12 wpchat:w-12 wpchat:cursor-pointer wpchat:items-center wpchat:justify-center wpchat:overflow-hidden wpchat:transition wpchat:hover:scale-105 wpchat:active:scale-98',
                 iconShape === 'roundedRectangle' ? 'wpchat:rounded-2xl' : 'wpchat:rounded-full',
@@ -375,7 +413,10 @@ export default function FrontendShadow({ fixedHeight }) {
         }}
       >
         <style>{`${tailwindStyles}`}</style>
-        <Frontend fixedHeight={fixedHeight} />
+        {/* Respect prefers-reduced-motion for all Framer Motion animations */}
+        <MotionConfig reducedMotion='user'>
+          <Frontend fixedHeight={fixedHeight} />
+        </MotionConfig>
       </root.div>
     </React.StrictMode>
   );

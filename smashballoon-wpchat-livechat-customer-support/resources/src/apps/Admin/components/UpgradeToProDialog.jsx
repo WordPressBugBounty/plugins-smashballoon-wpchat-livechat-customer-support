@@ -1,4 +1,5 @@
 import React from 'react';
+import { Heading } from 'react-aria-components';
 import { Button } from '@AC/ui/Button';
 import SvgLoader from '@Components/SvgLoader';
 import { getImagePath } from '@Utils/getImagePath';
@@ -38,9 +39,12 @@ function UpgradeToProDialog({
       <section className='wpchat:bg-gray-100 wpchat:grid wpchat:grid-cols-1 wpchat:gap-5 wpchat:rounded-ss-lg wpchat:rounded-se-lg wpchat:p-4 wpchat:pb-0 wpchat:md:grid-cols-[50fr_50fr] wpchat:md:gap-3 wpchat:md:pt-6 wpchat:md:pe-13 wpchat:md:ps-10 wpchat:items-end'>
         <div className='wpchat:pb-8'>
           {title && (
-            <h2 className='wpchat:text-gray-900 wpchat:mt-0 wpchat:mb-3 wpchat:text-2xl wpchat:font-semibold wpchat:md:text-3xl'>
+            <Heading
+              slot='title'
+              className='wpchat:text-gray-900 wpchat:mt-0 wpchat:mb-3 wpchat:text-2xl wpchat:font-semibold wpchat:md:text-3xl'
+            >
               {title}
-            </h2>
+            </Heading>
           )}
           {description && (
             <p className='wpchat:text-gray-500 wpchat:mt-0 wpchat:mb-5 wpchat:md:max-w-[322px] wpchat:text-xs wpchat:leading-relaxed'>

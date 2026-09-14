@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
+import { __ } from '@wordpress/i18n';
 import { cn } from '@Utils/cn';
 import { useProUpsellBanner } from '@AH/useProUpsellBanner';
 import { useRTL } from '@Hooks/useRTL';
@@ -20,15 +21,25 @@ import { useRTL } from '@Hooks/useRTL';
 export function SideNav({
   children,
   isOpen,
+  setIsOpen,
   position = 'right',
   className,
   showLoading = false,
+  ariaLabel,
+  'aria-label': ariaLabelProp,
 }) {
   const [contentReady, setContentReady] = useState(isOpen);
   const [showChildren, setShowChildren] = useState(isOpen);
   const [adminMenuWidth, setAdminMenuWidth] = useState(160);
   const { shouldShowBanner } = useProUpsellBanner();
   const isRTL = useRTL();
+  const panelRef = useRef(null);
+  const restoreFocusRef = useRef(null);
+  const prevOpenRef = useRef(isOpen);
+  // Dismissible overlays get dialog semantics + Escape; persistent panels
+  // (no setIsOpen, e.g. the desktop customizer sidebar) are labeled regions.
+  const isDismissible = typeof setIsOpen === 'function';
+  const panelLabel = ariaLabel || ariaLabelProp || __('Side panel', 'smashballoon-wpchat-livechat-customer-support');
 
   const isRight = position === 'right';
 
@@ -52,6 +63,53 @@ export function SideNav({
     }
   }, [isOpen]);
 
+  // a11y focus contract: capture the opener on open and restore its focus on
+  // close. Skips the initial render (persistent panels).
+  useEffect(() => {
+    const wasOpen = prevOpenRef.current;
+    prevOpenRef.current = isOpen;
+    if (isOpen === wasOpen || !isDismissible) {
+      return;
+    }
+    if (isOpen) {
+      restoreFocusRef.current = document.activeElement;
+    } else if (restoreFocusRef.current?.isConnected) {
+      restoreFocusRef.current.focus();
+    }
+  }, [isOpen, isDismissible]);
+
+  // Move focus into the panel only once it has actually rendered. The panel
+  // mounts behind `contentReady` (flipped in a separate rAF), so focusing in
+  // the effect above raced the commit and no-op'd on panelRef=null.
+  useEffect(() => {
+    if (!isDismissible || !isOpen || !contentReady) {
+      return undefined;
+    }
+    const raf = requestAnimationFrame(() => panelRef.current?.focus());
+    return () => cancelAnimationFrame(raf);
+  }, [isOpen, isDismissible, contentReady]);
+
+  // Escape closes dismissible panels
+  useEffect(() => {
+    if (!isOpen || !isDismissible) {
+      return undefined;
+    }
+    const handleKeyDown = (e) => {
+      if (e.key !== 'Escape') {
+        return;
+      }
+      // Only close when focus is inside the panel — Escape on an unrelated
+      // element elsewhere on the page should not dismiss the SideNav.
+      const path = typeof e.composedPath === 'function' ? e.composedPath() : [];
+      if (panelRef.current && !path.includes(panelRef.current)) {
+        return;
+      }
+      setIsOpen(false);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isDismissible, setIsOpen]);
+
   useEffect(() => {
     const el = document.getElementById('adminmenuback');
     if (!el) return;
@@ -71,6 +129,10 @@ export function SideNav({
   const panel = (
     <motion.div
       key='sidenav'
+      ref={panelRef}
+      role={isDismissible ? 'dialog' : 'region'}
+      aria-label={panelLabel}
+      tabIndex={-1}
       className={cn(
         'wpchat:fixed wpchat:top-0 wpchat:bottom-0 wpchat:z-99 wpchat:w-full wpchat:bg-white wpchat:shadow-[-8px_0_20px_rgba(0,0,0,0.1)] wpchat:outline-none wpchat:md:w-[500px]',
         shouldShowBanner ? 'wpchat:mt-[130px]' : 'wpchat:mt-[98px]',

@@ -184,7 +184,11 @@ export default function AgentSettings() {
               'smashballoon-wpchat-livechat-customer-support',
             )}
           />
-          <Select selectedKey={options} onSelectionChange={handleTimingChange}>
+          <Select
+            selectedKey={options}
+            onSelectionChange={handleTimingChange}
+            aria-label={__('Agent timings', 'smashballoon-wpchat-livechat-customer-support')}
+          >
             <SelectItem id={true}>{__('Enable', 'smashballoon-wpchat-livechat-customer-support')}</SelectItem>
             <SelectItem id={false}>
               {__('Disable', 'smashballoon-wpchat-livechat-customer-support')}
@@ -241,6 +245,7 @@ export default function AgentSettings() {
                               selectedKey={selectedOffHoursAgent}
                               onSelectionChange={handleOffHoursAgentChange}
                               placeholder={__('Select Agent', 'smashballoon-wpchat-livechat-customer-support')}
+                              aria-label={__('Off-hours redirect agent', 'smashballoon-wpchat-livechat-customer-support')}
                               className='wpchat:max-w-xs'
                             >
                               {agents.map((agent) => (

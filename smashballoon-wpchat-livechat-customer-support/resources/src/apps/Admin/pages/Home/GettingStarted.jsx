@@ -35,7 +35,7 @@ function GettingStarted() {
           </h1>
           <p className='wpchat:mt-0 wpchat:mb-8 wpchat:text-xs wpchat:text-gray-500'>
             {__(
-              'WPChat helps you connect with your website visitors instantly through live chat messaging. Set up your chat widget in minutes and never miss a customer inquiry.',
+              'WPChat helps you connect with your website visitors in one click, straight into a real conversation on WhatsApp, Messenger, Telegram, or Instagram. Set up your chat widget in minutes and never miss a customer inquiry.',
               'smashballoon-wpchat-livechat-customer-support',
             )}
           </p>

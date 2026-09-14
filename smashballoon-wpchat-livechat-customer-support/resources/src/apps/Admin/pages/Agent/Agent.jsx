@@ -112,18 +112,20 @@ export default function Agents() {
   return (
     <PageLayout breadcrumb={[{ label: __('Agents', 'smashballoon-wpchat-livechat-customer-support') }]} HeaderButtons={HeaderButtons}>
       <PlatformCoverageWarning enabledPlatforms={settings?.agentSettings?.platforms || {}} />
-      {(isPro ? agents : agents.slice(0, 1)).map((agent, index) => (
-        <AgentSingleItem
-          key={agent.id}
-          className='wpchat:mb-4'
-          onClick={() => navigate(`/agents/edit/${agent.id}`)}
-          avatarClassName='wpchat:w-6 wpchat:h-6'
-          agent={agent}
-          isLastAgent={isPro && agents.length === 1}
-          onDelete={isPro ? () => deleteAgent(agent.id) : null}
-          settings={settings}
-        />
-      ))}
+      <div role='group' aria-label={__('Agents', 'smashballoon-wpchat-livechat-customer-support')}>
+        {(isPro ? agents : agents.slice(0, 1)).map((agent, index) => (
+          <AgentSingleItem
+            key={agent.id}
+            className='wpchat:mb-4'
+            onClick={() => navigate(`/agents/edit/${agent.id}`)}
+            avatarClassName='wpchat:w-6 wpchat:h-6'
+            agent={agent}
+            isLastAgent={isPro && agents.length === 1}
+            onDelete={isPro ? () => deleteAgent(agent.id) : null}
+            settings={settings}
+          />
+        ))}
+      </div>
       {!isPro && <UpgradeToPro {...UpgradeToProData} />}
       <Suspense>{isPro && <NewAgentInfo />}</Suspense>
       <Modal isOpen={isOpen} onOpenChange={setIsOpen} isDismissable>

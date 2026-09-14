@@ -45,7 +45,12 @@ function FeatureCard({ icon, title, description, path }) {
       role='button'
       tabIndex={0}
       onClick={handleClick}
-      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
       className='wpchat:hover:bg-wp-light-blue-50 wpchat:outline-wp-light-blue-500-20 wpchat:cursor-pointer wpchat:rounded-2xl wpchat:bg-white wpchat:px-4 wpchat:py-5 wpchat:text-center wpchat:shadow-sm wpchat:transition wpchat:outline-solid wpchat:hover:shadow-md wpchat:focus:bg-white wpchat:focus-visible:outline-4'
     >
       {icon && (

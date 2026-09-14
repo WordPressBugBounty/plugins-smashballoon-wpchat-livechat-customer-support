@@ -1,4 +1,5 @@
 import React from 'react';
+import { Heading } from 'react-aria-components';
 import { __ } from '@wordpress/i18n';
 import { Button } from '@AC/ui/Button';
 import SvgLoader from '@Components/SvgLoader';
@@ -52,9 +53,10 @@ function DefaultModal({
   if (variant === 'simple') {
     return (
       <div className='wpchat:mx-auto wpchat:w-full wpchat:rounded-lg wpchat:bg-white wpchat:p-6 wpchat:shadow-2xl wpchat:md:w-[460px]'>
-        <h5 className='wpchat:m-0 wpchat:mb-2 wpchat:text-lg wpchat:font-semibold wpchat:text-gray-900'>
+        {/* slot="title" labels the surrounding react-aria Dialog */}
+        <Heading slot='title' className='wpchat:m-0 wpchat:mb-2 wpchat:text-lg wpchat:font-semibold wpchat:text-gray-900'>
           {title}
-        </h5>
+        </Heading>
         <div className={cn('wpchat:mb-8 wpchat:text-gray-700 wpchat:text-sm', bodyClassName)}>{children}</div>
         <div className='wpchat:flex wpchat:justify-end wpchat:gap-2'>
           {!disableCancelButton && (
@@ -73,24 +75,28 @@ function DefaultModal({
       {/* Header */}
       {!hideHeader && (
         <div className='wpchat:flex wpchat:items-center wpchat:justify-between wpchat:border-b wpchat:border-gray-200 wpchat:px-8 wpchat:py-4'>
-          <h5 className='wpchat:m-0 wpchat:text-lg wpchat:leading-relaxed wpchat:font-semibold wpchat:text-gray-900'>
+          {/* slot="title" labels the surrounding react-aria Dialog */}
+          <Heading slot='title' className='wpchat:m-0 wpchat:text-lg wpchat:leading-relaxed wpchat:font-semibold wpchat:text-gray-900'>
             {title}
-          </h5>
-          <SvgLoader
-            name='close'
-            className='wpchat:h-[1.8em] wpchat:w-[1.8em] wpchat:cursor-pointer wpchat:fill-gray-500'
-            role='button'
-            tabIndex={0}
+          </Heading>
+          <button
+            type='button'
             aria-label={__('Close', 'smashballoon-wpchat-livechat-customer-support')}
             onClick={() => setIsOpen(false)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                setIsOpen(false);
-                e.preventDefault();
-              }
-            }}
-          />
+            className='wpchat:m-0 wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:p-0'
+          >
+            <SvgLoader
+              name='close'
+              className='wpchat:h-[1.8em] wpchat:w-[1.8em] wpchat:fill-gray-500'
+            />
+          </button>
         </div>
+      )}
+      {/* Keep the dialog named when the visible header is hidden */}
+      {hideHeader && title && (
+        <Heading slot='title' className='wpchat:sr-only'>
+          {title}
+        </Heading>
       )}
 
       {/* Body */}

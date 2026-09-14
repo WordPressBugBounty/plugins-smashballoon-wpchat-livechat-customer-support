@@ -102,7 +102,7 @@ function ChatBubble({ msg, setChatMessages }) {
           (isImage ? (
             <img
               src={chatbotAvatar}
-              alt={__('Chatbot Avatar', 'smashballoon-wpchat-livechat-customer-support')}
+              alt='' /* decorative — the sender name is announced from the adjacent text */
               className='wpchat:h-[48px] wpchat:w-[48px] wpchat:rounded-full wpchat:object-cover'
             />
           ) : (

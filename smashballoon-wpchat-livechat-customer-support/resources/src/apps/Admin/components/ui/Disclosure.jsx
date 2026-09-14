@@ -39,7 +39,7 @@ export function AccordionItem({ icon, label, value, children, borderless, ...pro
         <>
           <Button
             slot="trigger"
-            className="wpchat:flex wpchat:w-full wpchat:items-center wpchat:justify-between wpchat:py-3 wpchat:cursor-pointer wpchat:bg-transparent wpchat:border-0 wpchat:px-5 wpchat:outline-none"
+            className="wpchat:flex wpchat:w-full wpchat:items-center wpchat:justify-between wpchat:py-3 wpchat:cursor-pointer wpchat:bg-transparent wpchat:border-0 wpchat:px-5 wpchat:outline wpchat:outline-0 wpchat:outline-wp-light-blue-500-20 wpchat:focus-visible:outline-4"
           >
             <span className="wpchat:flex wpchat:items-center wpchat:gap-2.5">
               {icon && (

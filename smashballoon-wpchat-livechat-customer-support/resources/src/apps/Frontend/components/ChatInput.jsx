@@ -1,4 +1,5 @@
 import React from 'react';
+import { __ } from '@wordpress/i18n';
 import SvgLoader from '@Components/SvgLoader';
 import { useChatStore } from '@Frontend/context/ChatStoreContext';
 import { cn } from '@Utils/cn';
@@ -61,11 +62,17 @@ const ChatInput = ({
         type='text'
         name='text'
         placeholder={inputPlaceholder}
+        aria-label={inputPlaceholder || __('Type a message', 'smashballoon-wpchat-livechat-customer-support')}
         value={message}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
       />
-      <button onClick={handleSendMessage} className={cn('wpchat:cursor-pointer', variation.button)}>
+      <button
+        type='button'
+        onClick={handleSendMessage}
+        aria-label={__('Send message', 'smashballoon-wpchat-livechat-customer-support')}
+        className={cn('wpchat:cursor-pointer', variation.button)}
+      >
         <SvgLoader
           name={chatInputSendIcon ? chatInputSendIcon : 'send'}
           className={cn('wpchat:h-full wpchat:w-full', variation.icon)}

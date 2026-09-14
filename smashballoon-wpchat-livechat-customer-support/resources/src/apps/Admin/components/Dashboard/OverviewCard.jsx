@@ -153,13 +153,24 @@ function OverviewCard() {
           </div>
         </div>
       </div>
-      <SideNav isOpen={isOpenSideNav} setIsOpen={setIsOpenSideNav} showLoading={true}>
+      <SideNav
+        isOpen={isOpenSideNav}
+        setIsOpen={setIsOpenSideNav}
+        showLoading={true}
+        ariaLabel={__('Preview', 'smashballoon-wpchat-livechat-customer-support')}
+      >
         <h2 className='wpchat:text-gray-900 wpchat:border-gray-200 wpchat:m-0 wpchat:mb-9 wpchat:flex wpchat:items-center wpchat:gap-1.5 wpchat:border-b-1 wpchat:py-4 wpchat:ps-8 wpchat:text-lg wpchat:leading-relaxed wpchat:font-semibold'>
-          <SvgLoader
-            name='chevronLeft'
-            className='wpchat:h-[1.3em] wpchat:w-[1.3em] wpchat:cursor-pointer wpchat:rtl:rotate-180'
+          <button
+            type='button'
+            aria-label={__('Close preview', 'smashballoon-wpchat-livechat-customer-support')}
             onClick={() => setIsOpenSideNav(false)}
-          />
+            className='wpchat:m-0 wpchat:flex wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:p-0'
+          >
+            <SvgLoader
+              name='chevronLeft'
+              className='wpchat:h-[1.3em] wpchat:w-[1.3em] wpchat:rtl:rotate-180'
+            />
+          </button>
           {__('Preview', 'smashballoon-wpchat-livechat-customer-support')}
         </h2>
         <EmbeddedFrontend />

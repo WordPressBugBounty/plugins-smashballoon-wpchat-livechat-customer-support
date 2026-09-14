@@ -190,6 +190,15 @@ const AgentStats = () => {
                 requiredEntitlement="wpchat.analytics.advanced"
                 minHeight={dynamicHeight}
               >
+                {/* Text alternative for the bar chart (recharts SVG is not SR-readable) */}
+                <div
+                  role="img"
+                  aria-label={sprintf(
+                    /* translators: %s: comma-separated list of "agent: chat count" pairs */
+                    __('Chats per agent bar chart. %s', 'smashballoon-wpchat-livechat-customer-support'),
+                    barData.slice(0, 10).map((d) => `${d.name}: ${d.chats}`).join(', '),
+                  )}
+                >
                 <ResponsiveContainer width="100%" height={dynamicHeight}>
                   <BarChart
                     layout="vertical"
@@ -231,6 +240,7 @@ const AgentStats = () => {
                     </Bar>
                   </BarChart>
                 </ResponsiveContainer>
+                </div>
               </UpgradeToProBlurNotice>
             </div>
           </div>

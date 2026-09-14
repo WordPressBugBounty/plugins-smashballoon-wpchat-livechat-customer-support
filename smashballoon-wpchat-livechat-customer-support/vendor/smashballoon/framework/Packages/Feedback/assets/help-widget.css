@@ -146,8 +146,14 @@
 	background: var(--sb-hw-content-bg);
 	border-radius: var(--sb-hw-radius);
 	box-shadow: var(--sb-hw-shadow-lg);
-	/* See FAB z-index note — panel sits one step below so the FAB icon stays on top. */
-	z-index: 1000000;
+	/*
+	 * Closed-state z-index sits below the page so the invisible panel
+	 * (kept in the DOM via opacity:0 + scale + blur for the open/close
+	 * transition) cannot overlay or trap interactions with page chrome
+	 * underneath it. `.sb-hw-panel--open` promotes the panel back above
+	 * the page when the user opens the widget.
+	 */
+	z-index: -1;
 	overflow: hidden;
 	font-family: var(--sb-hw-font);
 	font-size: 14px;
@@ -169,6 +175,15 @@
 	transform: scale(1);
 	filter: blur(0);
 	pointer-events: auto;
+	/*
+	 * Promote above page content while the panel is visible. 1000000
+	 * deterministically clears the SB Callout side-menu (999999) used by
+	 * sbi/cff free plugins, and stays one step below the FAB (1000001)
+	 * so its close icon remains clickable. Mirrors the pre-existing
+	 * FAB↔panel relationship documented in the FAB z-index comment
+	 * above.
+	 */
+	z-index: 1000000;
 }
 
 /* =========================================================

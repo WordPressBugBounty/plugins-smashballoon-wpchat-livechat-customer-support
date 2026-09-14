@@ -22,15 +22,22 @@ const IframeEmbed = ({ imageSrc, iframeSrc, className }) => {
       className={twMerge('wpchat:relative wpchat:h-0 wpchat:w-full wpchat:pb-[56.25%]', className)}
     >
       {!isPlaying ? (
-        <img
-          src={imageSrc}
-          alt={__('iframe-thumbnail', 'smashballoon-wpchat-livechat-customer-support')}
-          className='wpchat:absolute wpchat:top-0 wpchat:start-0 wpchat:h-full wpchat:w-full wpchat:cursor-pointer wpchat:rounded-lg wpchat:object-cover'
+        <button
+          type='button'
+          aria-label={__('Play video', 'smashballoon-wpchat-livechat-customer-support')}
           onClick={() => setIsPlaying(true)}
-        />
+          className='wpchat:absolute wpchat:top-0 wpchat:start-0 wpchat:m-0 wpchat:h-full wpchat:w-full wpchat:cursor-pointer wpchat:border-0 wpchat:bg-transparent wpchat:p-0'
+        >
+          <img
+            src={imageSrc}
+            alt=''
+            className='wpchat:h-full wpchat:w-full wpchat:rounded-lg wpchat:object-cover'
+          />
+        </button>
       ) : (
         <iframe
           src={iframeSrc}
+          title={__('Video', 'smashballoon-wpchat-livechat-customer-support')}
           className='wpchat:absolute wpchat:top-0 wpchat:start-0 wpchat:h-full wpchat:w-full'
           allow='autoplay'
           allowFullScreen
