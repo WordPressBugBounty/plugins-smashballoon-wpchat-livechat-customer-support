@@ -116,7 +116,7 @@ class FaqsRepository implements FaqsRepositoryInterface
 	{
 		$offset = ($page - 1) * $per_page;
 		$query = $this->db->prepare(
-			"SELECT * FROM {$this->tableName} ORDER BY priority DESC LIMIT %d OFFSET %d",
+			"SELECT * FROM {$this->tableName} ORDER BY priority DESC, id ASC LIMIT %d OFFSET %d",
 			$per_page,
 			$offset
 		);
@@ -312,7 +312,7 @@ class FaqsRepository implements FaqsRepositoryInterface
 	{
 		$query = $this->db->prepare(
 			"SELECT * FROM {$this->tableName}
-			ORDER BY click_count DESC, priority DESC
+			ORDER BY click_count DESC, priority DESC, id ASC
 			LIMIT %d",
 			$limit
 		);

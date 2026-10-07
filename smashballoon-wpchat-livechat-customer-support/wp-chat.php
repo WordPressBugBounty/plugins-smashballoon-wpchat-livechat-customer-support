@@ -4,7 +4,7 @@
  * Plugin Name: WPChat - Click-to-Chat Customer Support Suite
  * Plugin URI: https://wpchat.com
  * Description: Add a click-to-chat button to your WordPress site so visitors can message you on WhatsApp, Messenger, Telegram, or Instagram in one click.
- * Version: 1.4.3
+ * Version: 1.4.4
  * Author: Smash Balloon
  * Author URI: https://smashballoon.com
  * License: GPL v2 or later
@@ -22,7 +22,7 @@ if (!defined('WPCHAT_PLUGIN_NAME')) {
 	define('WPCHAT_PLUGIN_NAME', 'WPChat');
 }
 if (!defined('WPCHAT_VERSION')) {
-	define('WPCHAT_VERSION', '1.4.3');
+	define('WPCHAT_VERSION', '1.4.4');
 }
 if (!defined('WPCHAT_PLUGIN_FILE')) {
 	define('WPCHAT_PLUGIN_FILE', __FILE__);

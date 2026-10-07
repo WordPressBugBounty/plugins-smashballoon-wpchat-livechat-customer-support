@@ -6,7 +6,7 @@ Author URI: https://wpchat.com
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.4.3
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -249,6 +249,11 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.4 =
+* Tweak: The plugin is now about 5% smaller to download, so installs and updates finish faster and take up less space on your server.
+* Fix: The FAQ list in the admin and FAQ search results no longer show duplicate or skipped entries when several FAQs share the same priority.
+* Fix: Popular FAQs now display in a consistent order when several FAQs have the same number of clicks.
 
 = 1.4.3 =
 * Tweak: Confirmed compatibility with WordPress 7.1.

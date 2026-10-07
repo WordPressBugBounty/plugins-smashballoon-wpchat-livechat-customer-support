@@ -241,7 +241,7 @@ class FaqSearchService implements SearchServiceInterface
             MATCH(question, answer) AGAINST(%s IN NATURAL LANGUAGE MODE) as relevance_score
             FROM {$this->tableName}
             WHERE MATCH(question, answer) AGAINST(%s IN NATURAL LANGUAGE MODE) > 0
-            ORDER BY relevance_score DESC, priority DESC, click_count DESC
+            ORDER BY relevance_score DESC, priority DESC, click_count DESC, id ASC
             LIMIT %d OFFSET %d",
 			$query,
 			$query,
@@ -269,7 +269,7 @@ class FaqSearchService implements SearchServiceInterface
 		$fallbackQuery = $this->db->prepare(
 			"SELECT * FROM {$this->tableName}
             WHERE question LIKE %s OR answer LIKE %s
-            ORDER BY priority DESC, click_count DESC
+            ORDER BY priority DESC, click_count DESC, id ASC
             LIMIT %d OFFSET %d",
 			$searchTerm,
 			$searchTerm,
