@@ -72,6 +72,19 @@ class AnalyticsEndpoint extends RestEndpoint
 			]
 		);
 
+		// Fresh frontend nonce for pages served from a full-page cache, whose embedded nonce has expired.
+		register_rest_route(
+			$this->namespace,
+			'/' . $this->restBase . '/nonce',
+			[
+				[
+					'methods' => \WP_REST_Server::READABLE,
+					'callback' => [$this, 'getFrontendNonce'],
+					'permission_callback' => '__return_true',
+				],
+			]
+		);
+
 		// Simple data retrieval endpoints
 		register_rest_route(
 			$this->namespace,
@@ -169,12 +182,17 @@ class AnalyticsEndpoint extends RestEndpoint
 	 */
 	public function logEvent(WP_REST_Request $request)
 	{
+		if (!EventLogger::isEnabled()) {
+			return new WP_REST_Response(['success' => true, 'disabled' => true]);
+		}
+
 		try {
 			$eventType = $request->get_param('event_type');
 			$eventData = $request->get_param('event_data') ?? [];
 
 			// Optional context data for overriding automatic assignment.
-			$contextData = $request->get_param('context') ?? [];
+			// Visitor identity always comes from the server, never from the request.
+			$contextData = $this->withoutVisitorIdentity($request->get_param('context') ?? []);
 
 			$success = $this->analyticsService->logEvent(
 				$eventType,
@@ -212,6 +230,10 @@ class AnalyticsEndpoint extends RestEndpoint
 	 */
 	public function logBatchEvents(WP_REST_Request $request)
 	{
+		if (!EventLogger::isEnabled()) {
+			return new WP_REST_Response(['success' => true, 'disabled' => true]);
+		}
+
 		try {
 			$events = $request->get_param('events') ?? [];
 			$contextData = $request->get_param('context') ?? [];
@@ -260,7 +282,7 @@ class AnalyticsEndpoint extends RestEndpoint
 				$success = $this->analyticsService->logEvent(
 					$eventType,
 					$eventData,
-					array_merge($contextData, $eventContext)
+					$this->withoutVisitorIdentity(array_merge($contextData, $eventContext))
 				);
 
 				if ($success) {
@@ -608,83 +630,39 @@ class AnalyticsEndpoint extends RestEndpoint
 	}
 
 	/**
-	 * Check permission for analytics batch endpoint using session validation.
-	 * This provides security without requiring nonce in the request headers.
+	 * Return fresh nonces so a cached page can keep sending analytics.
+	 * The logged-out nonce is the same for every visitor and already sits in the page source.
+	 *
+	 * @return WP_REST_Response The nonces, never cached.
+	 */
+	public function getFrontendNonce(): WP_REST_Response
+	{
+		nocache_headers();
+
+		return new WP_REST_Response([
+			'frontendNonce' => wp_create_nonce('wpchat_frontend'),
+			'restNonce' => wp_create_nonce('wp_rest'),
+		]);
+	}
+
+	/**
+	 * Check permission for analytics batch endpoint: valid nonce plus a sane payload.
 	 *
 	 * @param WP_REST_Request $request The request object.
 	 * @return bool|WP_Error Returns true if allowed, otherwise returns a WP_Error.
 	 */
 	public function checkAnalyticsBatchPermission(WP_REST_Request $request)
 	{
-		// First try standard nonce verification for normal requests
+		// Every frontend request (fetch and sendBeacon) carries a nonce; a cookie alone is not enough.
 		$nonce = $request->get_header('X-WP-Nonce') ?? $request->get_param('nonce');
-		if ($nonce) {
-			if (wp_verify_nonce($nonce, 'wp_rest') || wp_verify_nonce($nonce, 'wpchat_frontend')) {
-				return true;
-			}
-		}
-		
-		// For sendBeacon requests, validate using session/cookie
-		$sessionId = isset($_COOKIE['wpchat_session_id']) ? sanitize_text_field(wp_unslash($_COOKIE['wpchat_session_id'])) : null;
-		$guestId = isset($_COOKIE['wpchat_guest_id']) ? sanitize_text_field(wp_unslash($_COOKIE['wpchat_guest_id'])) : null;
-		
-		if (!$sessionId && !$guestId) {
+		if (!$nonce || (!wp_verify_nonce($nonce, 'wp_rest') && !wp_verify_nonce($nonce, 'wpchat_frontend'))) {
 			return new WP_Error(
-				'no_session',
-				'No valid session found',
+				'invalid_nonce',
+				'Invalid nonce',
 				['status' => 403]
 			);
 		}
-		
-		// Validate session exists and apply rate limiting
-		if ($sessionId) {
-			$sessionKey = 'wpchat_session_' . substr(md5($sessionId), 0, 16);
-			$sessionData = get_transient($sessionKey);
-			
-			if (!$sessionData) {
-				// Create new session entry for valid session IDs
-				set_transient($sessionKey, [
-					'created' => time(),
-					'ip' => $this->getClientIp(),
-					'requests' => 1
-				], DAY_IN_SECONDS);
-			} else {
-				// Check if session is from same IP (with some flexibility for mobile networks)
-				$currentIp = $this->getClientIp();
-				if ($sessionData['ip'] !== $currentIp) {
-					// Allow if IPs are in same /24 subnet (for mobile networks)
-					$sessionIpParts = explode('.', $sessionData['ip']);
-					$currentIpParts = explode('.', $currentIp);
-					
-					if (count($sessionIpParts) === 4 && count($currentIpParts) === 4) {
-						// Check if first 3 octets match (same /24 subnet)
-						if ($sessionIpParts[0] !== $currentIpParts[0] ||
-							$sessionIpParts[1] !== $currentIpParts[1] ||
-							$sessionIpParts[2] !== $currentIpParts[2]) {
-							return new WP_Error(
-								'session_mismatch',
-								'Session IP mismatch',
-								['status' => 403]
-							);
-						}
-					}
-				}
-				
-				// Rate limiting per session (100 requests per day)
-				if (($sessionData['requests'] ?? 0) > 100) {
-					return new WP_Error(
-						'session_rate_limit',
-						'Session rate limit exceeded',
-						['status' => 429]
-					);
-				}
-				
-				// Update request count
-				$sessionData['requests'] = ($sessionData['requests'] ?? 0) + 1;
-				set_transient($sessionKey, $sessionData, DAY_IN_SECONDS);
-			}
-		}
-		
+
 		// Additional validations for the events
 		$events = $request->get_param('events');
 		
@@ -738,34 +716,13 @@ class AnalyticsEndpoint extends RestEndpoint
 	}
 
 	/**
-	 * Get client IP address, considering proxies.
+	 * Drop client-supplied visitor identity so a request cannot write events as another visitor.
 	 *
-	 * @return string The client IP address.
+	 * @param mixed $context Context data from the request.
+	 * @return array Context without site_id, session_id and user_id.
 	 */
-	private function getClientIp(): string
+	private function withoutVisitorIdentity($context): array
 	{
-		// Check for Cloudflare
-		if (!empty($_SERVER['HTTP_CF_CONNECTING_IP'])) {
-			$ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_CONNECTING_IP']));
-		}
-		// Check for other proxies
-		elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-			$ips = explode(',', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR'])));
-			$ip = trim($ips[0]);
-		}
-		elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
-			$ip = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_REAL_IP']));
-		}
-		else {
-			$ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '0.0.0.0';
-		}
-		
-		// Validate IP
-		if (filter_var($ip, FILTER_VALIDATE_IP)) {
-			return $ip;
-		}
-		
-		return '0.0.0.0';
+		return is_array($context) ? array_diff_key($context, array_flip(['site_id', 'session_id', 'user_id'])) : [];
 	}
-
 }

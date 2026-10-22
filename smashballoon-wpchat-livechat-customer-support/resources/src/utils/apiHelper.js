@@ -95,7 +95,68 @@ export const makeWPChatRequest = async (endpoint, options = {}) => {
 		requestConfig.data = data;
 	}
 
-	return await apiFetch(requestConfig);
+	try {
+		return await apiFetch(requestConfig);
+	} catch (error) {
+		// A full-page cache can serve nonces past their 12-24h life: refresh them once and retry
+		const isFrontend = globalVar && globalVar === window.wpChatFrontend;
+		if (!isFrontend || options.nonceRefreshed || error?.data?.status !== 403) {
+			throw error;
+		}
+		try {
+			await refreshFrontendNonce();
+		} catch {
+			// Refresh failed (offline, blocked): report the original 403, not the refresh error
+			throw error;
+		}
+		const fresh = window.wpChatFrontend;
+		const swap = (obj) => (obj && 'nonce' in obj ? { ...obj, nonce: fresh.frontendNonce } : obj);
+		return makeWPChatRequest(endpoint, {
+			...options,
+			params: swap(params),
+			data: swap(data),
+			headers: 'X-WP-Nonce' in headers ? { ...headers, 'X-WP-Nonce': fresh.restNonce } : headers,
+			nonceRefreshed: true,
+		});
+	}
+};
+
+let nonceRefresh = null;
+
+/**
+ * Replace expired frontend nonces with fresh ones. Concurrent callers share one refresh.
+ * @returns {Promise<void>}
+ */
+export const refreshFrontendNonce = () => {
+	if (!nonceRefresh) {
+		nonceRefresh = fetchFreshNonces().finally(() => {
+			nonceRefresh = null;
+		});
+	}
+	return nonceRefresh;
+};
+
+const fetchFreshNonces = async () => {
+	const config = window.wpChatFrontend;
+	// Plain fetch with no X-WP-Nonce header: core rejects any request that carries a stale one
+	const url = new URL(buildRestUrl('analytics/nonce', {}, 'frontend'), window.location.href).toString();
+	const fresh = await fetch(url, { credentials: 'same-origin' }).then((r) => r.json());
+	if (fresh?.frontendNonce) {
+		config.frontendNonce = fresh.frontendNonce;
+		config.restNonce = fresh.restNonce;
+	}
+	// That REST call runs as a guest, so a logged-in visitor gets their wp_rest nonce from core's admin-ajax action instead
+	if (config.ajaxUrl) {
+		try {
+			const response = await fetch(`${config.ajaxUrl}?action=rest-nonce`, { credentials: 'same-origin' });
+			const restNonce = response.ok ? (await response.text()).trim() : '';
+			if (/^[0-9a-f]{10}$/.test(restNonce)) {
+				config.restNonce = restNonce;
+			}
+		} catch {
+			// Best effort: admin-ajax can be cross-origin or blocked, and the REST nonces above are already stored
+		}
+	}
 };
 
 /**

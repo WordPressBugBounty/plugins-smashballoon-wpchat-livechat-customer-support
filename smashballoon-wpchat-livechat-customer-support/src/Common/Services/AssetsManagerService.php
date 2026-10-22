@@ -11,6 +11,7 @@ use SmashBalloon\WPChat\Common\Contracts\VisibilityServiceInterface;
 use SmashBalloon\WPChat\Common\Services\SupportService;
 use SmashBalloon\WPChat\Common\Helpers\Utility;
 use SmashBalloon\WPChat\Common\Helpers\UTMUrlGenerator;
+use SmashBalloon\WPChat\Common\Services\Analytics\EventLogger;
 
 /**
  * Class AssetsManagerService
@@ -129,30 +130,12 @@ usort(
 		add_filter('script_loader_tag', [$this, 'filterScriptLoaderTag'], 10, 3);
 		add_filter('pre_load_script_translations', [$this, 'provideScriptTranslations'], 10, 4);
 		add_action('init', [$this, 'registerStyles']);
-		add_action('init', [$this, 'maybeStartSession'], 1);
+		add_action('send_headers', [EventLogger::class, 'clearCookiesIfDisabled']);
 		add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
 		add_action('admin_enqueue_scripts', [$this, 'enqueueAdminStyles']);
 		add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendScripts']);
 		add_action('wp_enqueue_scripts', [$this, 'enqueueFrontendStyles']);
 		add_filter('admin_body_class', [$this, 'addAdminBodyClass']);
-	}
-
-	/**
-	 * Start PHP session early if needed for frontend.
-	 *
-	 * Must be called early (on init with priority 1) before any output is sent.
-	 *
-	 * @return void
-	 */
-	public function maybeStartSession(): void {
-		// Only start session on frontend, not admin or AJAX/REST requests
-		if ( is_admin() || wp_doing_ajax() || defined( 'REST_REQUEST' ) ) {
-			return;
-		}
-
-		if ( session_status() === PHP_SESSION_NONE && ! headers_sent() ) {
-			session_start();
-		}
 	}
 
 	/**
@@ -404,11 +387,12 @@ wp_register_style(
 		wp_localize_script('wp-chat-frontend', 'wpChatFrontend', [
 			'restNonce' => wp_create_nonce('wp_rest'),
 			'restUrl' => rest_url('wpchat/v1/'),
+			'ajaxUrl' => admin_url('admin-ajax.php'),
 			'frontendNonce' => wp_create_nonce('wpchat_frontend'),
 			'isPro' => defined('WPCHAT_PRO') && WPCHAT_PRO,
 			'funnelId' => $funnelId,
 			'brandingLogoUrl' => UTMUrlGenerator::brandingLogoUrl(),
-			'sessionId' => session_id(),
+			'analyticsEnabled' => EventLogger::isEnabled() ? '1' : '0',
 			'connectionErrorMessage' => apply_filters('wpchat_connection_error_message', ''),
 			'offHoursMessage' => wp_kses_post(apply_filters('wpchat_off_hours_message', '')),
 		]);

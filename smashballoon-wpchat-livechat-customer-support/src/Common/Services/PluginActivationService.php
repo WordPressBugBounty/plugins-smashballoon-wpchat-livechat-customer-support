@@ -88,7 +88,9 @@ private function registerCapabilities(): void {
  * @return void
  */
 public function redirectAfterActivation(): void {
-    if ( get_option( 'wpchat_plugin_do_activation_redirect', false ) ) {
+    // admin_init also runs for admin-ajax calls (guests included), which must not use up the admin's redirect.
+    $canRedirect = !wp_doing_ajax() && current_user_can('activate_plugins');
+    if ($canRedirect && get_option('wpchat_plugin_do_activation_redirect', false)) {
     delete_option( 'wpchat_plugin_do_activation_redirect' );
     wp_safe_redirect( admin_url( 'admin.php?page=wp-chat' ) );
     exit;

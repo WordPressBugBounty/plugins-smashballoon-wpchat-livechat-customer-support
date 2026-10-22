@@ -6,7 +6,7 @@ Author URI: https://wpchat.com
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.4.4
+Stable tag: 1.4.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -75,7 +75,7 @@ WPChat works for any business that wants to add click-to-chat and WhatsApp custo
 
 The free version of WPChat is a complete multi-platform click-to-chat solution for WordPress. Add a customizable chat widget to your site with WhatsApp chat, Facebook Messenger, Telegram, and Instagram support. Create a professional agent profile, add up to 10 smart FAQs, and choose from three beautiful chat widget themes. No coding required.
 
-WPChat is 100% mobile responsive, GDPR compliant, loads asynchronously for zero performance impact, and works with every WordPress theme. Add WhatsApp chat to WordPress for free in under 5 minutes.
+WPChat is 100% mobile responsive, loads asynchronously for zero performance impact, and works with every WordPress theme. Add WhatsApp chat to WordPress for free in under 5 minutes.
 
 = 🚀 Pro Click-to-Chat Features: Chat Funnels, Analytics & Unlimited Agents =
 
@@ -119,7 +119,7 @@ WPChat is 100% mobile responsive, GDPR compliant, loads asynchronously for zero 
 * [Mobile responsive chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Perfect chat experience on any device, whether mobile or desktop.
 * [Async chat widget loading](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Zero performance impact with lightweight, asynchronously loaded chat widget code.
 * [RTL chat support](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Full right-to-left language support for international customer chat.
-* [GDPR compliant chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - 100% GDPR compliant chat widget with no personal data collection.
+* [Privacy-friendly chat widget](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - No cookies until a visitor interacts with the widget, and interaction analytics stay in your site database and can be turned off.
 * [Remove WPChat branding](https://wpchat.com/features/?utm_source=wprepo&utm_medium=link&utm_campaign=liteplugin) - Remove WPChat branding from your chat widget with WPChat Pro.
 
 = 🧡 Built by Smash Balloon =
@@ -167,19 +167,25 @@ Visit [WPBeginner](https://wpbeginner.com/?utm_source=wprepo&utm_medium=link&utm
 
 **Data Collection**
 
-WPChat does not collect any personal data for a purpose other than carrying out the chatting with the site's visitors.
+WPChat sets no cookies when a page loads. Cookies are only set after a visitor interacts with the chat widget (opens it, clicks, or searches):
+
+* **wpchat_session_id**: Analytics session ID, expires after 24 hours.
+* **wpchat_guest_id**: Anonymous guest ID for analytics, expires after 30 days.
+* **wpchat_chat_session_{instance}** (for example `wpchat_chat_session_floating`, or `wpchat_chat_session_wp-chat-shortcode-1` for a `[wpchat]` shortcode): Browser-session cookie set when the visitor first picks an FAQ or starts a message, used to clear the stored conversation after the browser is closed. It holds no identifier.
+
+Interaction analytics (widget opens and closes, navigation, FAQ clicks, FAQ ratings, and FAQ search terms, together with the visitor's browser user agent, page URL and referrer) are stored in your own site database and deleted after 365 days. You can turn interaction analytics off in WPChat > Settings, or with the `wpchat_analytics_enabled` filter (for example from a consent plugin). When analytics are off, WPChat sets no analytics cookies and records no events.
 
 **External Connections**
 
 This plugin connects to three external sites:
 
 * **wpchat.com**: Used for performing seamless upgrades from Free version to the Pro plugin.
-* **api.wpchat.com**: Used for AI enabled features like smart search.
+* **api.wpchat.com**: Used for AI enabled features like smart search. When smart search is on, the text a visitor types into the FAQ search is sent to api.wpchat.com. Turn smart search off on the FAQs page, or with the `wpchat_smart_search_enabled` filter, to use the local FAQ search only.
 * **license.wpchat.com**: Used for license related requests, like license activation, deactivation and checks.
 
 **Data Usage**
 
-All data associated with WPChat is used solely for the functionality to chat with website visitors. No personal data is collected, stored, or shared beyond this purpose.
+WPChat uses this data only to run the chat widget and to show you the Analytics page. Chat conversations happen in WhatsApp, Messenger, Telegram, Instagram, phone or SMS, not on WPChat's servers.
 
 Privacy Policy: https://wpchat.com/privacy-policy
 Terms of Service: https://wpchat.com/terms-and-conditions
@@ -221,9 +227,9 @@ The free version includes one agent profile. WPChat Pro lets you add unlimited a
 
 Yes. WPChat works on any WordPress page, including WooCommerce product pages, cart pages, and checkout pages. Add WhatsApp chat to your online store to answer customer questions and reduce cart abandonment.
 
-= Is WPChat GDPR compliant? =
+= Does WPChat set cookies or collect visitor data? =
 
-Yes. WPChat does not collect personal data from your visitors. Chat conversations happen through WhatsApp, Messenger, Telegram, or Instagram - not through WPChat's servers.
+WPChat sets no cookies on page load. After a visitor interacts with the widget it sets an analytics session cookie (24 hours), an anonymous guest ID cookie (30 days) and a browser-session chat cookie. Interaction analytics (user agent, page URL, referrer, FAQ search terms) are stored in your site database for 365 days and can be turned off in WPChat > Settings or with the `wpchat_analytics_enabled` filter. With smart search on, FAQ search text is sent to api.wpchat.com. Chat conversations happen in WhatsApp, Messenger, Telegram, or Instagram, not on WPChat's servers. See the Privacy Policy section for details.
 
 = What are chat funnels? =
 
@@ -249,6 +255,17 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.5 =
+* New: Added a "Visitor interaction analytics" setting in WPChat > Settings to turn chat analytics off, plus the `wpchat_analytics_enabled` filter so consent plugins can turn analytics off per visitor, and the `wpchat_smart_search_enabled` filter to keep FAQ search on your own site.
+* Tweak: WPChat no longer sets any cookies when a page loads. Cookies are set only after a visitor interacts with the chat widget, and turning analytics off removes the analytics cookies a visitor already has.
+* Tweak: After updating, returning visitors may see their previous chat conversation cleared once, the first time they open the chat.
+* Fix: Analytics no longer count one new visitor as several unique visitors.
+* Fix: Chat events are no longer lost when a visitor leaves the page right after using the chat.
+* Fix: On sites with full-page caching, the chat widget no longer loads empty once the cached page's security token expires.
+* Fix: Visitors are no longer sent to the WPChat admin page, and the admin no longer misses the welcome screen, when a background request runs right after the plugin is activated.
+* Fix: Sidebar links now switch pages correctly when clicked from the Customizer.
+* Fix: Plugin security hardening.
 
 = 1.4.4 =
 * Tweak: The plugin is now about 5% smaller to download, so installs and updates finish faster and take up less space on your server.

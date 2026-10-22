@@ -69,6 +69,19 @@ export default function Chat() {
   // Check if user has interacted (sent a message via typing, option click, or FAQ selection)
   const hasUserInteracted = chatMessages.some((m) => m.messageType === 'send');
 
+  // A chat auto-opened by data-show-chat is not an interaction: hold storage and
+  // analytics until the visitor clicks or types inside the widget (click covers
+  // screen readers and other activations that send no pointer event).
+  const showChat = useChatStore((s) => s.showChat);
+  const userEngaged = useChatStore((s) => s.userEngaged);
+  const setUserEngaged = useChatStore((s) => s.setUserEngaged);
+  // A message already sent (e.g. an FAQ picked on the home screen) counts as engagement
+  const isEngaged = userEngaged || !showChat || hasUserInteracted;
+  const markEngaged = useCallback(() => {
+    if (!userEngaged) setUserEngaged(true);
+  }, [userEngaged, setUserEngaged]);
+  const pendingFunnelViewRef = useRef(null);
+
   // Zustand store values
   const response = useChatStore((s) => s.response);
   const replaceMode = useChatStore((s) => s.replaceMode);
@@ -87,13 +100,20 @@ export default function Chat() {
 
   // On mount: clear expired data, archive previous messages, check for old conversations
   useEffect(() => {
-    if (isPreviewMode) return;
+    if (isPreviewMode || !isEngaged) return;
     clearExpiredData(instanceId);
     initSession(instanceId); // Move current to archive immediately
     if (hasOldConversations(instanceId)) {
       setShowOldMessagesButton(true);
     }
-  }, [isPreviewMode, instanceId]);
+  }, [isPreviewMode, instanceId, isEngaged]);
+
+  // Send the funnel view held back while the chat was auto-opened
+  useEffect(() => {
+    if (!isEngaged || !pendingFunnelViewRef.current) return;
+    logFunnelView(...pendingFunnelViewRef.current);
+    pendingFunnelViewRef.current = null;
+  }, [isEngaged]);
 
   // Save messages to localStorage whenever they change (frontend only, after user interaction)
   useEffect(() => {
@@ -166,12 +186,17 @@ export default function Chat() {
           setChatFunnelLastBlockOrder(firstBlock?.block_order || 1);
           setDisableNavigation(true); // Prevent user from navigating back when funnel is active
           
-          logFunnelView(funnelId, currentFunnel.name || '', {
+          const funnelView = [funnelId, currentFunnel.name || '', {
             source: 'chat_opened',
             mode: mode || 'view',
             starting_block: firstBlock?.block_order,
             total_blocks: currentFunnel.blocks?.length || 0,
-          });
+          }];
+          if (storeApi.getState().userEngaged || !storeApi.getState().showChat) {
+            logFunnelView(...funnelView);
+          } else {
+            pendingFunnelViewRef.current = funnelView;
+          }
         }
 
         // Convert funnel to chat message
@@ -308,7 +333,7 @@ export default function Chat() {
   }, [instanceId]);
 
   return (
-    <div className='wpchat:rounded-2xl'>
+    <div className='wpchat:rounded-2xl' onPointerDownCapture={markEngaged} onKeyDownCapture={markEngaged} onClickCapture={markEngaged}>
       <ChatHeader />
       <div
         className={cn(

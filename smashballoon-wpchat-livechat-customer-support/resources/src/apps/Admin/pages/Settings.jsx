@@ -75,6 +75,7 @@ export default function Support() {
 
   const [status, setStatus] = useState(STATUS.IDLE);
   const [preserveSettings, setPreserveSettings] = useState(false);
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(true);
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [dataSharingConsent, setDataSharingConsent] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -105,6 +106,7 @@ export default function Support() {
   useEffect(() => {
     if (settings) {
       setPreserveSettings(settings.preserveSettings);
+      setAnalyticsEnabled(settings.analyticsEnabled ?? true);
       setNotificationsEnabled(settings.notificationsEnabled ?? false);
       setDataSharingConsent(settings.dataSharingConsent ?? false);
     }
@@ -162,6 +164,7 @@ export default function Support() {
       const payload = {
         ...settings,
         preserveSettings: preserveSettings,
+        analyticsEnabled: analyticsEnabled,
         dataSharingConsent: dataSharingConsent,
         notificationsEnabled: dataSharingConsent ? true : notificationsEnabled,
       };
@@ -508,6 +511,26 @@ export default function Support() {
               'Preserve settings if plugin is removed',
               'smashballoon-wpchat-livechat-customer-support',
             )}
+          />
+        </div>
+      </Card>
+
+      <Card className='wpchat:pt-6 wpchat:pb-7'>
+        <div className='wpchat:flex wpchat:justify-between wpchat:gap-5 wpchat:items-start'>
+          <TitleDescription
+            className='wpchat:mb-0'
+            title={__('Visitor interaction analytics', 'smashballoon-wpchat-livechat-customer-support')}
+            titleClassName='wpchat:text-base wpchat:leading-[1.6]'
+            description={__(
+              'Record how visitors use the chat widget (opens, clicks, FAQ searches) for the Analytics page. Stored in your site database. When off, WPChat sets no analytics cookies and records no events.',
+              'smashballoon-wpchat-livechat-customer-support',
+            )}
+            descriptionClassName='wpchat:text-gray-700 wpchat:max-w-[395px] wpchat:leading-[1.6] wpchat:mb-0'
+          />
+          <Switch
+            isSelected={analyticsEnabled}
+            onChange={setAnalyticsEnabled}
+            aria-label={__('Visitor interaction analytics', 'smashballoon-wpchat-livechat-customer-support')}
           />
         </div>
       </Card>

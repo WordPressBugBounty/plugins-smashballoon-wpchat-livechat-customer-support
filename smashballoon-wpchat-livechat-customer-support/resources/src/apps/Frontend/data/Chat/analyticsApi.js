@@ -1,6 +1,9 @@
 import bufferManager from './AnalyticsBufferManager';
 import { useChatStore } from './chatStore';
 
+// Site owner setting or `wpchat_analytics_enabled` filter turned analytics off.
+const isAnalyticsDisabled = () => window.wpChatFrontend?.analyticsEnabled === '0';
+
 /**
  * Log an event to the analytics system using the buffer manager.
  *
@@ -11,7 +14,7 @@ import { useChatStore } from './chatStore';
 export const logEvent = (eventType, data = {}, context = {}) => {
 	// Skip logging if in preview mode (backend admin preview)
 	const isPreviewMode = useChatStore.getState().isPreviewMode;
-	if (isPreviewMode) {
+	if (isPreviewMode || isAnalyticsDisabled()) {
 		return;
 	}
 
@@ -26,7 +29,7 @@ export const logEvent = (eventType, data = {}, context = {}) => {
 export const logBatchEvents = (events) => {
 	// Skip logging if in preview mode (backend admin preview)
 	const isPreviewMode = useChatStore.getState().isPreviewMode;
-	if (isPreviewMode) {
+	if (isPreviewMode || isAnalyticsDisabled()) {
 		return;
 	}
 

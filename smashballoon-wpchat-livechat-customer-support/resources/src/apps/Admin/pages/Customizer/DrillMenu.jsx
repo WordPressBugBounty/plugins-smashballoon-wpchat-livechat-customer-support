@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
 import { AnimatePresence, Reorder, motion } from 'motion/react';
 import { TooltipTrigger, Button as RACButton } from 'react-aria-components';
@@ -30,7 +30,9 @@ import { useRTL } from '@Hooks/useRTL';
 export const DrillMenu = ({ data, className }) => {
   const location = useLocation();
   const { stack, push, pop, direction, reset } = useMenuStore();
-  const current = stack[stack.length - 1] || { title: '', children: data };
+  // Memoized so the root fallback keeps one identity; a fresh object every render
+  // re-fires the [current] effects in an endless loop that starves router transitions.
+  const current = useMemo(() => stack[stack.length - 1] || { title: '', children: data }, [stack, data]);
   const isRTL = useRTL();
 
   const [items, setItems] = useState(current.children || []);

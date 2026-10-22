@@ -1,7 +1,7 @@
 /**
  * Conversation storage utility for persisting chat messages.
  * Uses localStorage for data (shared across tabs).
- * Clears when PHP session expires (browser close or session timeout).
+ * Clears when the browser session ends (browser close).
  * Supports multiple independent widget instances via instanceId.
  */
 
@@ -59,29 +59,23 @@ const clearAllConversations = (instanceId) => {
 };
 
 /**
- * Check if PHP session has changed (expired or new session).
+ * Check if the browser session has changed (browser was closed since the last chat).
+ * Uses a browser-session cookie that is only set once the visitor opens the chat,
+ * so nothing is stored on a plain page load.
  * @param {string} instanceId - The instance identifier.
  * @returns {boolean} True if session has changed.
  */
 const isSessionChanged = (instanceId) => {
-	const currentSessionId = window.wpChatFrontend?.sessionId;
-	if (!currentSessionId) return false;
+	const cookieName = getSessionIdKey(instanceId).replace(SESSION_ID_KEY_PREFIX, 'wpchat_chat_session');
+	if (document.cookie.split('; ').includes(`${cookieName}=1`)) return false;
 
+	document.cookie = `${cookieName}=1; path=/; SameSite=Lax`;
+
+	// A stored marker means an earlier browser session existed.
 	const sessionIdKey = getSessionIdKey(instanceId);
-	const storedSessionId = localStorage.getItem(sessionIdKey);
-	if (!storedSessionId) {
-		// First visit - store session ID
-		safeSetItem(sessionIdKey, currentSessionId);
-		return false;
-	}
-
-	if (storedSessionId !== currentSessionId) {
-		// Session changed - update stored ID
-		safeSetItem(sessionIdKey, currentSessionId);
-		return true;
-	}
-
-	return false;
+	const hadPreviousSession = localStorage.getItem(sessionIdKey) !== null;
+	safeSetItem(sessionIdKey, '1');
+	return hadPreviousSession;
 };
 
 /**
@@ -121,7 +115,7 @@ const moveCurrentToArchive = (instanceId) => {
 };
 
 /**
- * Clear data if PHP session changed. Call on page load.
+ * Clear data if the browser session changed. Call when the chat opens.
  * @param {string} instanceId - The instance identifier.
  * @returns {void}
  */

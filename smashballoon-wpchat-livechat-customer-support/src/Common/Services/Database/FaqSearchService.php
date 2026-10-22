@@ -84,6 +84,16 @@ class FaqSearchService implements SearchServiceInterface
 		$settings = $this->settingsService->getAllSettings();
 		$smartSearchEnabled = $settings['smartSearchEnabled'] ?? true;
 
+		/**
+		 * Filters whether visitor FAQ searches use smart search (sends the search text to api.wpchat.com).
+		 *
+		 * Return false to use the local FAQ search only.
+		 *
+		 * @param bool   $smartSearchEnabled Whether smart search is enabled.
+		 * @param string $query              The visitor's search text.
+		 */
+		$smartSearchEnabled = (bool) apply_filters('wpchat_smart_search_enabled', $smartSearchEnabled, $query);
+
 		// Try vector search first if available and enabled
 		if ($this->vectorService && $smartSearchEnabled) {
 			try {

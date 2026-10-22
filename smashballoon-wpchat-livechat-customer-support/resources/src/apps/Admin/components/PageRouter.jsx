@@ -124,6 +124,8 @@ function useInterceptMenuClicks() {
         const url = new URL(link.href);
         if (url.searchParams.get('page') === PAGE_SLUG) {
           e.preventDefault();
+          // Drop focus after a mouse click or core's :focus style sticks. Keep it for keyboard (detail 0).
+          if (e.detail > 0) link.blur();
           window.history.pushState({}, '', link.href);
           window.dispatchEvent(new PopStateEvent('popstate'));
         }

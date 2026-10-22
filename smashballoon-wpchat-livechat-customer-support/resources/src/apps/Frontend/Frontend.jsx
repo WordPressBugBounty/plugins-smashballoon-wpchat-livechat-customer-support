@@ -67,6 +67,7 @@ function Frontend({ fixedHeight }) {
   const theme = useChatStore((s) => s.theme);
   const frontendClassName = useChatStore((s) => s.frontendClassName);
   const chatFunnelId = useChatStore((s) => s.chatFunnelId);
+  const userEngaged = useChatStore((s) => s.userEngaged);
   const chatFunnelLastBlockOrder = useChatStore((s) => s.chatFunnelLastBlockOrder || 1);
   const widgetHeight = useChatStore((s) => s.widgetHeight);
   const fetchAvailablePlatforms = useChatStore((s) => s.fetchAvailablePlatforms);
@@ -167,7 +168,8 @@ function Frontend({ fixedHeight }) {
   // Track funnel abandonment on page unload
   useEffect(() => {
     const handleBeforeUnload = () => {
-      if (chatFunnelId && isOpen) {
+      // An auto-opened chat the visitor never touched did not log a view, so no abandon either
+      if (chatFunnelId && isOpen && (userEngaged || !showChat)) {
         // Use navigator.sendBeacon for reliable tracking when page unloads
         logFunnelAbandon(
           chatFunnelId,
@@ -184,7 +186,7 @@ function Frontend({ fixedHeight }) {
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [chatFunnelId, isOpen, chatFunnelLastBlockOrder]);
+  }, [chatFunnelId, isOpen, chatFunnelLastBlockOrder, userEngaged, showChat]);
 
   // Handle chat toggle with analytics
   const handleChatToggle = () => {
@@ -200,8 +202,8 @@ function Frontend({ fixedHeight }) {
     } else {
       logChatClose('user_action');
 
-      // Log funnel abandonment if there was an active funnel
-      if (chatFunnelId) {
+      // Log funnel abandonment if there was an active funnel the visitor actually saw
+      if (chatFunnelId && (userEngaged || !showChat)) {
         logFunnelAbandon(
           chatFunnelId,
           '', // Empty funnel_name - backend will populate from database

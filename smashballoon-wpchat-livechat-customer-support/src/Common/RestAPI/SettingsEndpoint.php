@@ -235,6 +235,10 @@ return new WP_Error(
 				'type'        => 'boolean',
 				'description' => __( 'Smart search enabled status', 'smashballoon-wpchat-livechat-customer-support' ),
 			),
+			'analyticsEnabled' => array(
+				'type'        => 'boolean',
+				'description' => __( 'Interaction analytics enabled status', 'smashballoon-wpchat-livechat-customer-support' ),
+			),
 			'dataSharingConsent' => array(
 				'type'        => 'boolean',
 				'description' => __( 'Data sharing consent', 'smashballoon-wpchat-livechat-customer-support' ),
@@ -427,6 +431,7 @@ return new WP_Error(
 			'faqOnboardingStatus' => 'rest_sanitize_boolean',
 			'proUpsellStatus'     => 'rest_sanitize_boolean',
 			'smartSearchEnabled'  => 'rest_sanitize_boolean',
+			'analyticsEnabled'    => 'rest_sanitize_boolean',
 			'notificationsEnabled' => 'rest_sanitize_boolean',
 			'dataSharingConsent' => 'rest_sanitize_boolean',
 			'dataSharingConsentDismissed' => 'rest_sanitize_boolean',

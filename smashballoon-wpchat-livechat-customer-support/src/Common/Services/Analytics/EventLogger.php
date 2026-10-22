@@ -93,6 +93,13 @@ class EventLogger
 	private ?string $sessionId = null;
 
 	/**
+	 * Current guest ID.
+	 *
+	 * @var string|null
+	 */
+	private ?string $guestId = null;
+
+	/**
 	 * Cached sequence number for navigation events.
 	 *
 	 * @var int
@@ -108,24 +115,75 @@ class EventLogger
 	{
 		$this->wpdb = $wpdb;
 		$this->tableName = $wpdb->prefix . 'wpchat_analytics';
-		$this->initializeSession();
+		// Only read an existing session here. A new session (and its cookie) is
+		// created lazily in logEvent(), i.e. on the visitor's first interaction.
+		$this->sessionId = isset($_COOKIE[self::SESSION_ID_COOKIE]) ? sanitize_text_field(wp_unslash($_COOKIE[self::SESSION_ID_COOKIE])) : null;
 	}
 
 	/**
-	 * Initialize session ID for the current user session.
+	 * Expire leftover analytics cookies once analytics are turned off, so withdrawing consent clears them.
+	 *
+	 * @return void
 	 */
-	private function initializeSession(): void
+	public static function clearCookiesIfDisabled(): void
 	{
-		// Get existing session ID or create new one
-		$existingSessionId = isset($_COOKIE[self::SESSION_ID_COOKIE]) ? sanitize_text_field(wp_unslash($_COOKIE[self::SESSION_ID_COOKIE])) : null;
+		if (headers_sent() || self::isEnabled()) {
+			return;
+		}
 
-		if (!$existingSessionId) {
+		foreach ([self::SESSION_ID_COOKIE, self::GUEST_ID_COOKIE] as $cookie) {
+			if (isset($_COOKIE[$cookie])) {
+				setcookie($cookie, '', [
+					'expires' => time() - HOUR_IN_SECONDS,
+					'path' => COOKIEPATH,
+					'domain' => COOKIE_DOMAIN,
+					'secure' => is_ssl(),
+					'httponly' => true,
+					'samesite' => 'Strict'
+				]);
+				unset($_COOKIE[$cookie]);
+			}
+		}
+	}
+
+	/**
+	 * Whether interaction analytics are enabled for the current request.
+	 *
+	 * Controlled by the "analyticsEnabled" setting (default on) and the
+	 * `wpchat_analytics_enabled` filter, so consent plugins can turn it off.
+	 *
+	 * @return bool
+	 */
+	public static function isEnabled(): bool
+	{
+		$settings = get_option('wpchat_global_settings', []);
+		$enabled = !is_array($settings) || ($settings['analyticsEnabled'] ?? true) !== false;
+
+		/**
+		 * Filters whether WPChat interaction analytics are enabled.
+		 *
+		 * Return false to stop WPChat from setting its analytics cookies,
+		 * writing analytics rows and sending analytics events.
+		 *
+		 * @param bool $enabled Whether analytics are enabled.
+		 */
+		return (bool) apply_filters('wpchat_analytics_enabled', $enabled);
+	}
+
+	/**
+	 * Get the current session ID, starting a new session (and setting its cookie) if none exists.
+	 *
+	 * @return string Session ID.
+	 */
+	private function getOrCreateSessionId(): string
+	{
+		if (!$this->sessionId) {
 			$this->sessionId = wp_generate_uuid4();
 			$this->setSessionCookie($this->sessionId);
 			$this->resetNavigationSequenceCache();
-		} else {
-			$this->sessionId = $existingSessionId;
 		}
+
+		return $this->sessionId;
 	}
 
 	/**
@@ -163,7 +221,11 @@ class EventLogger
 			return 'user_' . get_current_user_id();
 		}
 
-		// Get or create guest ID
+		if ($this->guestId) {
+			return $this->guestId;
+		}
+
+		// Get or create guest ID, kept for the request so a batch maps to one visitor
 		$guestId = isset($_COOKIE[self::GUEST_ID_COOKIE]) ? sanitize_text_field(wp_unslash($_COOKIE[self::GUEST_ID_COOKIE])) : null;
 		if (!$guestId) {
 			$guestId = 'guest_' . wp_generate_uuid4();
@@ -183,6 +245,7 @@ class EventLogger
 			}
 		}
 
+		$this->guestId = $guestId;
 		return $guestId;
 	}
 
@@ -218,12 +281,16 @@ class EventLogger
 			return false;
 		}
 
+		if (!self::isEnabled()) {
+			return false;
+		}
+
 		$eventTypeValue = self::EVENT_TYPES[$eventType];
 
 		// Use provided context data or fall back to automatic assignment
 		$siteId = $contextData['site_id'] ?? $this->getSiteId();
 		$userId = $contextData['user_id'] ?? $this->getUserId();
-		$sessionId = $contextData['session_id'] ?? $this->sessionId;
+		$sessionId = $contextData['session_id'] ?? $this->getOrCreateSessionId();
 		
 		// Use event_data timestamp if available (for batched events), otherwise current time
 		$timestamp = $this->getEventTimestamp($data);

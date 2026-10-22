@@ -73,6 +73,7 @@ class SettingsService implements ServiceProviderInterface {
 			'proUpsellStatus' => false,
 			'preserveSettings' => false,
 			'smartSearchEnabled' => true,
+			'analyticsEnabled' => true,
 			'claimOfferTokenAmount' => 5000,
 			'notificationsEnabled' => $isPro,
 			'dataSharingConsent' => $isPro,

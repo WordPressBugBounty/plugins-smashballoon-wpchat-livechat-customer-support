@@ -193,9 +193,17 @@ class AnalyticsBufferManager {
 		const payload = JSON.stringify({
 			events: this.buffer,
 			context: {},
+			// The beacon carries no headers, and the visitor may not have a session cookie yet.
+			nonce: window.wpChatFrontend?.frontendNonce || '',
 		});
 
-		const url = `${window.location.origin}${buildRestUrl('analytics/batch', {}, 'frontend')}`;
+		// restUrl may already be absolute, so resolve against the page instead of prefixing the origin
+		// sendBeacon cannot set X-WP-Nonce, so pass the REST nonce as _wpnonce to keep logged-in visitors authenticated
+		const restNonce = window.wpChatFrontend?.restNonce;
+		const url = new URL(
+			buildRestUrl('analytics/batch', restNonce ? { _wpnonce: restNonce } : {}, 'frontend'),
+			window.location.href
+		).toString();
 		
 		try {
 			navigator.sendBeacon(url, new Blob([payload], {
@@ -228,7 +236,8 @@ class AnalyticsBufferManager {
 			}
 
 		} catch (error) {
-			if (retryCount < this.config.maxRetries) {
+			// The request helper already refreshed the nonce once, so another 403 will not clear by waiting
+			if (error?.data?.status !== 403 && retryCount < this.config.maxRetries) {
 				await this.delay(this.config.retryDelay * (retryCount + 1));
 				return this.sendEvents(events, retryCount + 1);
 			}
@@ -266,6 +275,9 @@ class AnalyticsBufferManager {
 	 * Retry failed/offline events
 	 */
 	async retryFailedEvents() {
+		if (window.wpChatFrontend?.analyticsEnabled === '0') {
+			return;
+		}
 		try {
 			const storedEvents = JSON.parse(localStorage.getItem('wpchat_offline_events') || '[]');
 			
