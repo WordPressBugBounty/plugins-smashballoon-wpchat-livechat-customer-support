@@ -1,1 +1,0 @@
-import{l as f}from"./wp-chat-OverlayArrow-CgeyM9zV.js";import{h as m}from"./wp-chat-Button-elhHrogd.js";import{r as s,e as d}from"./wp-chat-chunk-EPOLDU6W-CW-UdKEc.js";const x=s.forwardRef(function(e,a){[e,a]=m(e,a,f);let{children:t,level:l=3,className:r,...o}=e,c=`h${l}`;return d.createElement(c,{...o,ref:a,className:r??"react-aria-Heading"},t)});export{x as $};
