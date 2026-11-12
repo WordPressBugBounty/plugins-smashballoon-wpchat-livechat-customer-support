@@ -67,9 +67,15 @@ class SingletonContainer
 			self::$instance->set(AgentsServiceInterface::class, autowire(AgentsService::class));
 		}
 		self::$instance->set(
+			SmartSearchRateLimiter::class,
+			autowire(SmartSearchRateLimiter::class)
+				->constructorParameter('privateSettings', \SmashBalloon\WPChat\Vendor\DI\get(PrivateSettingsService::class))
+		);
+		self::$instance->set(
 			SearchServiceInterface::class,
 			autowire(FaqSearchService::class)
 				->constructorParameter('vectorService', \SmashBalloon\WPChat\Vendor\DI\get(VectorEmbeddingService::class))
+				->constructorParameter('rateLimiter', \SmashBalloon\WPChat\Vendor\DI\get(SmartSearchRateLimiter::class))
 		);
 
 		// Configure PrivateSettingsService with PrivateOptionsRepository

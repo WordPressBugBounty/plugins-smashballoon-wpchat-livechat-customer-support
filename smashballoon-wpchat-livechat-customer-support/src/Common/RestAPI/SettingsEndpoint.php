@@ -4,6 +4,7 @@ namespace SmashBalloon\WPChat\Common\RestAPI;
 
 use SmashBalloon\WPChat\Common\Services\SettingsService;
 use SmashBalloon\WPChat\Common\Services\PrivateSettingsService;
+use SmashBalloon\WPChat\Common\Services\SmartSearchManagerService;
 use SmashBalloon\WPChat\Common\Services\ApiService;
 use WP_REST_Request;
 use WP_REST_Response;
@@ -38,14 +39,27 @@ class SettingsEndpoint extends RestEndpoint {
 	private $privateSettingsService;
 
 	/**
+	 * The Smart Search manager, which decides whether a claim is recent.
+	 *
+	 * @var SmartSearchManagerService
+	 */
+	private $smartSearchManager;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param SettingsService $settingsService The settings service.
-	 * @param PrivateSettingsService $privateSettingsService The private settings service.
+	 * @param SettingsService           $settingsService        The settings service.
+	 * @param PrivateSettingsService    $privateSettingsService The private settings service.
+	 * @param SmartSearchManagerService $smartSearchManager     The Smart Search manager.
 	 */
-	public function __construct(SettingsService $settingsService, PrivateSettingsService $privateSettingsService) {
+	public function __construct(
+		SettingsService $settingsService,
+		PrivateSettingsService $privateSettingsService,
+		SmartSearchManagerService $smartSearchManager
+	) {
 		$this->settingsService = $settingsService;
 		$this->privateSettingsService = $privateSettingsService;
+		$this->smartSearchManager = $smartSearchManager;
 	}
 
 	/**
@@ -94,10 +108,18 @@ register_rest_route(
 	/**
 	 * Get all settings.
 	 *
+	 * The route is public because the front-end widget reads it. The Smart Search
+	 * account fields (token state, usage and the newsletter email that identifies the
+	 * site to the WPChat API) come from private settings and go to admins only.
+	 *
 	 * @return WP_REST_Response
 	 */
 	public function getSettings() {
 		$settings = $this->settingsService->getAllSettings();
+
+		if (!$this->checkPermission()) {
+			return rest_ensure_response($settings);
+		}
 
 		// Add a flag to indicate if an access token exists
 		// We don't expose the actual token for security reasons
@@ -369,6 +391,7 @@ return new WP_Error(
 	 */
 	private function sanitizeSettingsFromRequest(array $settingsData): array {
 		$sanitizedSettings = array();
+		$settingsData      = array_diff_key( $settingsData, array_flip( SettingsService::ADMIN_ONLY_KEYS ) );
 
 		foreach ( $settingsData as $key => $value ) {
 			if ( is_array( $value ) ) {
@@ -480,21 +503,8 @@ return new WP_Error(
 	 * @return bool True if subscribed and within 24 hours, false otherwise.
 	 */
 	private function isNewsletterWithin24Hours(): bool {
-		$isSubscribed = (bool)$this->privateSettingsService->getSetting( 'newsletter_subscribed', false );
-		$subscriptionDate = $this->privateSettingsService->getSetting( 'newsletter_subscription_date', '' );
-
-		if ( ! $isSubscribed || empty( $subscriptionDate ) ) {
-			return false;
-		}
-
-		try {
-			$subscriptionTime = new \DateTime( $subscriptionDate );
-			$now = new \DateTime();
-			$hoursDiff = ($now->getTimestamp() - $subscriptionTime->getTimestamp()) / 3600;
-
-			return $hoursDiff < 24;
-		} catch ( \Exception $e ) {
-			return false;
-		}
+		// The same check as the Connect screen: the claim date is stored in the site's
+		// timezone, so reading it as UTC is off by the site's offset (SMASH-2676).
+		return $this->smartSearchManager->hasRecentClaimOffer();
 	}
 }

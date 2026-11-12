@@ -130,9 +130,14 @@ class SmartSearchManagerService implements ServiceProviderInterface
 			return false;
 		}
 
-		$subscriptionTime = new \DateTime($subscriptionDate);
-		$now = new \DateTime();
-		$hoursDiff = ($now->getTimestamp() - $subscriptionTime->getTimestamp()) / 3600;
+		// claimOffer() stores current_time('mysql'), which is in the site's timezone.
+		try {
+			$subscriptionTime = new \DateTime((string) $subscriptionDate, wp_timezone());
+		} catch (\Exception $e) {
+			return false;
+		}
+
+		$hoursDiff = (time() - $subscriptionTime->getTimestamp()) / 3600;
 
 		return $hoursDiff < 24;
 	}

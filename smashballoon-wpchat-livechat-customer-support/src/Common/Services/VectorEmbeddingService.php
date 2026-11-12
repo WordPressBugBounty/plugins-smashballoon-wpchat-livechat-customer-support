@@ -15,6 +15,11 @@ use SmashBalloon\WPChat\Common\Helpers\Logger;
 
 class VectorEmbeddingService implements ServiceProviderInterface
 {
+	/**
+	 * Longest visitor query, in characters, sent to the embeddings API (SMASH-2676).
+	 */
+	public const SEARCH_QUERY_MAX_CHARS = 200;
+
 	private ?SQLite3 $db = null;
 	private string $vectorFilePath;
 	private ApiService $apiService;
@@ -482,7 +487,8 @@ class VectorEmbeddingService implements ServiceProviderInterface
 	public function searchByVector(string $query, int $limit = 5): array
 	{
 		try {
-			$queryVector = $this->generateEmbedding($query);
+			// The query comes from a public route and is billed by length, so only the start is sent.
+			$queryVector = $this->generateEmbedding(mb_substr($query, 0, self::SEARCH_QUERY_MAX_CHARS));
 
 			// Get similar vectors with their scores
 			$similarities = $this->db

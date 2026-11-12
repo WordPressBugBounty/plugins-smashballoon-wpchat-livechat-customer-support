@@ -51,7 +51,9 @@ class SmartSearchEndpoint extends RestEndpoint
 				array(
 					'methods'             => \WP_REST_Server::CREATABLE, // POST
 					'callback'            => array($this, 'claimOffer'),
-					'permission_callback' => array($this, 'checkPublicPermission'),
+					// Admin only: the claim registers the site with the WPChat API and
+					// rewrites the site's private settings, so the public widget nonce is not enough.
+					'permission_callback' => array($this, 'checkPermission'),
 					'args'                => array(
 						'email' => array(
 							'required' => true,

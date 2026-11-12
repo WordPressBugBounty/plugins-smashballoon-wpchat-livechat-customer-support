@@ -6,7 +6,7 @@ Author URI: https://wpchat.com
 Requires at least: 5.8
 Tested up to: 7.1
 Requires PHP: 8.0
-Stable tag: 1.4.5
+Stable tag: 1.4.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -255,6 +255,12 @@ Add up to 10 frequently asked questions in the free version (unlimited in Pro). 
 8. Chat funnels builder (Pro)
 
 == Changelog ==
+
+= 1.4.6 =
+* Tweak: Connecting Smart Search from the emailed link now opens a "Connect Smart Search" screen in WPChat, so you confirm before Smart Search connects.
+* Tweak: Smart Search now limits how many FAQ searches one visitor can make, so a single visitor can't use up your site's Smart Search tokens. Once a limit is reached, search falls back to keyword matching.
+* Fix: The Smart Search email-verification window now lasts a full 24 hours on sites not set to UTC.
+* Fix: Plugin security hardening.
 
 = 1.4.5 =
 * New: Added a "Visitor interaction analytics" setting in WPChat > Settings to turn chat analytics off, plus the `wpchat_analytics_enabled` filter so consent plugins can turn analytics off per visitor, and the `wpchat_smart_search_enabled` filter to keep FAQ search on your own site.

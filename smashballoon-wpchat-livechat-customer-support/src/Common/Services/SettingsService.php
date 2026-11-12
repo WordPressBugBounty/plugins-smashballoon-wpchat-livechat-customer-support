@@ -61,6 +61,9 @@ class SettingsService implements ServiceProviderInterface {
 	public function register(): void {
 	}
 
+	/** Response-only settings fields that must never be stored or served publicly. */
+	public const ADMIN_ONLY_KEYS = array( 'hasAccessToken', 'tokenUsage', 'newsletterStatus' );
+
 	/**
 	 * Retrieves all chat service settings, merging stored values with defaults.
 	 *
@@ -172,7 +175,9 @@ class SettingsService implements ServiceProviderInterface {
 			$merged_settings['notificationsEnabled'] = true;
 		}
 
-		return $merged_settings;
+		// Admin-only live values are added by SettingsEndpoint::getSettings().
+		// Drop any stale stored copy so no caller can leak it to non-admins.
+		return array_diff_key( $merged_settings, array_flip( self::ADMIN_ONLY_KEYS ) );
 	}
 
 	/**
@@ -280,7 +285,8 @@ class SettingsService implements ServiceProviderInterface {
 	 * @return bool Returns true if the settings were successfully updated, false otherwise.
 	 */
 	public function updateSettings(array $settings): bool {
-		$currentSettings = $this->repository->getSettings();
+		// Drop any stale stored copy of the admin-only keys so this save cleans it.
+		$currentSettings = array_diff_key( $this->repository->getSettings(), array_flip( self::ADMIN_ONLY_KEYS ) );
 
 		// Pro forces telemetry + in-plugin notifications on at read time, so never
 		// persist UI changes to these keys - the stored value stays exactly as the

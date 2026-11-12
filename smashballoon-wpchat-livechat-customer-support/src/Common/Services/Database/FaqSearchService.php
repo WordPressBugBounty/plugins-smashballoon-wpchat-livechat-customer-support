@@ -7,6 +7,7 @@ use SmashBalloon\WPChat\Common\Helpers\Logger;
 use SmashBalloon\WPChat\Common\Contracts\SearchServiceInterface;
 use SmashBalloon\WPChat\Common\Services\VectorEmbeddingService;
 use SmashBalloon\WPChat\Common\Services\SettingsService;
+use SmashBalloon\WPChat\Common\Services\SmartSearchRateLimiter;
 use Exception;
 use wpdb;
 
@@ -49,18 +50,31 @@ class FaqSearchService implements SearchServiceInterface
 	protected SettingsService $settingsService;
 
 	/**
+	 * Per-visitor limit on searches that spend the site's WPChat API tokens.
+	 *
+	 * @var SmartSearchRateLimiter
+	 */
+	protected SmartSearchRateLimiter $rateLimiter;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param wpdb $db The WordPress database object.
-	 * @param SettingsService $settingsService The settings service.
-	 * @param VectorEmbeddingService|null $vectorService The vector embedding service (optional).
+	 * @param wpdb                        $db              The WordPress database object.
+	 * @param SettingsService             $settingsService The settings service.
+	 * @param VectorEmbeddingService|null $vectorService   The vector embedding service (optional).
+	 * @param SmartSearchRateLimiter|null $rateLimiter     The smart search limiter (optional).
 	 */
-	public function __construct(wpdb $db, SettingsService $settingsService, ?VectorEmbeddingService $vectorService = null)
-	{
+	public function __construct(
+		wpdb $db,
+		SettingsService $settingsService,
+		?VectorEmbeddingService $vectorService = null,
+		?SmartSearchRateLimiter $rateLimiter = null
+	) {
 		$this->db = $db;
 		$this->tableName = $db->prefix . 'wpchat_faqs';
 		$this->settingsService = $settingsService;
 		$this->vectorService = $vectorService;
+		$this->rateLimiter = $rateLimiter ?? new SmartSearchRateLimiter();
 	}
 
 	/**
@@ -94,8 +108,9 @@ class FaqSearchService implements SearchServiceInterface
 		 */
 		$smartSearchEnabled = (bool) apply_filters('wpchat_smart_search_enabled', $smartSearchEnabled, $query);
 
-		// Try vector search first if available and enabled
-		if ($this->vectorService && $smartSearchEnabled) {
+		// Try vector search first if available and enabled. Over the per-visitor limit, the search
+		// falls through to the local keyword search so it does not spend the site's tokens.
+		if ($this->vectorService && $smartSearchEnabled && $this->rateLimiter->attempt($query)) {
 			try {
 				$vectorResults = $this->vectorService->searchByVector($query, $options['limit'] ?? 10);
 
